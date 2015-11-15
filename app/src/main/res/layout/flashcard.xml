@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.desarrollodroide.libraryfragmenttransactionextended.SlidingRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/LinearLayout_Flashcard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:background="@drawable/dropshadow">
+        <memorizer.freecoders.com.flashcards.classes.AutoResizeTextView
+            android:id="@+id/TextView_Question"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="40sp"
+            android:maxLines="1"
+            android:ellipsize="none"
+            android:fontFamily="sans-serif"
+            android:text="Agree"
+            android:layout_margin="10dp"/>
+        <ListView
+            android:id="@+id/ListView_FlashCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/button"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:paddingBottom="30dp">
+        </ListView>
+    </LinearLayout>
+
+</com.desarrollodroide.libraryfragmenttransactionextended.SlidingRelativeLayout>

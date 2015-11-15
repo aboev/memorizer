@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/alex-mac/AndroidStudioProjects/Memo-Test/app/build/intermediates/exploded-aar/de.hdodenhof/circleimageview/1.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4b868b833b0887aa48c4e581558eef4f1196f6a2">
+        <dex dex="/Users/alex-mac/AndroidStudioProjects/Memo-Test/app/build/intermediates/pre-dexed/debug/classes-96419c624cfd0af61872aa79a449f5c62c536caa.jar" />
+    </item>
+
+</items>
