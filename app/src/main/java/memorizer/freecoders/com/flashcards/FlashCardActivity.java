@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
@@ -19,6 +20,8 @@ import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 public class FlashCardActivity extends AppCompatActivity {
 
     private FlashCardFragment currentFlashCardFragment;
+    TextView scoreView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,14 @@ public class FlashCardActivity extends AppCompatActivity {
             getFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, currentFlashCardFragment).commit();
         }
+
+        scoreView = (TextView) findViewById(R.id.scoreView);
+        updateScore(0,0);
+    }
+
+    public void updateScore(int numCorrect,int numTotal)
+    {
+        scoreView.setText("Score: "+ Integer.toString(numCorrect)+"/"+Integer.toString(numTotal));
     }
 
     public void nextFlashCard(){
