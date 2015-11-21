@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.activeandroid.ActiveAndroid;
 import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
 
+import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 
 public class FlashCardActivity extends AppCompatActivity {
