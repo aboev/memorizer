@@ -33,4 +33,5 @@ dependencies {
     compile 'net.sf.opencsv:opencsv:2.3'
     compile 'com.desarrollodroide:fragmenttransactionextended:1'
     compile 'de.hdodenhof:circleimageview:1.2.1'
+    compile 'com.github.nkzawa:socket.io-client:0.3.0'
 }
