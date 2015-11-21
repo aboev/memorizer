@@ -145,9 +145,9 @@ public class FlashCardActivity extends AppCompatActivity {
 
         try {
             Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
-            mSocket.connect();
             mSocket.on(Constants.SOCKET_CHANNEL_NAME,
                     MemorizerApplication.getServerInterface().onNewSocketMessage);
+            mSocket.connect();
             MemorizerApplication.setSocketIO(mSocket);
             Log.d(LOG_TAG, "Connected to socket");
         } catch (URISyntaxException e) {
