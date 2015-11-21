@@ -10,5 +10,5 @@ public class Constants {
     public final static String SERVER_URL = "http://dev.snufan.com:81";
     public final static String SOCKET_SERVER_URL = "http://dev.snufan.com:5001";
 
-    public final static String SOCKET_CHANNEL_NAME = "events";
+    public final static String SOCKET_CHANNEL_NAME = "event";
 }
