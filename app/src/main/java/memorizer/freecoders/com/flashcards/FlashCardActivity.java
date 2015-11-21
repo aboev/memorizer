@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,11 +15,19 @@ import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
+import java.net.URISyntaxException;
+
+import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
+import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
 public class FlashCardActivity extends AppCompatActivity {
+
+    private static String LOG_TAG = "FlashCardActivity";
 
     private FlashCardFragment currentFlashCardFragment;
     TextView scoreView;
@@ -131,6 +140,19 @@ public class FlashCardActivity extends AppCompatActivity {
     public void initApp(){
         MemorizerApplication.setFlashCardsDAO(new FlashCardsDAO(this));
         MemorizerApplication.setFlashCardActivity(this);
+
+        MemorizerApplication.setServerInterface(new ServerInterface());
+
+        try {
+            Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
+            mSocket.connect();
+            mSocket.on(Constants.SOCKET_CHANNEL_NAME,
+                    MemorizerApplication.getServerInterface().onNewSocketMessage);
+            MemorizerApplication.setSocketIO(mSocket);
+            Log.d(LOG_TAG, "Connected to socket");
+        } catch (URISyntaxException e) {
+            Log.d(LOG_TAG, "Failed to connect to socket");
+        }
     }
 
 }
