@@ -23,7 +23,8 @@
         <meta-data android:name="AA_DB_NAME" android:value="Memorizer.db" />
         <meta-data android:name="AA_DB_VERSION" android:value="5" />
 
-        <uses-permission android:name="android.permission.INTERNET" />
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
