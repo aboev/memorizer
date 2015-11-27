@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -29,6 +30,9 @@ public class ServerInterface {
     private static Gson gson = new Gson();
 
     private static String LOG_TAG = "ServerInterface";
+
+    private Socket mSocketIO;
+    private String strSocketID;
 
     public static final void registerUserRequest(Context context,
                                                 UserDetails userDetails,
@@ -67,6 +71,22 @@ public class ServerInterface {
         }
         );
         VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public void setSocketIO (Socket socket){
+        this.mSocketIO = socket;
+    }
+
+    public Socket getSocketIO () {
+        return this.mSocketIO;
+    }
+
+    public void setSocketID (String strSocketID) {
+        this.strSocketID = strSocketID;
+    }
+
+    public String getSocketID () {
+        return this.strSocketID;
     }
 
     public Emitter.Listener onNewSocketMessage = new Emitter.Listener() {
