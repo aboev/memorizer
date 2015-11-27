@@ -21,6 +21,10 @@ public class Constants {
     public final static String RESPONSE_DATA = "data";
     public final static String RESPONSE_CODE = "code";
 
+    public final static String HEADER_USERID = "id";
+
+    public final static String KEY_ID = "id";
+
     public final static String SOCKET_CHANNEL_NAME = "event";
 
 
