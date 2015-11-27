@@ -34,4 +34,5 @@ dependencies {
     compile 'com.desarrollodroide:fragmenttransactionextended:1'
     compile 'de.hdodenhof:circleimageview:1.2.1'
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
+    compile 'com.google.code.gson:gson:2.3.1'
 }
