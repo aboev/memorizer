@@ -17,6 +17,7 @@ public class MemorizerApplication extends Application {
     private static FlashCardsDAO mFlashCardsDAO;
     private static Socket mSocketIO;
     private static ServerInterface mServerInterface;
+    private static Preferences mPreferences;
 
     public final static void setFlashCardActivity(FlashCardActivity flashCardActivity) {
         mFlashCardActivity = flashCardActivity;
@@ -48,6 +49,14 @@ public class MemorizerApplication extends Application {
 
     public final static ServerInterface getServerInterface () {
         return mServerInterface;
+    }
+
+    public final static void setPreferences (Preferences preferences) {
+        mPreferences = preferences;
+    }
+
+    public final static Preferences getPreferences () {
+        return mPreferences;
     }
 
 }
