@@ -25,9 +25,9 @@ import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
-public class FlashCardActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
-    private static String LOG_TAG = "FlashCardActivity";
+    private static String LOG_TAG = "MainActivity";
 
     private FlashCardFragment currentFlashCardFragment;
     TextView scoreView;
