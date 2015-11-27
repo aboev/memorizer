@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Preferences;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FlashCardFragment currentFlashCardFragment;
     TextView scoreView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             mSocket.on(Constants.SOCKET_CHANNEL_NAME,
                     MemorizerApplication.getServerInterface().onNewSocketMessage);
             mSocket.connect();
-            MemorizerApplication.setSocketIO(mSocket);
+            MemorizerApplication.getServerInterface().setSocketIO(mSocket);
             Log.d(LOG_TAG, "Connected to socket");
         } catch (URISyntaxException e) {
             Log.d(LOG_TAG, "Failed to connect to socket");
