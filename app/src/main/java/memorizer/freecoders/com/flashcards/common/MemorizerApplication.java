@@ -14,9 +14,18 @@ import memorizer.freecoders.com.flashcards.network.ServerInterface;
 public class MemorizerApplication extends Application {
     private static MainActivity mMainActivity;
     private static FlashCardsDAO mFlashCardsDAO;
-    private static Socket mSocketIO;
     private static ServerInterface mServerInterface;
     private static Preferences mPreferences;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mPreferences = new Preferences(this);
+        mPreferences.loadPreferences();
+
+        mServerInterface = new ServerInterface();
+    }
 
     public final static void setFlashCardActivity(MainActivity mainActivity) {
         mMainActivity = mainActivity;
@@ -34,24 +43,12 @@ public class MemorizerApplication extends Application {
         return mFlashCardsDAO;
     }
 
-    public final static Socket getSocketIO() {
-        return mSocketIO;
-    }
-
-    public final static void setSocketIO(Socket socket){
-        mSocketIO = socket;
-    }
-
     public final static void setServerInterface (ServerInterface serverInterface) {
         mServerInterface = serverInterface;
     }
 
     public final static ServerInterface getServerInterface () {
         return mServerInterface;
-    }
-
-    public final static void setPreferences (Preferences preferences) {
-        mPreferences = preferences;
     }
 
     public final static Preferences getPreferences () {
