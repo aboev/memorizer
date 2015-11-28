@@ -1,5 +1,6 @@
 package memorizer.freecoders.com.flashcards;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -14,23 +15,30 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
+import com.android.volley.Response;
 import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
+import io.socket.client.Socket;
+import io.socket.client.IO;
+import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.common.Preferences;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
+import memorizer.freecoders.com.flashcards.json.Question;
+import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
 public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "MainActivity";
 
-    private FlashCardFragment currentFlashCardFragment;
+    public FlashCardFragment currentFlashCardFragment;
+
+    public MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
     TextView scoreView;
 
     @Override
@@ -87,16 +95,11 @@ public class MainActivity extends AppCompatActivity {
             ActiveAndroid.initialize(this);
             initApp();
 
-            // Create a new Fragment to be placed in the activity layout
-            currentFlashCardFragment = new FlashCardFragment();
+            Fragment fragment = new MainMenuFragment();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            currentFlashCardFragment.setArguments(getIntent().getExtras());
-
-            // Add the fragment to the 'fragment_container' FrameLayout
             getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, currentFlashCardFragment).commit();
+                    .add(R.id.fragment_container, fragment).commit();
+
         }
 
         scoreView = (TextView) findViewById(R.id.scoreView);
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateScore(int numCorrect,int numTotal)
     {
-        scoreView.setText("Score: "+ Integer.toString(numCorrect)+"/"+Integer.toString(numTotal));
+        scoreView.setText("Score: " + Integer.toString(numCorrect) + "/" + Integer.toString(numTotal));
     }
 
     public void nextFlashCard(){
@@ -115,6 +118,25 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransactionExtended fragmentTransactionExtended =
                 new FragmentTransactionExtended(this, fragmentTransaction, currentFlashCardFragment,
                 newFlashCardFragment, R.id.fragment_container);
+        fragmentTransactionExtended.addTransition(FragmentTransactionExtended.SLIDE_HORIZONTAL);
+
+        fragmentTransactionExtended.commit();
+        currentFlashCardFragment = newFlashCardFragment;
+    }
+
+    public void nextFlashCard(Question question){
+        FlashCardFragment newFlashCardFragment = new FlashCardFragment();
+        newFlashCardFragment.setActionType(FlashCardFragment.INT_GIVEN_FLASHCARD);
+        FlashCard flashCard = new FlashCard();
+        flashCard.question = question.question;
+        flashCard.options = question.options;
+        flashCard.answer_id = question.answer_id;
+        newFlashCardFragment.setFlashCard(flashCard);
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        FragmentTransactionExtended fragmentTransactionExtended =
+                new FragmentTransactionExtended(this, fragmentTransaction, currentFlashCardFragment,
+                        newFlashCardFragment, R.id.fragment_container);
         fragmentTransactionExtended.addTransition(FragmentTransactionExtended.SLIDE_HORIZONTAL);
 
         fragmentTransactionExtended.commit();
@@ -143,6 +165,19 @@ public class MainActivity extends AppCompatActivity {
 
         MemorizerApplication.setServerInterface(new ServerInterface());
 
+        if ((MemorizerApplication.getPreferences().strUserID == null) ||
+                MemorizerApplication.getPreferences().strUserID.isEmpty()) {
+            ServerInterface.registerUserRequest(MemorizerApplication.getFlashCardActivity(),
+                    new UserDetails(),
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse(String response) {
+                            MemorizerApplication.getPreferences().strUserID = response;
+                            MemorizerApplication.getPreferences().savePreferences();
+                        }
+                    }, null);
+        }
+
         try {
             Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
             mSocket.on(Constants.SOCKET_CHANNEL_NAME,
@@ -153,6 +188,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (URISyntaxException e) {
             Log.d(LOG_TAG, "Failed to connect to socket");
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MemorizerApplication.getServerInterface().getSocketIO().disconnect();
+        MemorizerApplication.getServerInterface().getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
+                MemorizerApplication.getServerInterface().onNewSocketMessage);
     }
 
 }
