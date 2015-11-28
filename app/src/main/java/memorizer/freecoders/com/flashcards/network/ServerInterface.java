@@ -6,8 +6,6 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,9 +15,14 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
+import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 
 /**
@@ -35,9 +38,9 @@ public class ServerInterface {
     private String strSocketID;
 
     public static final void registerUserRequest(Context context,
-                                                UserDetails userDetails,
-                                                final Response.Listener<String> responseListener,
-                                                final Response.ErrorListener errorListener) {
+            UserDetails userDetails,
+            final Response.Listener<String> responseListener,
+            final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
         Log.d(LOG_TAG, "Register user request");
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -47,12 +50,51 @@ public class ServerInterface {
                     @Override
                     public void onResponse(String response) {
                         Log.d(LOG_TAG, "Response: " + response);
-                        Type type = new TypeToken<ServerResponse<String>>(){}.getType();
+                        Type type = new TypeToken<ServerResponse
+                                <HashMap<String,String>>>(){}.getType();
                         try {
-                            ServerResponse<String> res =
+                            ServerResponse<HashMap<String, String>> res =
                                     gson.fromJson(response, type);
                             if ( res != null && res.isSuccess() && res.data != null
-                                    && !res.data.isEmpty()
+                                    && res.data.containsKey(Constants.KEY_ID)
+                                    && responseListener != null)
+                                responseListener.onResponse(res.data.get(Constants.KEY_ID));
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public static final void newGameRequest(Context context,
+            final Response.Listener<Game> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "New game request");
+        StringRequest request = new StringRequest(Request.Method.POST,
+                Constants.SERVER_URL + Constants.SERVER_PATH_GAME ,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <Game>>(){}.getType();
+                        try {
+                            ServerResponse<Game> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && res.data != null
                                     && responseListener != null)
                                 responseListener.onResponse(res.data);
                             else if (errorListener != null)
@@ -97,7 +139,35 @@ public class ServerInterface {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    String strMessageType = "";
+                    try {
+                        strMessageType = new JSONObject(args[0].toString()).
+                                getString(Constants.JSON_SOCK_MSG_TYPE);
+                    } catch (JSONException e) {
+                        Log.d(LOG_TAG, "Json exception while processing " + args[0].toString());
+                    }
+                    if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_SOCKETID)) {
+                        Type type = new TypeToken<SocketMessage<String>>(){}.getType();
+                        SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
+                        String socketID = (String) socketMessage.msg_body;
+                        MemorizerApplication.getPreferences().strSocketID = socketID;
+                        Log.d(LOG_TAG, "Assigned socket ID to " + socketID);
+                    } else if (strMessageType.
+                            equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
+                        if ((MemorizerApplication.getFlashCardActivity().
+                                multiplayerInterface.progressDialog != null) &&
+                                (MemorizerApplication.getFlashCardActivity().
+                                        multiplayerInterface.progressDialog.isShowing()))
+                            MemorizerApplication.getFlashCardActivity().
+                                    multiplayerInterface.progressDialog.dismiss();
+                        Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
+                        SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
+                        MemorizerApplication.getFlashCardActivity().nextFlashCard(socketMessage.msg_body);
+                        Log.d(LOG_TAG, "Received new question " + args[0].toString());
+                    }
+
 /*
+                    try {
                     JSONObject data = (JSONObject) args[0];
                     String username;
                     String message;
@@ -117,6 +187,8 @@ public class ServerInterface {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "*/*");
         headers.put(Constants.HEADER_USERID, MemorizerApplication.getPreferences().strUserID);
+        headers.put(Constants.HEADER_SOCKETID, MemorizerApplication.getPreferences().strSocketID);
+        Log.d(LOG_TAG, "Setting socket id to "+ MemorizerApplication.getPreferences().strSocketID);
         return headers;
     }
 }
