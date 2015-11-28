@@ -23,6 +23,7 @@ public class FlashCardFragment extends Fragment {
 
     public final static int INT_SHOW_ANSWER = 0;   // Show user mistake and correct answer
     public final static int INT_NEW_FLASHCARD = 1; // Show new flashcard (default)
+    public final static int INT_GIVEN_FLASHCARD = 2; // Show server flashcard
 
     public static int numCorrectAnswers=0;
     public static int numTotalAnswers=0;
@@ -126,6 +127,22 @@ public class FlashCardFragment extends Fragment {
                 }
             });
 
+        } else if (intActionType == INT_GIVEN_FLASHCARD) {
+            questionTextView.setText(mFlashCard.question);
+            listViewAdapter.setValues(mFlashCard.options);
+
+            flashCardsListView.setAdapter(listViewAdapter);
+
+            flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    if (mFlashCard.answer_id == position) {
+                        MemorizerApplication.getFlashCardActivity().nextFlashCard();
+                    } else
+                        wrongAnswerNotify();
+                }
+            });
         }
 
         return true;
