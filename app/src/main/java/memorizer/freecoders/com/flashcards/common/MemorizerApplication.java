@@ -2,8 +2,6 @@ package memorizer.freecoders.com.flashcards.common;
 
 import android.app.Application;
 
-import com.github.nkzawa.socketio.client.Socket;
-
 import memorizer.freecoders.com.flashcards.MainActivity;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
