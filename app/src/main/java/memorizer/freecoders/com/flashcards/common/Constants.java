@@ -31,10 +31,15 @@ public class Constants {
     public static String JSON_SOCK_MSG_TYPE = "msg_type";
     public static String SOCK_MSG_TYPE_ANNOUNCE_SOCKETID = "socket_id_announce";
     public static String SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION = "new_question";
+    public static String SOCK_MSG_TYPE_PLAYER_ANSWERED = "player_answered";
+    public static String SOCK_MSG_TYPE_GAME_START = "game_start";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_IN_PROGRESS = 1;
     public static Integer GAME_STATUS_COMPLETED = 2;
 
+    public static String PLAYER_STATUS_THINKING = "player_thinking";
+    public static String PLAYER_STATUS_ANSWERED = "player_answered";
+    public static String PLAYER_STATUS_WAITING = "player_waiting";
 
 }
