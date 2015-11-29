@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
  * Created by alex-mac on 07.11.15.
  */
 public class FlashCardFragment extends Fragment {
+
+    private static String LOG_TAG = "FlashCardFragment";
 
     public final static int INT_SHOW_ANSWER = 0;   // Show user mistake and correct answer
     public final static int INT_NEW_FLASHCARD = 1; // Show new flashcard (default)
@@ -73,6 +76,17 @@ public class FlashCardFragment extends Fragment {
         snackbar.show();
     }
 
+    public void answerHighlight(int intAnswerID) {
+        /*
+            Visual animation of opponent answer
+         */
+        Log.d(LOG_TAG, "Highlighting answer " + intAnswerID);
+        if ((intAnswerID >= 0) && (intAnswerID < flashCardsListView.getChildCount())) {
+            View option = flashCardsListView.getChildAt(intAnswerID);
+            TextView textView = (TextView) option.findViewById(R.id.TextView_ButtonName);
+            textView.setBackgroundColor(0xfff00000);
+        }
+    }
 
 
     public boolean populateView() {
@@ -137,10 +151,9 @@ public class FlashCardFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    if (mFlashCard.answer_id == position) {
-                        MemorizerApplication.getFlashCardActivity().nextFlashCard();
-                    } else
-                        wrongAnswerNotify();
+                    MemorizerApplication.getMultiplayerInterface().invokeEvent(
+                            MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
+                            String.valueOf(position));
                 }
             });
         }
