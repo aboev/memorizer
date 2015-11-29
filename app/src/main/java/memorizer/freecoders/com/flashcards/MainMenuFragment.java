@@ -54,7 +54,9 @@ public class MainMenuFragment extends Fragment {
         buttonMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MemorizerApplication.getFlashCardActivity().multiplayerInterface.startGame();
+                MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
+                MemorizerApplication.setMultiPlayerInterface(multiplayerInterface);
+                multiplayerInterface.startGame();
             }
         });
 
