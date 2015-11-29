@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
@@ -146,26 +147,39 @@ public class ServerInterface {
                     } catch (JSONException e) {
                         Log.d(LOG_TAG, "Json exception while processing " + args[0].toString());
                     }
+                    Log.d(LOG_TAG, "Received socket message " + args[0]);
                     if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_SOCKETID)) {
-                        Type type = new TypeToken<SocketMessage<String>>(){}.getType();
+                        Type type = new TypeToken<SocketMessage<String>>() {
+                        }.getType();
                         SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
                         String socketID = (String) socketMessage.msg_body;
                         MemorizerApplication.getPreferences().strSocketID = socketID;
                         Log.d(LOG_TAG, "Assigned socket ID to " + socketID);
-                    } else if (strMessageType.
-                            equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
-                        if ((MemorizerApplication.getFlashCardActivity().
-                                multiplayerInterface.progressDialog != null) &&
-                                (MemorizerApplication.getFlashCardActivity().
-                                        multiplayerInterface.progressDialog.isShowing()))
-                            MemorizerApplication.getFlashCardActivity().
-                                    multiplayerInterface.progressDialog.dismiss();
-                        Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
+                    } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
+                        if ((MemorizerApplication.getMultiplayerInterface().progressDialog != null)
+                                && (MemorizerApplication.getMultiplayerInterface().progressDialog.
+                                isShowing()))
+                            MemorizerApplication.getMultiplayerInterface().progressDialog.dismiss();
+                        Type type = new TypeToken<SocketMessage<Question>>() {
+                        }.getType();
                         SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
                         MemorizerApplication.getFlashCardActivity().nextFlashCard(socketMessage.msg_body);
-                        Log.d(LOG_TAG, "Received new question " + args[0].toString());
+                    } else if (strMessageType.
+                            equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
+                        Type type = new TypeToken<SocketMessage<Game>>() {
+                        }.getType();
+                        SocketMessage<Game> socketMessage = gson.fromJson(args[0].toString(), type);
+                        MemorizerApplication.getMultiplayerInterface().currentGame =
+                                socketMessage.msg_body;
+                    } else if (strMessageType.
+                            equals(Constants.SOCK_MSG_TYPE_PLAYER_ANSWERED)) {
+                        Type type = new TypeToken<SocketMessage<String>>() {}.getType();
+                        SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
+                        String strAnswerID = socketMessage.msg_body;
+                        MemorizerApplication.getMultiplayerInterface().
+                                renderEvent(MemorizerApplication.getMultiplayerInterface().
+                                        EVENT_USER_ANSWER, strAnswerID);
                     }
-
 /*
                     try {
                     JSONObject data = (JSONObject) args[0];
@@ -188,7 +202,7 @@ public class ServerInterface {
         headers.put("Accept", "*/*");
         headers.put(Constants.HEADER_USERID, MemorizerApplication.getPreferences().strUserID);
         headers.put(Constants.HEADER_SOCKETID, MemorizerApplication.getPreferences().strSocketID);
-        Log.d(LOG_TAG, "Setting socket id to "+ MemorizerApplication.getPreferences().strSocketID);
+        Log.d(LOG_TAG, "Setting socket id to " + MemorizerApplication.getPreferences().strSocketID);
         return headers;
     }
 }
