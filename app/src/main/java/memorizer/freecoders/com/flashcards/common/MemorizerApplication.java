@@ -3,6 +3,7 @@ package memorizer.freecoders.com.flashcards.common;
 import android.app.Application;
 
 import memorizer.freecoders.com.flashcards.MainActivity;
+import memorizer.freecoders.com.flashcards.MultiplayerInterface;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -14,6 +15,7 @@ public class MemorizerApplication extends Application {
     private static FlashCardsDAO mFlashCardsDAO;
     private static ServerInterface mServerInterface;
     private static Preferences mPreferences;
+    private static MultiplayerInterface mMultiplayerInterface;
 
     @Override
     public void onCreate() {
@@ -51,6 +53,14 @@ public class MemorizerApplication extends Application {
 
     public final static Preferences getPreferences () {
         return mPreferences;
+    }
+
+    public final static void setMultiPlayerInterface (MultiplayerInterface multiPlayerInterface) {
+        mMultiplayerInterface = multiPlayerInterface;
+    }
+
+    public final static MultiplayerInterface getMultiplayerInterface () {
+        return mMultiplayerInterface;
     }
 
 }
