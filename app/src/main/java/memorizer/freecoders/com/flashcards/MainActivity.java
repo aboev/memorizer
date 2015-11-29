@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     public FlashCardFragment currentFlashCardFragment;
 
-    public MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
     TextView scoreView;
 
     @Override
