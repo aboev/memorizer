@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme"
         android:name=".common.MemorizerApplication">
         <activity
-            android:name=".FlashCardActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
