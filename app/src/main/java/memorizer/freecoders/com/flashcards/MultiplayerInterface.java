@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -36,6 +37,7 @@ public class MultiplayerInterface {
     public static int EVENT_OPPONENT_ANSWER = 40;
     public static int EVENT_START_SESSION = 50;
     public static int EVENT_FINISH_SESSION = 60;
+    public static int EVENT_USER_WAIT = 70;
 
     public void renderEvent (int intEventType, String strData) {
         /*
@@ -66,6 +68,11 @@ public class MultiplayerInterface {
             Set<String> socketIDs = currentGame.players.keySet();
             socketIDs.remove(MemorizerApplication.getPreferences().strSocketID);
             MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
+        } else if (intEventType == EVENT_USER_WAIT) {
+            SocketMessage msg = new SocketMessage();
+            msg.msg_type = Constants.SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE;
+            msg.msg_body = Constants.PLAYER_STATUS_WAITING;
+            MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
         }
     }
 
@@ -86,4 +93,5 @@ public class MultiplayerInterface {
                     }, null);
         }
     }
+
 }
