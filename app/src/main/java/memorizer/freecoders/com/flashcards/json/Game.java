@@ -6,6 +6,7 @@ import java.util.HashMap;
  * Created by alex-mac on 28.11.15.
  */
 public class Game {
+    public String game_id;
     public HashMap<String, String> players;
     public Integer status;
 }
