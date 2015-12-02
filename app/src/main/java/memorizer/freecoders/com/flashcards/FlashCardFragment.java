@@ -1,5 +1,9 @@
 package memorizer.freecoders.com.flashcards;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,8 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import memorizer.freecoders.com.flashcards.classes.AutoResizeTextView;
+import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
+import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 
 /**
@@ -84,7 +90,26 @@ public class FlashCardFragment extends Fragment {
         if ((intAnswerID >= 0) && (intAnswerID < flashCardsListView.getChildCount())) {
             View option = flashCardsListView.getChildAt(intAnswerID);
             TextView textView = (TextView) option.findViewById(R.id.TextView_ButtonName);
-            textView.setBackgroundColor(0xfff00000);
+            int colorFrom = Color.argb(0, 0, 255, 0);
+            int colorTo = Color.argb(255, 0, 255, 0); // Green (correct answer)
+            final Boolean boolCorrect;
+            if (mFlashCard.answer_id == intAnswerID)
+                boolCorrect = true;
+            else {
+                colorTo = Color.argb(255, 255, 0, 0); // Red (wrong answer)
+                boolCorrect = false;
+            }
+
+            Animations.highlightColor(textView, colorFrom, colorTo, new CallbackInterface() {
+                @Override
+                public void onResponse(Object obj) {
+                    if (boolCorrect) {
+                        MemorizerApplication.getMultiplayerInterface().invokeEvent(
+                                MemorizerApplication.getMultiplayerInterface().EVENT_USER_WAIT, "");
+                        Log.d(LOG_TAG, "Sending user wait event");
+                    }
+                }
+            });
         }
     }
 
@@ -154,6 +179,7 @@ public class FlashCardFragment extends Fragment {
                     MemorizerApplication.getMultiplayerInterface().invokeEvent(
                             MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
                             String.valueOf(position));
+                    answerHighlight(position);
                 }
             });
         }
