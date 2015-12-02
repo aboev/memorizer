@@ -33,11 +33,11 @@ public class MultiplayerInterface {
     public static int EVENT_INCOMING_INVITATION = 0;
     public static int EVENT_INVITATION_ACCEPTED = 10;
     public static int EVENT_NEW_QUESTION = 20;
-    public static int EVENT_USER_ANSWER = 30;
+    public static int EVENT_USER_ANSWER = 30;   // User answered question
     public static int EVENT_OPPONENT_ANSWER = 40;
     public static int EVENT_START_SESSION = 50;
     public static int EVENT_FINISH_SESSION = 60;
-    public static int EVENT_USER_WAIT = 70;
+    public static int EVENT_USER_WAIT = 70;     // User ready for next question
 
     public void renderEvent (int intEventType, String strData) {
         /*
@@ -45,7 +45,7 @@ public class MultiplayerInterface {
          */
 
         Log.d(LOG_TAG, "Rendering multiplayer event " + intEventType);
-        if (intEventType == EVENT_USER_ANSWER) {
+        if (intEventType == EVENT_USER_ANSWER) {    // Opponent answered
             Integer intAnswerID = Integer.valueOf(strData);
             MemorizerApplication.getFlashCardActivity().currentFlashCardFragment.
                     answerHighlight(intAnswerID);
@@ -58,7 +58,7 @@ public class MultiplayerInterface {
          */
 
         if (currentGame == null) return;
-        if (intEventType == EVENT_USER_ANSWER) {
+        if (intEventType == EVENT_USER_ANSWER) {    // User answered
             SocketMessage msg = new SocketMessage();
             msg.msg_type = Constants.SOCK_MSG_TYPE_PLAYER_ANSWERED;
             msg.msg_body = strData;
@@ -68,7 +68,7 @@ public class MultiplayerInterface {
             Set<String> socketIDs = currentGame.players.keySet();
             socketIDs.remove(MemorizerApplication.getPreferences().strSocketID);
             MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
-        } else if (intEventType == EVENT_USER_WAIT) {
+        } else if (intEventType == EVENT_USER_WAIT) {   // User ready for next question
             SocketMessage msg = new SocketMessage();
             msg.msg_type = Constants.SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE;
             msg.msg_body = Constants.PLAYER_STATUS_WAITING;
