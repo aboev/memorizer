@@ -9,4 +9,5 @@ public class Game {
     public String game_id;
     public HashMap<String, String> players;
     public Integer status;
+    public HashMap<String, UserDetails> profiles;
 }
