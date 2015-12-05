@@ -19,14 +19,12 @@ import com.android.volley.Response;
 import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
-import memorizer.freecoders.com.flashcards.common.Preferences;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
@@ -36,7 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "MainActivity";
 
+    public int intUIState;
+
+    public Fragment currentFragment;
     public FlashCardFragment currentFlashCardFragment;
+    public PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
 
     TextView scoreView;
 
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void populateView(Bundle savedInstanceState) {
-        if (findViewById(R.id.fragment_container) != null) {
+        if (findViewById(R.id.fragment_flashcard_container) != null) {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
@@ -94,33 +96,15 @@ public class MainActivity extends AppCompatActivity {
             ActiveAndroid.initialize(this);
             initApp();
 
-            Fragment fragment = new MainMenuFragment();
-
-            getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, fragment).commit();
+            showNextFragment(new MainMenuFragment(), null);
 
         }
 
-        scoreView = (TextView) findViewById(R.id.scoreView);
-        updateScore(0,0);
-    }
-
-    public void updateScore(int numCorrect,int numTotal)
-    {
-        scoreView.setText("Score: " + Integer.toString(numCorrect) + "/" + Integer.toString(numTotal));
     }
 
     public void nextFlashCard(){
         FlashCardFragment newFlashCardFragment = new FlashCardFragment();
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        FragmentTransactionExtended fragmentTransactionExtended =
-                new FragmentTransactionExtended(this, fragmentTransaction, currentFlashCardFragment,
-                newFlashCardFragment, R.id.fragment_container);
-        fragmentTransactionExtended.addTransition(FragmentTransactionExtended.SLIDE_HORIZONTAL);
-
-        fragmentTransactionExtended.commit();
-        currentFlashCardFragment = newFlashCardFragment;
+        showNextFragment(newFlashCardFragment, null);
     }
 
     public void nextFlashCard(Question question){
@@ -131,15 +115,7 @@ public class MainActivity extends AppCompatActivity {
         flashCard.options = question.options;
         flashCard.answer_id = question.answer_id;
         newFlashCardFragment.setFlashCard(flashCard);
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        FragmentTransactionExtended fragmentTransactionExtended =
-                new FragmentTransactionExtended(this, fragmentTransaction, currentFlashCardFragment,
-                        newFlashCardFragment, R.id.fragment_container);
-        fragmentTransactionExtended.addTransition(FragmentTransactionExtended.SLIDE_HORIZONTAL);
-
-        fragmentTransactionExtended.commit();
-        currentFlashCardFragment = newFlashCardFragment;
+        showNextFragment(newFlashCardFragment, null);
     }
 
     public void showAnswer(int intWrongAnswerID){
@@ -147,26 +123,46 @@ public class MainActivity extends AppCompatActivity {
         newFlashCardFragment.setActionType(FlashCardFragment.INT_SHOW_ANSWER);
         currentFlashCardFragment.getFlashCard().wrong_answer_id = intWrongAnswerID;
         newFlashCardFragment.setFlashCard(currentFlashCardFragment.getFlashCard());
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        FragmentTransactionExtended fragmentTransactionExtended =
-                new FragmentTransactionExtended(this, fragmentTransaction, currentFlashCardFragment,
-                        newFlashCardFragment, R.id.fragment_container);
-        fragmentTransactionExtended.addTransition(FragmentTransactionExtended.FLIP_HORIZONTAL);
+        showNextFragment(newFlashCardFragment, FragmentTransactionExtended.FLIP_HORIZONTAL);
+    }
 
-        fragmentTransactionExtended.commit();
-        currentFlashCardFragment = newFlashCardFragment;
+    public void showNextFragment (Fragment newFragment, Integer intTransitionType) {
+        if (currentFragment == null) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.fragment_flashcard_container, newFragment).commit();
+        } else {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fm.beginTransaction();
+            FragmentTransactionExtended fragmentTransactionExtended =
+                    new FragmentTransactionExtended(this, fragmentTransaction, currentFragment,
+                            newFragment, R.id.fragment_flashcard_container);
+            if (intTransitionType == null)
+                fragmentTransactionExtended.addTransition(FragmentTransactionExtended.SLIDE_HORIZONTAL);
+            else
+                fragmentTransactionExtended.addTransition(intTransitionType);
+            fragmentTransactionExtended.commit();
+        }
+
+        currentFragment = newFragment;
+
+        if (newFragment instanceof FlashCardFragment)
+            currentFlashCardFragment = (FlashCardFragment) newFragment;
+    }
+
+    public void showPlayersInfo () {
+        getFragmentManager().beginTransaction()
+                    .add(R.id.fragment_players_info_container, playersInfoFragment).commit();
     }
 
     public void initApp(){
         MemorizerApplication.setFlashCardsDAO(new FlashCardsDAO(this));
-        MemorizerApplication.setFlashCardActivity(this);
+        MemorizerApplication.setMainActivity(this);
 
         MemorizerApplication.setServerInterface(new ServerInterface());
 
         if ((MemorizerApplication.getPreferences().strUserID == null) ||
                 MemorizerApplication.getPreferences().strUserID.isEmpty()) {
-            ServerInterface.registerUserRequest(MemorizerApplication.getFlashCardActivity(),
+            ServerInterface.registerUserRequest(
                     new UserDetails(),
                     new Response.Listener<String> () {
                         @Override
