@@ -27,11 +27,11 @@ public class MemorizerApplication extends Application {
         mServerInterface = new ServerInterface();
     }
 
-    public final static void setFlashCardActivity(MainActivity mainActivity) {
+    public final static void setMainActivity(MainActivity mainActivity) {
         mMainActivity = mainActivity;
     }
 
-    public final static MainActivity getFlashCardActivity(){
+    public final static MainActivity getMainActivity(){
         return mMainActivity;
     }
 
