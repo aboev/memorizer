@@ -21,12 +21,14 @@ public final class Preferences {
     private String KEY_REGISTER_STATUS = "status";
     private String KEY_FIRST_START = "first_start";
     private String KEY_SOCKET_ID = "socket_id";
+    private String KEY_AVATAR = "avatar";
 
     public String strUserID = "";
     public String strUserName = "";
     public String strPhone = "";
     public String strEmail = "";
     public String strSocketID = "";
+    public String strAvatar = "";
     public Integer intRegisterStatus = 0;   // 0 - not registered,
     // 1 - waiting for sms code, 2 registered
     public Integer intLastOpenedTab = 0;
@@ -43,6 +45,7 @@ public final class Preferences {
         strPhone = settings.getString(KEY_PHONE, "");
         strEmail = settings.getString(KEY_EMAIL, "");
         strSocketID = settings.getString(KEY_SOCKET_ID, "");
+        strAvatar = settings.getString(KEY_AVATAR, "");
         intRegisterStatus = settings.getInt(KEY_REGISTER_STATUS, 0);
         return ((strUserID.length() != 0) && (intRegisterStatus == Constants.STATUS_REGISTERED));
     }
@@ -53,6 +56,7 @@ public final class Preferences {
         editor.putString(KEY_USERNAME, strUserName);
         editor.putString(KEY_PHONE, strPhone);
         editor.putString(KEY_EMAIL, strEmail);
+        editor.putString(KEY_AVATAR, strAvatar);
         editor.putInt(KEY_REGISTER_STATUS, intRegisterStatus);
         editor.putBoolean(KEY_FIRST_START, boolFirstStart);
         editor.commit();
