@@ -1,9 +1,5 @@
 package memorizer.freecoders.com.flashcards;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,7 +35,7 @@ public class FlashCardFragment extends Fragment {
 
     private View view;
 
-    private FlashCard mFlashCard;
+    public FlashCard mFlashCard;
     ListView flashCardsListView;
     ListViewAdapter listViewAdapter;
     AutoResizeTextView questionTextView;
@@ -118,7 +114,7 @@ public class FlashCardFragment extends Fragment {
         flashCardsListView = (ListView) view.findViewById(R.id.ListView_FlashCard);
         questionTextView = (AutoResizeTextView) view.findViewById(R.id.TextView_Question);
         listViewAdapter = new ListViewAdapter(view.getContext());
-        //MemorizerApplication.getFlashCardActivity().updateScore();
+        //MemorizerApplication.getMainActivity().updateScore();
 
         if (intActionType == INT_NEW_FLASHCARD) {
             mFlashCard = MemorizerApplication.getFlashCardsDAO().fetchRandomCard();
@@ -136,17 +132,19 @@ public class FlashCardFragment extends Fragment {
                         listViewAdapter.setCorrectAnswer(mFlashCard.answer_id);
                         listViewAdapter.notifyDataSetChanged();
                         numCorrectAnswers++;
-                        MemorizerApplication.getFlashCardActivity().updateScore(numCorrectAnswers,numTotalAnswers);
+                        MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
 
-                        MemorizerApplication.getFlashCardActivity().nextFlashCard();
+                        MemorizerApplication.getMainActivity().nextFlashCard();
+                        MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
                     } else {
-                        //Toast.makeText(view.getContext(),"Wrong! Try again", Toast.LENGTH_LONG).show();
-                        MemorizerApplication.getFlashCardActivity().updateScore(numCorrectAnswers,numTotalAnswers);
+                        MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
                         wrongAnswerNotify();
-                        MemorizerApplication.getFlashCardActivity().showAnswer(position);
+                        MemorizerApplication.getMainActivity().showAnswer(position);
                     }
                 }
             });
+
+            MemorizerApplication.getMainActivity().playersInfoFragment.intTotalQuestions++;
         } else if (intActionType == INT_SHOW_ANSWER) {
             questionTextView.setText(mFlashCard.question);
             listViewAdapter.setValues(mFlashCard.options);
@@ -160,7 +158,7 @@ public class FlashCardFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     if (mFlashCard.answer_id == position) {
-                        MemorizerApplication.getFlashCardActivity().nextFlashCard();
+                        MemorizerApplication.getMainActivity().nextFlashCard();
                     } else
                         wrongAnswerNotify();
                 }
@@ -180,8 +178,20 @@ public class FlashCardFragment extends Fragment {
                             MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
                             String.valueOf(position));
                     answerHighlight(position);
+                    if (mFlashCard.answer_id == position)
+                        MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
+                    else
+                        flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        });
+
+                    MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
                 }
             });
+            MemorizerApplication.getMainActivity().playersInfoFragment.intTotalQuestions++;
         }
 
         return true;
