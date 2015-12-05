@@ -6,15 +6,16 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 
+import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
+import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
 /**
@@ -47,8 +48,13 @@ public class MultiplayerInterface {
         Log.d(LOG_TAG, "Rendering multiplayer event " + intEventType);
         if (intEventType == EVENT_USER_ANSWER) {    // Opponent answered
             Integer intAnswerID = Integer.valueOf(strData);
-            MemorizerApplication.getFlashCardActivity().currentFlashCardFragment.
+            MemorizerApplication.getMainActivity().currentFlashCardFragment.
                     answerHighlight(intAnswerID);
+            if (MemorizerApplication.getMainActivity().currentFlashCardFragment.
+                    mFlashCard.answer_id == intAnswerID) {
+                MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(1);
+                MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
+            }
         }
     }
 
@@ -76,21 +82,42 @@ public class MultiplayerInterface {
         }
     }
 
-    public void startGame () {
+    public void requestNewGame() {
         if ((MemorizerApplication.getPreferences().strUserID != null) &&
                 !MemorizerApplication.getPreferences().strUserID.isEmpty()) {
-            ServerInterface.newGameRequest(MemorizerApplication.getFlashCardActivity(),
-                    new Response.Listener<Game>() {
-                        @Override
-                        public void onResponse(Game response) {
-                            if (response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) {
-                                progressDialog = ProgressDialog.show(
-                                        MemorizerApplication.getFlashCardActivity(),
-                                        "",
-                                        "Searching for opponents", true);
+
+            if ((MemorizerApplication.getPreferences().strUserName == null) ||
+                    MemorizerApplication.getPreferences().strUserName.isEmpty())
+                InputDialogInterface.updateUserName(new CallbackInterface() {
+                    @Override
+                    public void onResponse(Object obj) {
+                        ServerInterface.newGameRequest(
+                            new Response.Listener<Game>() {
+                                @Override
+                                public void onResponse(Game response) {
+                                    if (response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) {
+                                        progressDialog = ProgressDialog.show(
+                                                MemorizerApplication.getMainActivity(),
+                                                "",
+                                                "Searching for opponents", true);
+                                    }
+                                }
+                            }, null);
+                    }
+                });
+            else
+                ServerInterface.newGameRequest(
+                        new Response.Listener<Game>() {
+                            @Override
+                            public void onResponse(Game response) {
+                                if (response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) {
+                                    progressDialog = ProgressDialog.show(
+                                            MemorizerApplication.getMainActivity(),
+                                            "",
+                                            "Searching for opponents", true);
+                                }
                             }
-                        }
-                    }, null);
+                }, null);
         }
     }
 
