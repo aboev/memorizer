@@ -35,10 +35,11 @@ public class MultiplayerInterface {
     public static int EVENT_INVITATION_ACCEPTED = 10;
     public static int EVENT_NEW_QUESTION = 20;
     public static int EVENT_USER_ANSWER = 30;   // User answered question
-    public static int EVENT_OPPONENT_ANSWER = 40;
-    public static int EVENT_START_SESSION = 50;
-    public static int EVENT_FINISH_SESSION = 60;
-    public static int EVENT_USER_WAIT = 70;     // User ready for next question
+    public static int EVENT_USER_THINK = 40;   // User think
+    public static int EVENT_OPPONENT_ANSWER = 50;
+    public static int EVENT_START_SESSION = 60;
+    public static int EVENT_FINISH_SESSION = 70;
+    public static int EVENT_USER_WAIT = 80;     // User ready for next question
 
     public void renderEvent (int intEventType, String strData) {
         /*
@@ -49,7 +50,7 @@ public class MultiplayerInterface {
         if (intEventType == EVENT_USER_ANSWER) {    // Opponent answered
             Integer intAnswerID = Integer.valueOf(strData);
             MemorizerApplication.getMainActivity().currentFlashCardFragment.
-                    answerHighlight(intAnswerID);
+                    answerHighlight(intAnswerID, true);
             if (MemorizerApplication.getMainActivity().currentFlashCardFragment.
                     mFlashCard.answer_id == intAnswerID) {
                 MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(1);
@@ -78,6 +79,11 @@ public class MultiplayerInterface {
             SocketMessage msg = new SocketMessage();
             msg.msg_type = Constants.SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE;
             msg.msg_body = Constants.PLAYER_STATUS_WAITING;
+            MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
+        } else if (intEventType == EVENT_USER_THINK) {   // User ready for next question
+            SocketMessage msg = new SocketMessage();
+            msg.msg_type = Constants.SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE;
+            msg.msg_body = Constants.PLAYER_STATUS_THINKING;
             MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
         }
     }
