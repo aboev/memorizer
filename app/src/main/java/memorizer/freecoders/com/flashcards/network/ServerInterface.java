@@ -1,6 +1,7 @@
 package memorizer.freecoders.com.flashcards.network;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import io.socket.emitter.Emitter;
 import memorizer.freecoders.com.flashcards.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.Question;
@@ -237,6 +239,8 @@ public class ServerInterface {
                         Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
                         SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
                         MemorizerApplication.getMainActivity().nextFlashCard(socketMessage.msg_body);
+                        MemorizerApplication.getMultiplayerInterface().invokeEvent
+                                (MemorizerApplication.getMultiplayerInterface().EVENT_USER_THINK, "");
                     } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
                         Type type = new TypeToken<SocketMessage<Game>>() {}.getType();
                         SocketMessage<Game> socketMessage = gson.fromJson(args[0].toString(), type);
@@ -253,8 +257,6 @@ public class ServerInterface {
                                         EVENT_USER_ANSWER, strAnswerID);
                     } else if (strMessageType.
                             equals(Constants.SOCK_MSG_TYPE_GAME_END)) {
-                        Toast.makeText(MemorizerApplication.getMainActivity(), "Game Over",
-                                Toast.LENGTH_LONG);
                         MainMenuFragment mainMenuFragment = new MainMenuFragment();
                         MemorizerApplication.getMainActivity().getFragmentManager()
                                 .beginTransaction().add(R.id.fragment_flashcard_container,
@@ -265,6 +267,8 @@ public class ServerInterface {
                         MemorizerApplication.getMainActivity().getFragmentManager()
                                 .beginTransaction().remove(MemorizerApplication.getMainActivity().
                                 currentFlashCardFragment).commit();
+                        InputDialogInterface.showGameOverMessage(null);
+                        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
                     }
                 }
             });
