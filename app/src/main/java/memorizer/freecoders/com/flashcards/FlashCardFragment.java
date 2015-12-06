@@ -78,7 +78,7 @@ public class FlashCardFragment extends Fragment {
         snackbar.show();
     }
 
-    public void answerHighlight(int intAnswerID) {
+    public void answerHighlight(final int intAnswerID, final Boolean boolOpponentAnswer) {
         /*
             Visual animation of opponent answer
          */
@@ -99,7 +99,7 @@ public class FlashCardFragment extends Fragment {
             Animations.highlightColor(textView, colorFrom, colorTo, new CallbackInterface() {
                 @Override
                 public void onResponse(Object obj) {
-                    if (boolCorrect) {
+                    if ((!boolOpponentAnswer) || (mFlashCard.answer_id == intAnswerID)) {
                         MemorizerApplication.getMultiplayerInterface().invokeEvent(
                                 MemorizerApplication.getMultiplayerInterface().EVENT_USER_WAIT, "");
                         Log.d(LOG_TAG, "Sending user wait event");
@@ -177,7 +177,7 @@ public class FlashCardFragment extends Fragment {
                     MemorizerApplication.getMultiplayerInterface().invokeEvent(
                             MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
                             String.valueOf(position));
-                    answerHighlight(position);
+                    answerHighlight(position, false);
                     if (mFlashCard.answer_id == position)
                         MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
                     else
