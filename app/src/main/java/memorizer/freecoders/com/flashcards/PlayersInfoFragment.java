@@ -17,6 +17,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
+import memorizer.freecoders.com.flashcards.network.StringRequest;
 
 /**
  * Created by alex-mac on 05.12.15.
@@ -32,7 +33,8 @@ public class PlayersInfoFragment extends Fragment{
 
     TextView scoreView;
 
-    ArrayList<Integer> scoreList;
+    public ArrayList<Integer> scoreList;
+    public ArrayList<String> playerNames;
 
     public int intTotalQuestions = 0;
 
@@ -79,6 +81,10 @@ public class PlayersInfoFragment extends Fragment{
                 }
             }
         }
+
+        playerNames = new ArrayList<String>();
+        playerNames.add(textViewPlayer1Name.getText().toString());
+        playerNames.add(textViewPlayer2Name.getText().toString());
 
         scoreList = new ArrayList<Integer>();
         scoreList.add(0);
