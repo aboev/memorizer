@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import memorizer.freecoders.com.flashcards.MultiplayerInterface;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -86,6 +87,37 @@ public class InputDialogInterface {
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+    }
+
+    public static final void showGameOverMessage (final CallbackInterface onReply) {
+
+        String strMessage = "Game over. ";
+
+        if (MemorizerApplication.getMainActivity().playersInfoFragment.scoreList.get(0) >
+                MemorizerApplication.getMainActivity().playersInfoFragment.scoreList.get(1) )
+            strMessage = strMessage + "You win!";
+        else
+            strMessage = strMessage +
+                    MemorizerApplication.getMainActivity().
+                    playersInfoFragment.playerNames.get(1).toString() + " win";
+
+        Context context = MemorizerApplication.getMainActivity();
+
+        new AlertDialog.Builder(context)
+                .setTitle("Game")
+                .setMessage(strMessage)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                })
+                .setNegativeButton("Play again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        MemorizerApplication.getMultiplayerInterface().requestNewGame();
+                        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
                     }
                 })
                 .show();
