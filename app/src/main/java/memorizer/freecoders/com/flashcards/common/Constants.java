@@ -24,6 +24,7 @@ public class Constants {
 
     public final static String HEADER_USERID = "id";
     public final static String HEADER_SOCKETID = "socketid";
+    public final static String HEADER_SETID = "setid";
 
     public final static String KEY_ID = "id";
 
