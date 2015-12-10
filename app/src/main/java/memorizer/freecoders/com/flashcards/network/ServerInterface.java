@@ -123,10 +123,13 @@ public class ServerInterface {
     }
 
     public static final void newGameRequest(
+            String strSetID,
             final Response.Listener<Game> responseListener,
             final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
         Log.d(LOG_TAG, "New game request");
+        if (strSetID != null)
+            headers.put(Constants.HEADER_SETID, strSetID);
         StringRequest request = new StringRequest(Request.Method.POST,
                 Constants.SERVER_URL + Constants.SERVER_PATH_GAME ,
                 "", headers,
