@@ -97,7 +97,7 @@ public class MultiplayerInterface {
                 InputDialogInterface.updateUserName(new CallbackInterface() {
                     @Override
                     public void onResponse(Object obj) {
-                        ServerInterface.newGameRequest(
+                        ServerInterface.newGameRequest(null,
                             new Response.Listener<Game>() {
                                 @Override
                                 public void onResponse(Game response) {
@@ -112,7 +112,7 @@ public class MultiplayerInterface {
                     }
                 });
             else
-                ServerInterface.newGameRequest(
+                ServerInterface.newGameRequest(null,
                         new Response.Listener<Game>() {
                             @Override
                             public void onResponse(Game response) {
