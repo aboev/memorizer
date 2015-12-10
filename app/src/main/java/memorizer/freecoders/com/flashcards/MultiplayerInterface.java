@@ -107,6 +107,7 @@ public class MultiplayerInterface {
                                                 "",
                                                 "Searching for opponents", true);
                                     }
+                                    progressDialog.setCancelable(true);
                                 }
                             }, null);
                     }
@@ -121,6 +122,7 @@ public class MultiplayerInterface {
                                             MemorizerApplication.getMainActivity(),
                                             "",
                                             "Searching for opponents", true);
+                                    progressDialog.setCancelable(true);
                                 }
                             }
                 }, null);
