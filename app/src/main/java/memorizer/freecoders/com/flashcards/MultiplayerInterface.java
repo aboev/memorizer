@@ -1,6 +1,7 @@
 package memorizer.freecoders.com.flashcards;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -88,6 +89,13 @@ public class MultiplayerInterface {
         }
     }
 
+    public void quitGame () {
+        SocketMessage msg = new SocketMessage();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_QUIT_GAME;
+        msg.msg_body = "";
+        MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
+    }
+
     public void requestNewGame() {
         if ((MemorizerApplication.getPreferences().strUserID != null) &&
                 !MemorizerApplication.getPreferences().strUserID.isEmpty()) {
@@ -106,6 +114,12 @@ public class MultiplayerInterface {
                                                 MemorizerApplication.getMainActivity(),
                                                 "",
                                                 "Searching for opponents", true);
+                                        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                            @Override
+                                            public void onCancel(DialogInterface dialog) {
+                                                quitGame();
+                                            }
+                                        });
                                     }
                                     progressDialog.setCancelable(true);
                                 }
@@ -123,6 +137,12 @@ public class MultiplayerInterface {
                                             "",
                                             "Searching for opponents", true);
                                     progressDialog.setCancelable(true);
+                                    progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            quitGame();
+                                        }
+                                    });
                                 }
                             }
                 }, null);
