@@ -2,16 +2,12 @@ package memorizer.freecoders.com.flashcards.classes;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.animations.ResizeWidthAnimation;
-import memorizer.freecoders.com.flashcards.common.Animations;
 
 /**
  * Created by alex-mac on 12.12.15.
@@ -40,7 +36,7 @@ public class StyleProgressBar extends FrameLayout {
     }
 
     private void init() {
-        inflate(getContext(), R.layout.progressbar, this);
+        inflate(getContext(), R.layout.styleprogressbar, this);
         this.foreroundView = (View) findViewById(R.id.progressbar_foreground);
         this.backgroundView = (View) findViewById(R.id.progressbar_background);
     }
