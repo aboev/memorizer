@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.socket.client.Socket;
@@ -24,6 +25,7 @@ import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
@@ -193,6 +195,45 @@ public class ServerInterface {
         );
         VolleySingleton.getInstance(MemorizerApplication.
                 getMainActivity()).addToRequestQueue(uploadRequest);
+    }
+
+    public static final void getCardsetsRequest(
+            final Response.Listener<ArrayList<CardSet>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Get cardsets request");
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_CARDSETS ,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <ArrayList<CardSet>>>(){}.getType();
+                        try {
+                            ServerResponse<ArrayList<CardSet>> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && (responseListener != null) &&
+                                    res.data != null)
+                                responseListener.onResponse(res.data);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+                addToRequestQueue(request);
     }
 
     public void setSocketIO (Socket socket){
