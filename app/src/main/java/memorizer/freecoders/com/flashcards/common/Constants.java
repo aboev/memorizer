@@ -16,6 +16,7 @@ public class Constants {
     public final static String SERVER_PATH_USER = "/user";
     public final static String SERVER_PATH_GAME = "/game";
     public final static String SERVER_PATH_UPLOAD = "/upload";
+    public final static String SERVER_PATH_CARDSETS = "/cardsets";
 
     public final static String RESPONSE_RESULT = "result";
     public final static String RESPONSE_RESULT_OK = "OK";
@@ -36,6 +37,7 @@ public class Constants {
     public static String SOCK_MSG_TYPE_PLAYER_ANSWERED = "player_answered";
     public static String SOCK_MSG_TYPE_GAME_START = "game_start";
     public static String SOCK_MSG_TYPE_GAME_END = "game_end";
+    public static String SOCK_MSG_TYPE_QUIT_GAME = "quit_game";
     public static String SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE = "player_status";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
@@ -49,4 +51,6 @@ public class Constants {
     public static Integer UI_STATE_MAIN_MENU = 0;
     public static Integer UI_STATE_TRAIN_MODE = 10;
     public static Integer UI_STATE_MULTIPLAYER_MODE = 20;
+
+    public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 25;
 }
