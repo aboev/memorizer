@@ -40,10 +40,22 @@ android:paddingTop="10dp">
             android:text="Player 2"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/scoreView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Score:"
-        android:layout_gravity="center_horizontal|top" />
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal|top" >
+        <TextView
+            android:id="@+id/scoreView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score:"/>
+
+        <memorizer.freecoders.com.flashcards.classes.StyleProgressBar
+            android:id="@+id/styleprogressbar"
+            android:layout_width="100dp"
+            android:layout_height="10dp"/>
+    </LinearLayout>
+
 </FrameLayout>
