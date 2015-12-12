@@ -7,6 +7,8 @@ import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 
@@ -48,5 +50,52 @@ public class Animations {
         });
 
         fadeIn.start();
+    }
+
+    public final static void alphaAnimation (final View view){
+
+        final int visibility = view.getVisibility();
+        int duration = 500;
+
+        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(duration);
+
+        final AlphaAnimation reverse_animation = new AlphaAnimation(1.0f, 0.0f);
+        reverse_animation.setDuration(duration);
+        reverse_animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(visibility);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.startAnimation(reverse_animation);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(animation);
     }
 }
