@@ -1,14 +1,17 @@
 package memorizer.freecoders.com.flashcards;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.Notification;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +26,9 @@ import java.net.URISyntaxException;
 import io.socket.client.Socket;
 import io.socket.client.IO;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
+import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.json.Question;
@@ -185,12 +190,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void returnToMainMenu () {
+        MainMenuFragment mainMenuFragment = new MainMenuFragment();
+        getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
+                mainMenuFragment).commit();
+        getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+                playersInfoFragment).commit();
+        getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+                currentFlashCardFragment).commit();
+        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         MemorizerApplication.getServerInterface().getSocketIO().disconnect();
         MemorizerApplication.getServerInterface().getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
                 MemorizerApplication.getServerInterface().onNewSocketMessage);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+                MemorizerApplication.getMultiplayerInterface().quitGame();
+
+            if (MemorizerApplication.getMainActivity().intUIState != Constants.UI_STATE_MAIN_MENU )
+                returnToMainMenu();
+            else
+                finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
 }
