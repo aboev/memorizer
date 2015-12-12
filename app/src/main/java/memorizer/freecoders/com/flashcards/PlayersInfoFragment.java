@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,10 +13,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
-import memorizer.freecoders.com.flashcards.network.StringRequest;
 
 /**
  * Created by alex-mac on 05.12.15.
@@ -31,6 +30,8 @@ public class PlayersInfoFragment extends Fragment{
     CircleImageView imageViewPlayer1Avatar;
     CircleImageView imageViewPlayer2Avatar;
 
+    StyleProgressBar styleProgressBar;
+
     TextView scoreView;
 
     public ArrayList<Integer> scoreList;
@@ -43,7 +44,11 @@ public class PlayersInfoFragment extends Fragment{
                              Bundle savedInstanceState) {
         setRetainInstance(true);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.players_info, container, false);
+        View view;
+        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+            view = inflater.inflate(R.layout.players_info_single, container, false);
+        else
+            view = inflater.inflate(R.layout.players_info_multi, container, false);
 
         textViewPlayer1Name = (TextView) view.findViewById(R.id.TextViewPlayer1Name);
         textViewPlayer2Name = (TextView) view.findViewById(R.id.TextViewPlayer2Name);
@@ -52,6 +57,8 @@ public class PlayersInfoFragment extends Fragment{
         imageViewPlayer2Avatar = (CircleImageView) view.findViewById(R.id.ImageViewPlayer2Avatar);
 
         scoreView = (TextView) view.findViewById(R.id.scoreView);
+
+        styleProgressBar = (StyleProgressBar) view.findViewById(R.id.styleprogressbar);
 
         if ((MemorizerApplication.getPreferences().strUserName != null) &&
                 (!MemorizerApplication.getPreferences().strUserName.isEmpty()))
@@ -62,6 +69,7 @@ public class PlayersInfoFragment extends Fragment{
         if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE) {
             textViewPlayer2Name.setVisibility(View.GONE);
             imageViewPlayer2Avatar.setVisibility(View.GONE);
+            styleProgressBar.setVisibility(View.GONE);
         } else if (MemorizerApplication.getMainActivity().intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
             if ((MemorizerApplication.getMultiplayerInterface() != null) &&
@@ -80,6 +88,8 @@ public class PlayersInfoFragment extends Fragment{
                     it.remove();
                 }
             }
+            styleProgressBar.setVisibility(View.VISIBLE);
+            styleProgressBar.setProgress(0, false);
         }
 
         playerNames = new ArrayList<String>();
@@ -99,10 +109,14 @@ public class PlayersInfoFragment extends Fragment{
 
     public void updateScore()
     {
-        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MAIN_MENU)
+        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
             scoreView.setText("Score: " + scoreList.get(0) + "/" + intTotalQuestions);
-        else if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+        else if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
             scoreView.setText("Score: " + scoreList.get(0) + "/" + scoreList.get(1));
+            int progress = 100 * scoreList.get(0) / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
+            styleProgressBar.setProgress(progress, true);
+        }
+
     }
 
     public void increaseScore (int playerID) {
