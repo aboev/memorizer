@@ -10,11 +10,30 @@ android:paddingTop="10dp">
         android:gravity="center"
         android:layout_gravity="left"
         android:layout_marginLeft="20dp">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ImageViewPlayer1Avatar"
+        <FrameLayout
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/avatar"/>
+            android:layout_height="60dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ImageViewPlayer1Avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/avatar"
+                android:layout_gravity="center"/>
+            <View
+                android:id="@+id/viewUserGreenHighlight"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circlegradient_green"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+            <View
+                android:id="@+id/viewUserRedHighlight"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circlegradient_red"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
         <TextView
             android:id="@+id/TextViewPlayer1Name"
             android:layout_width="wrap_content"
@@ -28,11 +47,30 @@ android:paddingTop="10dp">
         android:gravity="center"
         android:layout_gravity="right"
         android:layout_marginRight="20dp">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ImageViewPlayer2Avatar"
+        <FrameLayout
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/avatar"/>
+            android:layout_height="60dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ImageViewPlayer2Avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/avatar"
+                android:layout_gravity="center"/>
+            <View
+                android:id="@+id/viewOpponentGreenHighlight"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circlegradient_green"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+            <View
+                android:id="@+id/viewOpponentRedHighlight"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circlegradient_red"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+        </FrameLayout>
         <TextView
             android:id="@+id/TextViewPlayer2Name"
             android:layout_width="wrap_content"
