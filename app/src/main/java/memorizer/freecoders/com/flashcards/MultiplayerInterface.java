@@ -54,9 +54,11 @@ public class MultiplayerInterface {
                     answerHighlight(intAnswerID, true);
             if (MemorizerApplication.getMainActivity().currentFlashCardFragment.
                     mFlashCard.answer_id == intAnswerID) {
+                MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(1, true);
                 MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(1);
                 MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
-            }
+            } else
+                MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(1, false);
         }
     }
 
