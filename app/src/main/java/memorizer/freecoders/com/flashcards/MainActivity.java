@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Fragment currentFragment;
     public FlashCardFragment currentFlashCardFragment;
+    public MainMenuFragment mainMenuFragment;
     public PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
 
     TextView scoreView;
@@ -101,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
             ActiveAndroid.initialize(this);
             initApp();
 
-            showNextFragment(new MainMenuFragment(), null);
+            mainMenuFragment = new MainMenuFragment();
+            showNextFragment(mainMenuFragment, null);
 
         }
 
@@ -132,6 +134,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showNextFragment (Fragment newFragment, Integer intTransitionType) {
+        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MAIN_MENU ) {
+            getFragmentManager().beginTransaction().remove(mainMenuFragment).commit();
+            getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
+                    newFragment).commit();
+            currentFragment = newFragment;
+            if (newFragment instanceof FlashCardFragment)
+                currentFlashCardFragment = (FlashCardFragment) newFragment;
+            return;
+        }
+
         if (currentFragment == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.fragment_flashcard_container, newFragment).commit();
@@ -146,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
             else
                 fragmentTransactionExtended.addTransition(intTransitionType);
             fragmentTransactionExtended.commit();
+
         }
 
         currentFragment = newFragment;
@@ -191,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void returnToMainMenu () {
-        MainMenuFragment mainMenuFragment = new MainMenuFragment();
+        mainMenuFragment = new MainMenuFragment();
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
                 mainMenuFragment).commit();
         getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
