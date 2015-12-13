@@ -56,12 +56,12 @@ public class Animations {
     public final static void alphaAnimation (final View view){
 
         final int visibility = view.getVisibility();
-        int duration = 500;
+        int duration = 100;
 
-        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+        AlphaAnimation animation = new AlphaAnimation(0.0f, 0.5f);
         animation.setDuration(duration);
 
-        final AlphaAnimation reverse_animation = new AlphaAnimation(1.0f, 0.0f);
+        final AlphaAnimation reverse_animation = new AlphaAnimation(0.5f, 0.0f);
         reverse_animation.setDuration(duration);
         reverse_animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
