@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 
@@ -97,5 +98,38 @@ public class Animations {
 
         view.setVisibility(View.VISIBLE);
         view.startAnimation(animation);
+    }
+
+    public final static void scaleAnimation (final View view){
+        float scale = 1.2f;
+
+        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, scale, 1.0f, scale,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        int duration = 500;
+
+        final ScaleAnimation reverse_animation = new ScaleAnimation(scale, 1.0f, scale, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        reverse_animation.setDuration(duration);
+
+        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.startAnimation(reverse_animation);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        view.startAnimation(scaleAnimation);
+
+
     }
 }
