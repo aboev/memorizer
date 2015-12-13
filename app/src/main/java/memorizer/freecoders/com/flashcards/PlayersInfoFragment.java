@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
+import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
@@ -33,6 +35,9 @@ public class PlayersInfoFragment extends Fragment{
     StyleProgressBar styleProgressBar;
 
     TextView scoreView;
+
+    View highlightUserCorrect, highlightUserWrong,
+            highlightOpponentCorrect, highlightOpponentWrong;
 
     public ArrayList<Integer> scoreList;
     public ArrayList<String> playerNames;
@@ -55,6 +60,12 @@ public class PlayersInfoFragment extends Fragment{
 
         imageViewPlayer1Avatar = (CircleImageView) view.findViewById(R.id.ImageViewPlayer1Avatar);
         imageViewPlayer2Avatar = (CircleImageView) view.findViewById(R.id.ImageViewPlayer2Avatar);
+
+        highlightUserCorrect = view.findViewById(R.id.viewUserGreenHighlight);
+        highlightUserWrong = view.findViewById(R.id.viewUserRedHighlight);
+
+        highlightOpponentCorrect = view.findViewById(R.id.viewOpponentGreenHighlight);
+        highlightOpponentWrong = view.findViewById(R.id.viewOpponentRedHighlight);
 
         scoreView = (TextView) view.findViewById(R.id.scoreView);
 
@@ -121,5 +132,30 @@ public class PlayersInfoFragment extends Fragment{
 
     public void increaseScore (int playerID) {
         scoreList.set(playerID, scoreList.get(playerID) + 1);
+    }
+
+    public void highlightAnswer (int playerID, Boolean boolCorrect) {
+        if (MemorizerApplication.getMainActivity().intUIState ==
+                Constants.UI_STATE_MULTIPLAYER_MODE) {
+
+            if (playerID == 0)
+                Animations.scaleAnimation(imageViewPlayer1Avatar);
+            else
+                Animations.scaleAnimation(imageViewPlayer2Avatar);
+        }
+
+
+        if (playerID == 0) {
+            if (boolCorrect)
+                Animations.alphaAnimation(highlightUserCorrect);
+            else
+                Animations.alphaAnimation(highlightUserWrong);
+        } else {
+            if (boolCorrect)
+                Animations.alphaAnimation(highlightOpponentCorrect);
+            else
+                Animations.alphaAnimation(highlightOpponentWrong);
+        }
+
     }
 }
