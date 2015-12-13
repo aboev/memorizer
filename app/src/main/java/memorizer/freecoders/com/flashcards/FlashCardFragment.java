@@ -1,5 +1,8 @@
 package memorizer.freecoders.com.flashcards;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +39,8 @@ public class FlashCardFragment extends Fragment {
     public static int numTotalAnswers=0;
 
     private View view;
+
+    private AdapterView.OnItemClickListener onFlashCardItemClickListener;
 
     public FlashCard mFlashCard;
     ListView flashCardsListView;
@@ -136,11 +143,14 @@ public class FlashCardFragment extends Fragment {
 
                         MemorizerApplication.getMainActivity().nextFlashCard();
                         MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
+                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, true);
                     } else {
                         MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
                         wrongAnswerNotify();
                         MemorizerApplication.getMainActivity().showAnswer(position);
+                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, false);
                     }
+                    setEmptyOnFlashcardItemClickListener();
                 }
             });
 
@@ -161,6 +171,7 @@ public class FlashCardFragment extends Fragment {
                         MemorizerApplication.getMainActivity().nextFlashCard();
                     } else
                         wrongAnswerNotify();
+                    setEmptyOnFlashcardItemClickListener();
                 }
             });
 
@@ -178,22 +189,55 @@ public class FlashCardFragment extends Fragment {
                             MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
                             String.valueOf(position));
                     answerHighlight(position, false);
-                    if (mFlashCard.answer_id == position)
+                    if (mFlashCard.answer_id == position) {
                         MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
-                    else
-                        flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                            }
-                        });
+                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, true);
+                    } else {
+                        setEmptyOnFlashcardItemClickListener();
+                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, false);
+                    }
 
                     MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
+                    setEmptyOnFlashcardItemClickListener();
                 }
             });
             MemorizerApplication.getMainActivity().playersInfoFragment.intTotalQuestions++;
         }
 
         return true;
+    }
+
+    public void setEmptyOnFlashcardItemClickListener() {
+        flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+    }
+
+    @Override
+    public Animator onCreateAnimator(int transit, boolean enter, int nextAnim)
+    {
+
+        Log.d(LOG_TAG, "onCreateAnimator" + nextAnim);
+        try {
+            final Animator anim = AnimatorInflater.loadAnimator(getActivity(), nextAnim);
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    onFlashCardItemClickListener = flashCardsListView.getOnItemClickListener();
+                    setEmptyOnFlashcardItemClickListener();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    flashCardsListView.setOnItemClickListener(onFlashCardItemClickListener);
+                }
+            });
+            return anim;
+        } catch (Exception e ) {
+            return super.onCreateAnimator(transit, enter, nextAnim);
+        }
     }
 }
