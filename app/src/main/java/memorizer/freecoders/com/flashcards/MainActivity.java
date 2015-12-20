@@ -44,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
     public Fragment currentFragment;
     public FlashCardFragment currentFlashCardFragment;
     public MainMenuFragment mainMenuFragment;
+    public CardsetPickerFragment cardsetPickerFragment;
     public PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
 
     TextView scoreView;
+    private Long SetID = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,14 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    public void setSetID (Long setID) {
+        this.SetID = setID;
+    }
+
+    public Long getSetID () {
+        return this.SetID;
     }
 
     public void nextFlashCard(){
@@ -178,6 +188,18 @@ public class MainActivity extends AppCompatActivity {
 
         MemorizerApplication.setServerInterface(new ServerInterface());
 
+        try {
+            Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
+            mSocket.on(Constants.SOCKET_CHANNEL_NAME,
+                    MemorizerApplication.getServerInterface().onNewSocketMessage);
+            mSocket.connect();
+            MemorizerApplication.getServerInterface().setSocketIO(mSocket);
+            MemorizerApplication.getPreferences().strSocketID = mSocket.id();
+            Log.d(LOG_TAG, "Connected to socket");
+        } catch (URISyntaxException e) {
+            Log.d(LOG_TAG, "Failed to connect to socket");
+        }
+
         if ((MemorizerApplication.getPreferences().strUserID == null) ||
                 MemorizerApplication.getPreferences().strUserID.isEmpty()) {
             ServerInterface.registerUserRequest(
@@ -189,28 +211,23 @@ public class MainActivity extends AppCompatActivity {
                             MemorizerApplication.getPreferences().savePreferences();
                         }
                     }, null);
-        }
-
-        try {
-            Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
-            mSocket.on(Constants.SOCKET_CHANNEL_NAME,
-                    MemorizerApplication.getServerInterface().onNewSocketMessage);
-            mSocket.connect();
-            MemorizerApplication.getServerInterface().setSocketIO(mSocket);
-            Log.d(LOG_TAG, "Connected to socket");
-        } catch (URISyntaxException e) {
-            Log.d(LOG_TAG, "Failed to connect to socket");
-        }
+        } else
+            ServerInterface.socketAnnounceUserID(MemorizerApplication.getPreferences().strUserID);
     }
 
     public void returnToMainMenu () {
         mainMenuFragment = new MainMenuFragment();
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
                 mainMenuFragment).commit();
-        getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+        if (MemorizerApplication.getMainActivity().playersInfoFragment != null)
+            getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
                 playersInfoFragment).commit();
-        getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+        if (MemorizerApplication.getMainActivity().currentFlashCardFragment != null)
+            getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
                 currentFlashCardFragment).commit();
+        if (MemorizerApplication.getMainActivity().cardsetPickerFragment != null)
+            getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+                    cardsetPickerFragment).commit();
         MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 
