@@ -11,6 +11,8 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
+
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
@@ -43,6 +45,15 @@ public class MainMenuFragment extends Fragment {
         textViewTrain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MemorizerApplication.getMainActivity().cardsetPickerFragment = new CardsetPickerFragment();
+                MemorizerApplication.getMainActivity().showNextFragment(
+                        MemorizerApplication.getMainActivity().cardsetPickerFragment,
+                        FragmentTransactionExtended.SLIDE_HORIZONTAL);
+                MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_CARD_PICK;
+                MemorizerApplication.getMainActivity().cardsetPickerFragment.intNextFragment =
+                        Constants.UI_STATE_TRAIN_MODE;
+
+                /*
                 MemorizerApplication.getMainActivity().nextFlashCard();
 
                 MemorizerApplication.getMainActivity().scoreView =
@@ -52,15 +63,26 @@ public class MainMenuFragment extends Fragment {
                 MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
 
                 MemorizerApplication.getMainActivity().showPlayersInfo();
+                */
             }
         });
 
         textViewMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MemorizerApplication.getMainActivity().cardsetPickerFragment = new CardsetPickerFragment();
+                MemorizerApplication.getMainActivity().showNextFragment(
+                        MemorizerApplication.getMainActivity().cardsetPickerFragment,
+                        FragmentTransactionExtended.SLIDE_HORIZONTAL);
+                MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_CARD_PICK;
+                MemorizerApplication.getMainActivity().cardsetPickerFragment.intNextFragment =
+                        Constants.UI_STATE_MULTIPLAYER_MODE;
+                /*
+
                 MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
                 MemorizerApplication.setMultiPlayerInterface(multiplayerInterface);
-                multiplayerInterface.requestNewGame();
+                multiplayerInterface.requestNewGame(null);
+                */
             }
         });
 
