@@ -23,6 +23,7 @@ import io.socket.emitter.Emitter;
 import memorizer.freecoders.com.flashcards.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.ConstantsPrivate;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.CardSet;
@@ -31,6 +32,8 @@ import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
+import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
+import memorizer.freecoders.com.flashcards.json.quizlet.QuizletSearchResult;
 
 /**
  * Created by alex-mac on 21.11.15.
@@ -236,6 +239,82 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
+    public static final void searchCardsetQuizletRequest(
+            String strKeyWords,
+            final Response.Listener<QuizletSearchResult> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Search cardsets request for " + strKeyWords);
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.QUIZLET_CARDSET_SEARCH_URL + "?client_id=" + ConstantsPrivate.QUIZLET_CLIENT_ID
+                + "&q=" + strKeyWords,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        try {
+                            QuizletSearchResult res =
+                                    gson.fromJson(response, QuizletSearchResult.class);
+                            if ( res != null && res.sets != null && (responseListener != null))
+                                responseListener.onResponse(res);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void fetchQuizletCardsetRequest(
+            String strSetID,
+            final Response.Listener<QuizletCardsetDescriptor> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Fetch cardset for " + strSetID);
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.QUIZLET_CARDSET_URL + strSetID + "?client_id=" +
+                        ConstantsPrivate.QUIZLET_CLIENT_ID,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        try {
+                            QuizletCardsetDescriptor res =
+                                    gson.fromJson(response, QuizletCardsetDescriptor.class);
+                            if ( res != null && (responseListener != null))
+                                responseListener.onResponse(res);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
     public void setSocketIO (Socket socket){
         this.mSocketIO = socket;
     }
@@ -269,24 +348,18 @@ public class ServerInterface {
                     }
                     Log.d(LOG_TAG, "Received socket message " + args[0]);
                     if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_SOCKETID)) {
-                        Type type = new TypeToken<SocketMessage<String>>() {
-                        }.getType();
+                        Type type = new TypeToken<SocketMessage<String>>() {}.getType();
                         SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
                         String socketID = (String) socketMessage.msg_body;
                         MemorizerApplication.getPreferences().strSocketID = socketID;
                         Log.d(LOG_TAG, "Assigned socket ID to " + socketID);
                     } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
-                        if ((MemorizerApplication.getMultiplayerInterface().progressDialog != null)
-                                && (MemorizerApplication.getMultiplayerInterface().progressDialog.
-                                isShowing()))
-                            MemorizerApplication.getMultiplayerInterface().progressDialog.dismiss();
                         Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
                         SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
-                        MemorizerApplication.getMainActivity().nextFlashCard(socketMessage.msg_body);
-                        MemorizerApplication.getMultiplayerInterface().invokeEvent
-                                (MemorizerApplication.getMultiplayerInterface().EVENT_USER_THINK, "");
+                        MemorizerApplication.getMultiplayerInterface().eventNewQuestion(socketMessage.msg_body);
                     } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
-                        Type type = new TypeToken<SocketMessage<Game>>() {}.getType();
+                        Type type = new TypeToken<SocketMessage<Game>>() {
+                        }.getType();
                         SocketMessage<Game> socketMessage = gson.fromJson(args[0].toString(), type);
                         MemorizerApplication.getMultiplayerInterface().currentGame =
                                 socketMessage.msg_body;
@@ -296,9 +369,7 @@ public class ServerInterface {
                         Type type = new TypeToken<SocketMessage<String>>() {}.getType();
                         SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
                         String strAnswerID = socketMessage.msg_body;
-                        MemorizerApplication.getMultiplayerInterface().
-                                renderEvent(MemorizerApplication.getMultiplayerInterface().
-                                        EVENT_USER_ANSWER, strAnswerID);
+                        MemorizerApplication.getMultiplayerInterface().eventOpponentAnswer(strAnswerID);
                     } else if (strMessageType.
                             equals(Constants.SOCK_MSG_TYPE_GAME_END)) {
                         MainMenuFragment mainMenuFragment = new MainMenuFragment();
@@ -313,11 +384,30 @@ public class ServerInterface {
                                 currentFlashCardFragment).commit();
                         InputDialogInterface.showGameOverMessage(null);
                         MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+                    } else if (strMessageType.
+                            equals(Constants.SOCK_MSG_TYPE_ANSWER_ACCEPTED)) {
+                        Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
+                        SocketMessage<Integer> socketMessage = gson.fromJson(args[0].toString(), type);
+                        int questionID = socketMessage.msg_body;
+                        MemorizerApplication.getMultiplayerInterface().eventAnswerAccepted(questionID);
+                    } else if (strMessageType.
+                            equals(Constants.SOCK_MSG_TYPE_ANSWER_REJECTED)) {
+                        Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
+                        SocketMessage<Integer> socketMessage = gson.fromJson(args[0].toString(), type);
+                        int questionID = socketMessage.msg_body;
+                        MemorizerApplication.getMultiplayerInterface().eventAnswerRejected(questionID);
                     }
                 }
             });
         }
     };
+
+    public static final void socketAnnounceUserID (String strUserID) {
+        SocketMessage msg = new SocketMessage();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_ANNOUNCE_USERID;
+        msg.msg_body = strUserID;
+        MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
+    }
 
     private static HashMap<String, String> makeHTTPHeaders() {
         HashMap<String, String> headers = new HashMap<String, String>();
