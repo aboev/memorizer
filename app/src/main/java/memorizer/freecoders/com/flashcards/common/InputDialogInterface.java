@@ -116,7 +116,7 @@ public class InputDialogInterface {
                 })
                 .setNegativeButton("Play again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        MemorizerApplication.getMultiplayerInterface().requestNewGame();
+                        MemorizerApplication.getMultiplayerInterface().requestNewGame(null);
                         MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
                     }
                 })
