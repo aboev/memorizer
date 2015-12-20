@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -134,17 +135,17 @@ public class PlayersInfoFragment extends Fragment{
         scoreList.set(playerID, scoreList.get(playerID) + 1);
     }
 
-    public void highlightAnswer (int playerID, Boolean boolCorrect) {
+    public void highlightAnswer (int playerID, Boolean boolCorrect, CallbackInterface onAnimationEnd) {
         if (MemorizerApplication.getMainActivity().intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
 
             if (playerID == 0)
-                Animations.scaleAnimation(imageViewPlayer1Avatar);
+                Animations.scaleAnimation(imageViewPlayer1Avatar, onAnimationEnd);
             else
-                Animations.scaleAnimation(imageViewPlayer2Avatar);
+                Animations.scaleAnimation(imageViewPlayer2Avatar, onAnimationEnd);
         }
 
-
+/*
         if (playerID == 0) {
             if (boolCorrect)
                 Animations.alphaAnimation(highlightUserCorrect);
@@ -156,6 +157,6 @@ public class PlayersInfoFragment extends Fragment{
             else
                 Animations.alphaAnimation(highlightOpponentWrong);
         }
-
+*/
     }
 }
