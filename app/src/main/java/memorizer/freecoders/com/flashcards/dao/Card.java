@@ -15,4 +15,7 @@ public class Card extends Model {
 
     @Column(name = "Answer")
     public String answer;
+
+    @Column(name = "SetID")
+    public Long setID;
 }
