@@ -36,7 +36,8 @@ public class Animations {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                onAnimationEnd.onResponse(null);
+                if (onAnimationEnd != null)
+                    onAnimationEnd.onResponse(null);
             }
 
             @Override
@@ -100,7 +101,7 @@ public class Animations {
         view.startAnimation(animation);
     }
 
-    public final static void scaleAnimation (final View view){
+    public final static void scaleAnimation (final View view, final CallbackInterface onAnimationEnd){
         float scale = 1.2f;
 
         ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, scale, 1.0f, scale,
@@ -110,6 +111,24 @@ public class Animations {
         final ScaleAnimation reverse_animation = new ScaleAnimation(scale, 1.0f, scale, 1.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         reverse_animation.setDuration(duration);
+
+        reverse_animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (onAnimationEnd != null)
+                    onAnimationEnd.onResponse(null);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
 
         scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
