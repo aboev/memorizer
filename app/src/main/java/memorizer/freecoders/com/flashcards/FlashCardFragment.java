@@ -85,7 +85,8 @@ public class FlashCardFragment extends Fragment {
         snackbar.show();
     }
 
-    public void answerHighlight(final int intAnswerID, final Boolean boolOpponentAnswer) {
+    public void answerHighlight(final int intAnswerID, final Boolean boolOpponentAnswer,
+                                CallbackInterface onComplete) {
         /*
             Visual animation of opponent answer
          */
@@ -103,16 +104,7 @@ public class FlashCardFragment extends Fragment {
                 boolCorrect = false;
             }
 
-            Animations.highlightColor(textView, colorFrom, colorTo, new CallbackInterface() {
-                @Override
-                public void onResponse(Object obj) {
-                    if ((!boolOpponentAnswer) || (mFlashCard.answer_id == intAnswerID)) {
-                        MemorizerApplication.getMultiplayerInterface().invokeEvent(
-                                MemorizerApplication.getMultiplayerInterface().EVENT_USER_WAIT, "");
-                        Log.d(LOG_TAG, "Sending user wait event");
-                    }
-                }
-            });
+            Animations.highlightColor(textView, colorFrom, colorTo, onComplete);
         }
     }
 
@@ -124,7 +116,11 @@ public class FlashCardFragment extends Fragment {
         //MemorizerApplication.getMainActivity().updateScore();
 
         if (intActionType == INT_NEW_FLASHCARD) {
-            mFlashCard = MemorizerApplication.getFlashCardsDAO().fetchRandomCard();
+            if (MemorizerApplication.getMainActivity().getSetID() != null)
+                mFlashCard = MemorizerApplication.getFlashCardsDAO().fetchRandomCard(
+                        MemorizerApplication.getMainActivity().getSetID());
+            else
+                mFlashCard = MemorizerApplication.getFlashCardsDAO().fetchRandomCard();
             questionTextView.setText(mFlashCard.question);
             listViewAdapter.setValues(mFlashCard.options);
 
@@ -143,12 +139,14 @@ public class FlashCardFragment extends Fragment {
 
                         MemorizerApplication.getMainActivity().nextFlashCard();
                         MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
-                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, true);
+                        MemorizerApplication.getMainActivity().playersInfoFragment.
+                                highlightAnswer(0, true, null);
                     } else {
                         MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
                         wrongAnswerNotify();
                         MemorizerApplication.getMainActivity().showAnswer(position);
-                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, false);
+                        MemorizerApplication.getMainActivity().playersInfoFragment.
+                                highlightAnswer(0, false, null);
                     }
                     setEmptyOnFlashcardItemClickListener();
                 }
@@ -188,16 +186,6 @@ public class FlashCardFragment extends Fragment {
                     MemorizerApplication.getMultiplayerInterface().invokeEvent(
                             MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
                             String.valueOf(position));
-                    answerHighlight(position, false);
-                    if (mFlashCard.answer_id == position) {
-                        MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
-                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, true);
-                    } else {
-                        setEmptyOnFlashcardItemClickListener();
-                        MemorizerApplication.getMainActivity().playersInfoFragment.highlightAnswer(0, false);
-                    }
-
-                    MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
                     setEmptyOnFlashcardItemClickListener();
                 }
             });
