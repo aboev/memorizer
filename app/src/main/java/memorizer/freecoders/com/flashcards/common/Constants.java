@@ -39,6 +39,9 @@ public class Constants {
     public static String SOCK_MSG_TYPE_GAME_END = "game_end";
     public static String SOCK_MSG_TYPE_QUIT_GAME = "quit_game";
     public static String SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE = "player_status";
+    public static String SOCK_MSG_TYPE_ANNOUNCE_USERID = "announce_userid";
+    public static String SOCK_MSG_TYPE_ANSWER_ACCEPTED = "answer_accepted";
+    public static String SOCK_MSG_TYPE_ANSWER_REJECTED = "answer_rejected";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_IN_PROGRESS = 1;
@@ -51,6 +54,10 @@ public class Constants {
     public static Integer UI_STATE_MAIN_MENU = 0;
     public static Integer UI_STATE_TRAIN_MODE = 10;
     public static Integer UI_STATE_MULTIPLAYER_MODE = 20;
+    public static Integer UI_STATE_CARD_PICK = 30;
 
     public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 25;
+
+    public final static String QUIZLET_CARDSET_SEARCH_URL = "https://api.quizlet.com/2.0/search/sets";
+    public final static String QUIZLET_CARDSET_URL = "https://api.quizlet.com/2.0/sets/";
 }
