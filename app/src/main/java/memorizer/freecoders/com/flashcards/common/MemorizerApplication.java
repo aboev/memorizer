@@ -2,6 +2,7 @@ package memorizer.freecoders.com.flashcards.common;
 
 import android.app.Application;
 
+import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
 import memorizer.freecoders.com.flashcards.MainActivity;
 import memorizer.freecoders.com.flashcards.MultiplayerInterface;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
@@ -16,6 +17,7 @@ public class MemorizerApplication extends Application {
     private static ServerInterface mServerInterface;
     private static Preferences mPreferences;
     private static MultiplayerInterface mMultiplayerInterface;
+    private static CardsetPickerActivity mCardsetPickerActivity;
 
     @Override
     public void onCreate() {
@@ -61,6 +63,14 @@ public class MemorizerApplication extends Application {
 
     public final static MultiplayerInterface getMultiplayerInterface () {
         return mMultiplayerInterface;
+    }
+
+    public final static void setCardsetPickerActivity(CardsetPickerActivity cardsetPickerActivity) {
+        mCardsetPickerActivity = cardsetPickerActivity;
+    }
+
+    public final static CardsetPickerActivity getCardsetPickerActivity(){
+        return mCardsetPickerActivity;
     }
 
 }
