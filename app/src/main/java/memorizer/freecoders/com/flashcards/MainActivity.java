@@ -1,10 +1,7 @@
 package memorizer.freecoders.com.flashcards;
 
-import android.app.Application;
+
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,16 +16,12 @@ import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.Response;
-import com.desarrollodroide.libraryfragmenttransactionextended.FragmentTransactionExtended;
-
 import java.net.URISyntaxException;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
-import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Constants;
-import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.json.Question;
@@ -44,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public Fragment currentFragment;
     public FlashCardFragment currentFlashCardFragment;
     public MainMenuFragment mainMenuFragment;
-    public CardsetPickerFragment cardsetPickerFragment;
+    public SearchCardsetFragment cardsetPickerFragment;
     public PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
 
     TextView scoreView;
@@ -140,36 +133,24 @@ public class MainActivity extends AppCompatActivity {
         newFlashCardFragment.setActionType(FlashCardFragment.INT_SHOW_ANSWER);
         currentFlashCardFragment.getFlashCard().wrong_answer_id = intWrongAnswerID;
         newFlashCardFragment.setFlashCard(currentFlashCardFragment.getFlashCard());
-        showNextFragment(newFlashCardFragment, FragmentTransactionExtended.FLIP_HORIZONTAL);
+        showNextFragment(newFlashCardFragment, Constants.ANIMATION_FLIP);
     }
 
     public void showNextFragment (Fragment newFragment, Integer intTransitionType) {
-        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MAIN_MENU ) {
-            getFragmentManager().beginTransaction().remove(mainMenuFragment).commit();
-            getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
-                    newFragment).commit();
-            currentFragment = newFragment;
-            if (newFragment instanceof FlashCardFragment)
-                currentFlashCardFragment = (FlashCardFragment) newFragment;
-            return;
-        }
-
-        if (currentFragment == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_flashcard_container, newFragment).commit();
-        } else {
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fm.beginTransaction();
-            FragmentTransactionExtended fragmentTransactionExtended =
-                    new FragmentTransactionExtended(this, fragmentTransaction, currentFragment,
-                            newFragment, R.id.fragment_flashcard_container);
             if (intTransitionType == null)
-                fragmentTransactionExtended.addTransition(FragmentTransactionExtended.SLIDE_HORIZONTAL);
-            else
-                fragmentTransactionExtended.addTransition(intTransitionType);
-            fragmentTransactionExtended.commit();
-
-        }
+                getFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                                R.anim.slide_in_right, R.anim.slide_out_left)
+                        .replace(R.id.fragment_flashcard_container, newFragment)
+                        .commit();
+            else if (intTransitionType == Constants.ANIMATION_FLIP)
+                getFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.flip_right_in, R.anim.flip_right_out,
+                                R.anim.flip_left_in, R.anim.flip_left_out)
+                        .replace(R.id.fragment_flashcard_container, newFragment)
+                        .commit();
 
         currentFragment = newFragment;
 
@@ -226,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
                 currentFlashCardFragment).commit();
         if (MemorizerApplication.getMainActivity().cardsetPickerFragment != null)
-            getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+            getSupportFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
                     cardsetPickerFragment).commit();
         MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
     }
@@ -256,4 +237,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+    };
 }
