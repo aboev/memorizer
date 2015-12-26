@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Мультикардс</string>
+
+    <string-array name="tab_items_cardsetpicker">
+        <item>Поиск</item>
+        <item>Последние</item>
+        <item>Любимые</item>
+    </string-array>
+
+    <string name="download_cardset_dialog_message">Загрузка карточек</string>
+
+    <string name="cardset_search_message">Введите название карточек</string>
+</resources>
