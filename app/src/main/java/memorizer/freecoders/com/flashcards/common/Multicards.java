@@ -11,7 +11,7 @@ import memorizer.freecoders.com.flashcards.network.ServerInterface;
 /**
  * Created by alex-mac on 08.11.15.
  */
-public class MemorizerApplication extends Application {
+public class Multicards extends Application {
     private static MainActivity mMainActivity;
     private static FlashCardsDAO mFlashCardsDAO;
     private static ServerInterface mServerInterface;

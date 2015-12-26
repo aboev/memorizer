@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,7 +20,7 @@ import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
 import memorizer.freecoders.com.flashcards.common.Animations;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 
 /**
  * Created by alex-mac on 07.11.15.
@@ -113,14 +111,14 @@ public class FlashCardFragment extends Fragment {
         flashCardsListView = (ListView) view.findViewById(R.id.ListView_FlashCard);
         questionTextView = (AutoResizeTextView) view.findViewById(R.id.TextView_Question);
         listViewAdapter = new ListViewAdapter(view.getContext());
-        //MemorizerApplication.getMainActivity().updateScore();
+        //Multicards.getMainActivity().updateScore();
 
         if (intActionType == INT_NEW_FLASHCARD) {
-            if (MemorizerApplication.getMainActivity().getSetID() != null)
-                mFlashCard = MemorizerApplication.getFlashCardsDAO().fetchRandomCard(
-                        MemorizerApplication.getMainActivity().getSetID());
+            if (Multicards.getMainActivity().getSetID() != null)
+                mFlashCard = Multicards.getFlashCardsDAO().fetchRandomCard(
+                        Multicards.getMainActivity().getSetID());
             else
-                mFlashCard = MemorizerApplication.getFlashCardsDAO().fetchRandomCard();
+                mFlashCard = Multicards.getFlashCardsDAO().fetchRandomCard();
             questionTextView.setText(mFlashCard.question);
             listViewAdapter.setValues(mFlashCard.options);
 
@@ -135,24 +133,24 @@ public class FlashCardFragment extends Fragment {
                         listViewAdapter.setCorrectAnswer(mFlashCard.answer_id);
                         listViewAdapter.notifyDataSetChanged();
                         numCorrectAnswers++;
-                        MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
+                        Multicards.getMainActivity().playersInfoFragment.updateScore();
 
-                        MemorizerApplication.getMainActivity().nextFlashCard();
-                        MemorizerApplication.getMainActivity().playersInfoFragment.increaseScore(0);
-                        MemorizerApplication.getMainActivity().playersInfoFragment.
+                        Multicards.getMainActivity().nextFlashCard();
+                        Multicards.getMainActivity().playersInfoFragment.increaseScore(0);
+                        Multicards.getMainActivity().playersInfoFragment.
                                 highlightAnswer(0, true, null);
                     } else {
-                        MemorizerApplication.getMainActivity().playersInfoFragment.updateScore();
+                        Multicards.getMainActivity().playersInfoFragment.updateScore();
                         wrongAnswerNotify();
-                        MemorizerApplication.getMainActivity().showAnswer(position);
-                        MemorizerApplication.getMainActivity().playersInfoFragment.
+                        Multicards.getMainActivity().showAnswer(position);
+                        Multicards.getMainActivity().playersInfoFragment.
                                 highlightAnswer(0, false, null);
                     }
                     setEmptyOnFlashcardItemClickListener();
                 }
             });
 
-            MemorizerApplication.getMainActivity().playersInfoFragment.intTotalQuestions++;
+            Multicards.getMainActivity().playersInfoFragment.intTotalQuestions++;
         } else if (intActionType == INT_SHOW_ANSWER) {
             questionTextView.setText(mFlashCard.question);
             listViewAdapter.setValues(mFlashCard.options);
@@ -166,7 +164,7 @@ public class FlashCardFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     if (mFlashCard.answer_id == position) {
-                        MemorizerApplication.getMainActivity().nextFlashCard();
+                        Multicards.getMainActivity().nextFlashCard();
                     } else
                         wrongAnswerNotify();
                     setEmptyOnFlashcardItemClickListener();
@@ -183,13 +181,13 @@ public class FlashCardFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    MemorizerApplication.getMultiplayerInterface().invokeEvent(
-                            MemorizerApplication.getMultiplayerInterface().EVENT_USER_ANSWER,
+                    Multicards.getMultiplayerInterface().invokeEvent(
+                            Multicards.getMultiplayerInterface().EVENT_USER_ANSWER,
                             String.valueOf(position));
                     setEmptyOnFlashcardItemClickListener();
                 }
             });
-            MemorizerApplication.getMainActivity().playersInfoFragment.intTotalQuestions++;
+            Multicards.getMainActivity().playersInfoFragment.intTotalQuestions++;
         }
 
         return true;

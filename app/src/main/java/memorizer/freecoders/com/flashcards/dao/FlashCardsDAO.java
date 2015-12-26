@@ -1,6 +1,5 @@
 package memorizer.freecoders.com.flashcards.dao;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -13,15 +12,13 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import au.com.bytecode.opencsv.CSVReader;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
-import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -92,9 +89,9 @@ public class FlashCardsDAO {
                             cnt++;
                         }
                         if (cnt > 0) {
-                            MemorizerApplication.getPreferences().recentSets.put(gid,
+                            Multicards.getPreferences().recentSets.put(gid,
                                     System.currentTimeMillis());
-                            MemorizerApplication.getPreferences().savePreferences();
+                            Multicards.getPreferences().savePreferences();
                             onSuccess.onResponse(cardset.getId());
                         } else
                             onFail.onResponse(null);
@@ -159,10 +156,10 @@ public class FlashCardsDAO {
                 .where("gid = ?", strGID)
                 .execute();
         if (cardsets.size() > 0) {
-            MemorizerApplication.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
-            MemorizerApplication.getPreferences().savePreferences();
+            Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
+            Multicards.getPreferences().savePreferences();
             Log.d(LOG_TAG, "Saving recent sets " +
-                    new Gson().toJson(MemorizerApplication.getPreferences().recentSets) );
+                    new Gson().toJson(Multicards.getPreferences().recentSets) );
             return cardsets.get(0);
         } else return null;
     }

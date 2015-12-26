@@ -1,9 +1,6 @@
 package memorizer.freecoders.com.flashcards.network;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,7 +23,7 @@ import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.ConstantsPrivate;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.Question;
@@ -85,7 +82,7 @@ public class ServerInterface {
             }
         }
         );
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
                 addToRequestQueue(request);
     }
 
@@ -124,7 +121,7 @@ public class ServerInterface {
             }
         }
         );
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
                 addToRequestQueue(request);
     }
 
@@ -166,7 +163,7 @@ public class ServerInterface {
             }
         }
         );
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
                 addToRequestQueue(request);
     }
 
@@ -182,8 +179,8 @@ public class ServerInterface {
                     public void onResponse(String response) {
                         Log.d(LOG_TAG, response.toString());
                         try {
-                            MemorizerApplication.getPreferences().strAvatar = strImageURI;
-                            MemorizerApplication.getPreferences().savePreferences();
+                            Multicards.getPreferences().strAvatar = strImageURI;
+                            Multicards.getPreferences().savePreferences();
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.d(LOG_TAG, "Exception " + e.getLocalizedMessage());
@@ -197,7 +194,7 @@ public class ServerInterface {
             }
         }
         );
-        VolleySingleton.getInstance(MemorizerApplication.
+        VolleySingleton.getInstance(Multicards.
                 getMainActivity()).addToRequestQueue(uploadRequest);
     }
 
@@ -236,7 +233,7 @@ public class ServerInterface {
             }
         }
         );
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
                 addToRequestQueue(request);
     }
 
@@ -276,7 +273,7 @@ public class ServerInterface {
         );
         String strTag = "search_request_" + strKeyWords;
         request.setTag(strTag);
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
                 addToRequestQueue(request);
         return strTag;
     }
@@ -315,12 +312,12 @@ public class ServerInterface {
             }
         }
         );
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
                 addToRequestQueue(request);
     }
 
     public static void cancelRequestByTag(final String strTag) {
-        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).getRequestQueue().
+        VolleySingleton.getInstance(Multicards.getMainActivity()).getRequestQueue().
                 cancelAll(new RequestQueue.RequestFilter() {
                     @Override
                     public boolean apply(Request<?> request) {
@@ -349,7 +346,7 @@ public class ServerInterface {
         @Override
         public void call(final Object[] args) {
             Log.d(LOG_TAG, "Received message " + args[0].toString());
-            MemorizerApplication.getMainActivity().
+            Multicards.getMainActivity().
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -365,50 +362,50 @@ public class ServerInterface {
                         Type type = new TypeToken<SocketMessage<String>>() {}.getType();
                         SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
                         String socketID = (String) socketMessage.msg_body;
-                        MemorizerApplication.getPreferences().strSocketID = socketID;
+                        Multicards.getPreferences().strSocketID = socketID;
                         Log.d(LOG_TAG, "Assigned socket ID to " + socketID);
                     } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
                         Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
                         SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
-                        MemorizerApplication.getMultiplayerInterface().eventNewQuestion(socketMessage.msg_body);
+                        Multicards.getMultiplayerInterface().eventNewQuestion(socketMessage.msg_body);
                     } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
                         Type type = new TypeToken<SocketMessage<Game>>() {}.getType();
                         SocketMessage<Game> socketMessage = gson.fromJson(args[0].toString(), type);
-                        MemorizerApplication.getMultiplayerInterface().currentGame =
+                        Multicards.getMultiplayerInterface().currentGame =
                                 socketMessage.msg_body;
-                        MemorizerApplication.getMainActivity().showPlayersInfo();
+                        Multicards.getMainActivity().showPlayersInfo();
                     } else if (strMessageType.
                             equals(Constants.SOCK_MSG_TYPE_PLAYER_ANSWERED)) {
                         Type type = new TypeToken<SocketMessage<String>>() {}.getType();
                         SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
                         String strAnswerID = socketMessage.msg_body;
-                        MemorizerApplication.getMultiplayerInterface().eventOpponentAnswer(strAnswerID);
+                        Multicards.getMultiplayerInterface().eventOpponentAnswer(strAnswerID);
                     } else if (strMessageType.
                             equals(Constants.SOCK_MSG_TYPE_GAME_END)) {
                         MainMenuFragment mainMenuFragment = new MainMenuFragment();
-                        MemorizerApplication.getMainActivity().getFragmentManager()
+                        Multicards.getMainActivity().getFragmentManager()
                                 .beginTransaction().add(R.id.fragment_flashcard_container,
                                 mainMenuFragment).commit();
-                        MemorizerApplication.getMainActivity().getFragmentManager()
-                                .beginTransaction().remove(MemorizerApplication.getMainActivity().
+                        Multicards.getMainActivity().getFragmentManager()
+                                .beginTransaction().remove(Multicards.getMainActivity().
                                 playersInfoFragment).commit();
-                        MemorizerApplication.getMainActivity().getFragmentManager()
-                                .beginTransaction().remove(MemorizerApplication.getMainActivity().
+                        Multicards.getMainActivity().getFragmentManager()
+                                .beginTransaction().remove(Multicards.getMainActivity().
                                 currentFlashCardFragment).commit();
                         InputDialogInterface.showGameOverMessage(null);
-                        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+                        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
                     } else if (strMessageType.
                             equals(Constants.SOCK_MSG_TYPE_ANSWER_ACCEPTED)) {
                         Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
                         SocketMessage<Integer> socketMessage = gson.fromJson(args[0].toString(), type);
                         int questionID = socketMessage.msg_body;
-                        MemorizerApplication.getMultiplayerInterface().eventAnswerAccepted(questionID);
+                        Multicards.getMultiplayerInterface().eventAnswerAccepted(questionID);
                     } else if (strMessageType.
                             equals(Constants.SOCK_MSG_TYPE_ANSWER_REJECTED)) {
                         Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
                         SocketMessage<Integer> socketMessage = gson.fromJson(args[0].toString(), type);
                         int questionID = socketMessage.msg_body;
-                        MemorizerApplication.getMultiplayerInterface().eventAnswerRejected(questionID);
+                        Multicards.getMultiplayerInterface().eventAnswerRejected(questionID);
                     }
                 }
             });
@@ -419,15 +416,15 @@ public class ServerInterface {
         SocketMessage msg = new SocketMessage();
         msg.msg_type = Constants.SOCK_MSG_TYPE_ANNOUNCE_USERID;
         msg.msg_body = strUserID;
-        MemorizerApplication.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
+        Multicards.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
     }
 
     private static HashMap<String, String> makeHTTPHeaders() {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Accept", "*/*");
-        headers.put(Constants.HEADER_USERID, MemorizerApplication.getPreferences().strUserID);
-        headers.put(Constants.HEADER_SOCKETID, MemorizerApplication.getPreferences().strSocketID);
-        Log.d(LOG_TAG, "Setting socket id to " + MemorizerApplication.getPreferences().strSocketID);
+        headers.put(Constants.HEADER_USERID, Multicards.getPreferences().strUserID);
+        headers.put(Constants.HEADER_SOCKETID, Multicards.getPreferences().strSocketID);
+        Log.d(LOG_TAG, "Setting socket id to " + Multicards.getPreferences().strSocketID);
         return headers;
     }
 }

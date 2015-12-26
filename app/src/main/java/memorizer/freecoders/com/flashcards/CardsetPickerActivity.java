@@ -19,10 +19,8 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import memorizer.freecoders.com.flashcards.common.Constants;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 
 public class CardsetPickerActivity extends AppCompatActivity {
 
@@ -117,7 +115,7 @@ public class CardsetPickerActivity extends AppCompatActivity {
         cardsetRecentsFragment = new RecentCardsetsFragment();
         cardsetRecentsFragment.intNextFragment = intNextFragment;
 
-        MemorizerApplication.setCardsetPickerActivity(this);
+        Multicards.setCardsetPickerActivity(this);
     }
 
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 
 /**
@@ -51,7 +50,7 @@ public class PlayersInfoFragment extends Fragment{
         setRetainInstance(true);
         // Inflate the layout for this fragment
         View view;
-        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
             view = inflater.inflate(R.layout.players_info_single, container, false);
         else
             view = inflater.inflate(R.layout.players_info_multi, container, false);
@@ -72,29 +71,29 @@ public class PlayersInfoFragment extends Fragment{
 
         styleProgressBar = (StyleProgressBar) view.findViewById(R.id.styleprogressbar);
 
-        if ((MemorizerApplication.getPreferences().strUserName != null) &&
-                (!MemorizerApplication.getPreferences().strUserName.isEmpty()))
-            textViewPlayer1Name.setText(MemorizerApplication.getPreferences().strUserName);
+        if ((Multicards.getPreferences().strUserName != null) &&
+                (!Multicards.getPreferences().strUserName.isEmpty()))
+            textViewPlayer1Name.setText(Multicards.getPreferences().strUserName);
         else
             textViewPlayer1Name.setText("Player1");
 
-        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE) {
+        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE) {
             textViewPlayer2Name.setVisibility(View.GONE);
             imageViewPlayer2Avatar.setVisibility(View.GONE);
             styleProgressBar.setVisibility(View.GONE);
-        } else if (MemorizerApplication.getMainActivity().intUIState ==
+        } else if (Multicards.getMainActivity().intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
-            if ((MemorizerApplication.getMultiplayerInterface() != null) &&
-                    (MemorizerApplication.getMultiplayerInterface().currentGame != null) &&
-                    (MemorizerApplication.getMultiplayerInterface().currentGame.profiles != null)) {
-                HashMap<String,UserDetails> profiles = MemorizerApplication.
+            if ((Multicards.getMultiplayerInterface() != null) &&
+                    (Multicards.getMultiplayerInterface().currentGame != null) &&
+                    (Multicards.getMultiplayerInterface().currentGame.profiles != null)) {
+                HashMap<String,UserDetails> profiles = Multicards.
                         getMultiplayerInterface().currentGame.profiles;
                 Iterator it = profiles.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry)it.next();
                     String strSocketID = (String) pair.getKey();
                     UserDetails userDetails = (UserDetails) pair.getValue();
-                    if ((!strSocketID.equals(MemorizerApplication.getPreferences().strSocketID)) &&
+                    if ((!strSocketID.equals(Multicards.getPreferences().strSocketID)) &&
                             (userDetails.name != null) && (!userDetails.name.isEmpty()))
                         textViewPlayer2Name.setText(userDetails.name);
                     it.remove();
@@ -122,9 +121,9 @@ public class PlayersInfoFragment extends Fragment{
     public void updateScore()
     {
         if ( (scoreList != null) && ( scoreList.size() > 0) ) {
-            if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+            if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
                 scoreView.setText("Score: " + scoreList.get(0) + "/" + intTotalQuestions);
-            else if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+            else if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
                 scoreView.setText("Score: " + scoreList.get(0) + "/" + scoreList.get(1));
                 int progress = 100 * scoreList.get(0) / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
                 styleProgressBar.setProgress(progress, true);
@@ -138,7 +137,7 @@ public class PlayersInfoFragment extends Fragment{
     }
 
     public void highlightAnswer (int playerID, Boolean boolCorrect, CallbackInterface onAnimationEnd) {
-        if (MemorizerApplication.getMainActivity().intUIState ==
+        if (Multicards.getMainActivity().intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
 
             if (playerID == 0)

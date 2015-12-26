@@ -22,7 +22,7 @@ import io.socket.client.Socket;
 import io.socket.client.IO;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
@@ -164,70 +164,70 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initApp(){
-        MemorizerApplication.setFlashCardsDAO(new FlashCardsDAO(this));
-        MemorizerApplication.setMainActivity(this);
+        Multicards.setFlashCardsDAO(new FlashCardsDAO(this));
+        Multicards.setMainActivity(this);
 
-        MemorizerApplication.setServerInterface(new ServerInterface());
+        Multicards.setServerInterface(new ServerInterface());
 
         try {
             Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
             mSocket.on(Constants.SOCKET_CHANNEL_NAME,
-                    MemorizerApplication.getServerInterface().onNewSocketMessage);
+                    Multicards.getServerInterface().onNewSocketMessage);
             mSocket.connect();
-            MemorizerApplication.getServerInterface().setSocketIO(mSocket);
-            MemorizerApplication.getPreferences().strSocketID = mSocket.id();
+            Multicards.getServerInterface().setSocketIO(mSocket);
+            Multicards.getPreferences().strSocketID = mSocket.id();
             Log.d(LOG_TAG, "Connected to socket");
         } catch (URISyntaxException e) {
             Log.d(LOG_TAG, "Failed to connect to socket");
         }
 
-        if ((MemorizerApplication.getPreferences().strUserID == null) ||
-                MemorizerApplication.getPreferences().strUserID.isEmpty()) {
+        if ((Multicards.getPreferences().strUserID == null) ||
+                Multicards.getPreferences().strUserID.isEmpty()) {
             ServerInterface.registerUserRequest(
                     new UserDetails(),
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse(String response) {
-                            MemorizerApplication.getPreferences().strUserID = response;
-                            MemorizerApplication.getPreferences().savePreferences();
+                            Multicards.getPreferences().strUserID = response;
+                            Multicards.getPreferences().savePreferences();
                         }
                     }, null);
         } else
-            ServerInterface.socketAnnounceUserID(MemorizerApplication.getPreferences().strUserID);
+            ServerInterface.socketAnnounceUserID(Multicards.getPreferences().strUserID);
     }
 
     public void returnToMainMenu () {
         mainMenuFragment = new MainMenuFragment();
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
                 mainMenuFragment).commit();
-        if (MemorizerApplication.getMainActivity().playersInfoFragment != null)
-            getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+        if (Multicards.getMainActivity().playersInfoFragment != null)
+            getFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
                 playersInfoFragment).commit();
-        if (MemorizerApplication.getMainActivity().currentFlashCardFragment != null)
-            getFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+        if (Multicards.getMainActivity().currentFlashCardFragment != null)
+            getFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
                 currentFlashCardFragment).commit();
-        if (MemorizerApplication.getMainActivity().cardsetPickerFragment != null)
-            getSupportFragmentManager().beginTransaction().remove(MemorizerApplication.getMainActivity().
+        if (Multicards.getMainActivity().cardsetPickerFragment != null)
+            getSupportFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
                     cardsetPickerFragment).commit();
-        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MemorizerApplication.getServerInterface().getSocketIO().disconnect();
-        MemorizerApplication.getServerInterface().getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
-                MemorizerApplication.getServerInterface().onNewSocketMessage);
+        Multicards.getServerInterface().getSocketIO().disconnect();
+        Multicards.getServerInterface().getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
+                Multicards.getServerInterface().onNewSocketMessage);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-            if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
-                MemorizerApplication.getMultiplayerInterface().quitGame();
+            if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+                Multicards.getMultiplayerInterface().quitGame();
 
-            if (MemorizerApplication.getMainActivity().intUIState != Constants.UI_STATE_MAIN_MENU )
+            if (Multicards.getMainActivity().intUIState != Constants.UI_STATE_MAIN_MENU )
                 returnToMainMenu();
             else
                 finish();

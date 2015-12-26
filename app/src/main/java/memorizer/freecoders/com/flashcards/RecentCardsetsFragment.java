@@ -1,14 +1,11 @@
 package memorizer.freecoders.com.flashcards;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,7 +22,7 @@ import java.util.Set;
 
 import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
 import memorizer.freecoders.com.flashcards.common.Constants;
-import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
+import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 
@@ -47,7 +44,7 @@ public class RecentCardsetsFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_recent_cardsets, container, false);
 
         cardSetListView = (ListView) view.findViewById(R.id.listViewCardSetPicker);
-        cardSetListAdapter = new CardsetListAdapter(MemorizerApplication.getMainActivity());
+        cardSetListAdapter = new CardsetListAdapter(Multicards.getMainActivity());
         cardSetListView.setAdapter(cardSetListAdapter);
 
         cardSetListAdapter.setValues(fetchRecentFlashcards());
@@ -57,23 +54,23 @@ public class RecentCardsetsFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
-                Cardset cardset = MemorizerApplication.getFlashCardsDAO().fetchCardset(strGID);
+                Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
                 if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
                     Long setID = cardset.getId();
-                    MemorizerApplication.getMainActivity().setSetID(setID);
-                    MemorizerApplication.getMainActivity().nextFlashCard();
-                    MemorizerApplication.getMainActivity().scoreView =
-                            (TextView) MemorizerApplication.getMainActivity().
+                    Multicards.getMainActivity().setSetID(setID);
+                    Multicards.getMainActivity().nextFlashCard();
+                    Multicards.getMainActivity().scoreView =
+                            (TextView) Multicards.getMainActivity().
                                     findViewById(R.id.scoreView);
-                    MemorizerApplication.getMainActivity().intUIState =
+                    Multicards.getMainActivity().intUIState =
                             Constants.UI_STATE_TRAIN_MODE;
-                    MemorizerApplication.getMainActivity().showPlayersInfo();
-                    MemorizerApplication.getCardsetPickerActivity().finish();
+                    Multicards.getMainActivity().showPlayersInfo();
+                    Multicards.getCardsetPickerActivity().finish();
                 } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE)) {
                     MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
-                    MemorizerApplication.setMultiPlayerInterface(multiplayerInterface);
+                    Multicards.setMultiPlayerInterface(multiplayerInterface);
                     multiplayerInterface.requestNewGame(strGID);
-                    MemorizerApplication.getCardsetPickerActivity().finish();
+                    Multicards.getCardsetPickerActivity().finish();
                 }
             }
         });
@@ -89,13 +86,13 @@ public class RecentCardsetsFragment extends Fragment{
         ArrayList<QuizletCardsetDescriptor> cardsetDescriptors =
                 new ArrayList<QuizletCardsetDescriptor>();
 
-        Map<Integer, Long> map = sortByValues(MemorizerApplication.getPreferences().recentSets);
+        Map<Integer, Long> map = sortByValues(Multicards.getPreferences().recentSets);
         Set set = map.entrySet();
         Iterator iterator = set.iterator();
         while(iterator.hasNext()) {
             Map.Entry entry = (Map.Entry)iterator.next();
             String strGID = (String) entry.getKey();
-            Cardset cardset = MemorizerApplication.getFlashCardsDAO().fetchCardset(strGID);
+            Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
             if (cardset != null) {
                 QuizletCardsetDescriptor descriptor = new QuizletCardsetDescriptor();
                 descriptor.title = cardset.title;

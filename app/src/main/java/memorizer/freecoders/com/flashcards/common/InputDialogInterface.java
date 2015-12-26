@@ -4,13 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 
 import android.content.DialogInterface;
-import android.text.InputType;
 import android.widget.EditText;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
-import memorizer.freecoders.com.flashcards.MultiplayerInterface;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -22,7 +20,7 @@ public class InputDialogInterface {
 
     public static final void askUserName (final CallbackInterface onReply) {
 
-        Context context = MemorizerApplication.getMainActivity();
+        Context context = Multicards.getMainActivity();
         final EditText txtUrl = new EditText(context);
 
         new AlertDialog.Builder(context)
@@ -55,8 +53,8 @@ public class InputDialogInterface {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    MemorizerApplication.getPreferences().strUserName = userDetails.name;
-                                    MemorizerApplication.getPreferences().savePreferences();
+                                    Multicards.getPreferences().strUserName = userDetails.name;
+                                    Multicards.getPreferences().savePreferences();
                                     callbackInterface.onResponse(strName);
                                 }
                             }, new Response.ErrorListener() {
@@ -72,7 +70,7 @@ public class InputDialogInterface {
 
     public static final void askLanguage (final CallbackInterface onReply) {
 
-        Context context = MemorizerApplication.getMainActivity();
+        Context context = Multicards.getMainActivity();
         final EditText txtUrl = new EditText(context);
 
         new AlertDialog.Builder(context)
@@ -96,15 +94,15 @@ public class InputDialogInterface {
 
         String strMessage = "Game over. ";
 
-        if (MemorizerApplication.getMainActivity().playersInfoFragment.scoreList.get(0) >
-                MemorizerApplication.getMainActivity().playersInfoFragment.scoreList.get(1) )
+        if (Multicards.getMainActivity().playersInfoFragment.scoreList.get(0) >
+                Multicards.getMainActivity().playersInfoFragment.scoreList.get(1) )
             strMessage = strMessage + "You win!";
         else
             strMessage = strMessage +
-                    MemorizerApplication.getMainActivity().
+                    Multicards.getMainActivity().
                     playersInfoFragment.playerNames.get(1).toString() + " win";
 
-        Context context = MemorizerApplication.getMainActivity();
+        Context context = Multicards.getMainActivity();
 
         new AlertDialog.Builder(context)
                 .setTitle("Game")
@@ -116,8 +114,8 @@ public class InputDialogInterface {
                 })
                 .setNegativeButton("Play again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        MemorizerApplication.getMultiplayerInterface().requestNewGame(null);
-                        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
+                        Multicards.getMultiplayerInterface().requestNewGame(null);
+                        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
                     }
                 })
                 .show();
