@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="memorizer.freecoders.com.flashcards" >
+    package="memorizer.freecoders.com.flashcards">
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".common.Multicards"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".common.MemorizerApplication">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,11 +22,17 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="AA_DB_NAME" android:value="Memorizer.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="6" />
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="Memorizer.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="10" />
 
+        <activity
+            android:name=".CardsetPickerActivity"
+            android:label="@string/title_activity_cardset_picker"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
