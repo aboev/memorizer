@@ -42,8 +42,10 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
 
         rowView = inflater.inflate(R.layout.cardsetpicker_item, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.textViewCardsetPickerItem);
+        TextView textViewAuthor = (TextView) rowView.findViewById(R.id.textViewCardsetSearchAuthor);
 
-        textView.setText(values.get(position).title + " (" + values.get(position).created_by + " )");
+        textView.setText(values.get(position).title);
+        textViewAuthor.setText(values.get(position).created_by);
 
         return rowView;
     }
