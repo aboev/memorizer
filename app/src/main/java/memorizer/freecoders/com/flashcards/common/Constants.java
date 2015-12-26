@@ -60,4 +60,10 @@ public class Constants {
 
     public final static String QUIZLET_CARDSET_SEARCH_URL = "https://api.quizlet.com/2.0/search/sets";
     public final static String QUIZLET_CARDSET_URL = "https://api.quizlet.com/2.0/sets/";
+
+    public final static String INTENT_META_NEXT_FRAGMENT = "nextFragment";
+
+    public final static int ANIMATION_SLIDE = 0;
+    public final static int ANIMATION_FLIP = 1;
+
 }
