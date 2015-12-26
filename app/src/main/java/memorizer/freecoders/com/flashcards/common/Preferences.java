@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 /**
  * Created by alex-mac on 27.11.15.
@@ -22,6 +26,7 @@ public final class Preferences {
     private String KEY_FIRST_START = "first_start";
     private String KEY_SOCKET_ID = "socket_id";
     private String KEY_AVATAR = "avatar";
+    private String KEY_RECENT_SETS = "recent_sets";
 
     public String strUserID = "";
     public String strUserName = "";
@@ -33,6 +38,7 @@ public final class Preferences {
     // 1 - waiting for sms code, 2 registered
     public Integer intLastOpenedTab = 0;
     public Boolean boolFirstStart = true;
+    public HashMap<String, Long> recentSets;
 
     public Preferences(Context context) {
         settings = context.getSharedPreferences(Constants.PREFS_NAME, 0);
@@ -47,6 +53,10 @@ public final class Preferences {
         strSocketID = settings.getString(KEY_SOCKET_ID, "");
         strAvatar = settings.getString(KEY_AVATAR, "");
         intRegisterStatus = settings.getInt(KEY_REGISTER_STATUS, 0);
+
+        Type type = new TypeToken<HashMap<String, Long>>() {}.getType();
+        recentSets = gson.fromJson(settings.getString(KEY_RECENT_SETS, "{}"), type);
+
         return ((strUserID.length() != 0) && (intRegisterStatus == Constants.STATUS_REGISTERED));
     }
 
@@ -59,6 +69,7 @@ public final class Preferences {
         editor.putString(KEY_AVATAR, strAvatar);
         editor.putInt(KEY_REGISTER_STATUS, intRegisterStatus);
         editor.putBoolean(KEY_FIRST_START, boolFirstStart);
+        editor.putString(KEY_RECENT_SETS, gson.toJson(recentSets));
         editor.commit();
     }
 
