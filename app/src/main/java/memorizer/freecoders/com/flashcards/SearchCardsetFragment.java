@@ -1,13 +1,12 @@
 package memorizer.freecoders.com.flashcards;
 
-import android.app.Fragment;
+
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,25 +19,23 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import memorizer.freecoders.com.flashcards.classes.AutoResizeTextView;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
-import memorizer.freecoders.com.flashcards.classes.FlashCard;
-import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
-import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletSearchResult;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
 /**
  * Created by alex-mac on 12.12.15.
  */
-public class CardsetPickerFragment extends Fragment {
-    private static String LOG_TAG = "CardsetPickerFragment";
+public class SearchCardsetFragment extends Fragment {
+    private static String LOG_TAG = "SearchCardsetFragment";
 
     ListView cardSetListView;
     CardsetListAdapter cardSetListAdapter;
@@ -48,12 +45,16 @@ public class CardsetPickerFragment extends Fragment {
 
     public ProgressDialog progressDialog;
 
+    private ArrayList<String> pendingRequests;
+
+    private int intFragmentType = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setRetainInstance(true);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.cardsetpicker, container, false);
+        View view = inflater.inflate(R.layout.fragment_search_cardset, container, false);
 
         cardSetListView = (ListView) view.findViewById(R.id.listViewCardSetPicker);
         cardSetListAdapter = new CardsetListAdapter(MemorizerApplication.getMainActivity());
@@ -73,7 +74,19 @@ public class CardsetPickerFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                ServerInterface.searchCardsetQuizletRequest(inputEditText.getText().toString(),
+                String strKeywords = "";
+                try {
+                    strKeywords = URLEncoder.encode(inputEditText.getText().toString(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    Log.d(LOG_TAG, "UnsupportedEncodingException");
+                }
+
+                for (int i = 0; i < pendingRequests.size(); i++) {
+                    ServerInterface.cancelRequestByTag(pendingRequests.get(i));
+                    pendingRequests.remove(i);
+                }
+                String strTag = ServerInterface.searchCardsetQuizletRequest(
+                        strKeywords,
                         new Response.Listener<QuizletSearchResult>() {
                             @Override
                             public void onResponse(QuizletSearchResult response) {
@@ -81,6 +94,7 @@ public class CardsetPickerFragment extends Fragment {
                                 cardSetListAdapter.notifyDataSetChanged();
                             }
                         }, null);
+                pendingRequests.add(strTag);
             }
         });
 
@@ -122,9 +136,7 @@ public class CardsetPickerFragment extends Fragment {
                                     MemorizerApplication.getMainActivity().intUIState =
                                             Constants.UI_STATE_TRAIN_MODE;
                                     MemorizerApplication.getMainActivity().showPlayersInfo();
-                                    getFragmentManager().beginTransaction().remove(
-                                            MemorizerApplication.getMainActivity().
-                                                    cardsetPickerFragment).commit();
+                                    MemorizerApplication.getCardsetPickerActivity().finish();
                                 }
                             }, new CallbackInterface() {
                                 @Override
@@ -137,8 +149,10 @@ public class CardsetPickerFragment extends Fragment {
                                     MemorizerApplication.getMainActivity().returnToMainMenu();
                                 }
                             });
+                    String strMessage = getResources().
+                            getString(R.string.download_cardset_dialog_message);
                     progressDialog = ProgressDialog.show(
-                            MemorizerApplication.getMainActivity(), "", "Downloading cardset", true);
+                            MemorizerApplication.getCardsetPickerActivity(), "", strMessage, true);
                     progressDialog.setCancelable(true);
                 } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
                     Long setID = cardset.getId();
@@ -150,19 +164,17 @@ public class CardsetPickerFragment extends Fragment {
                     MemorizerApplication.getMainActivity().intUIState =
                             Constants.UI_STATE_TRAIN_MODE;
                     MemorizerApplication.getMainActivity().showPlayersInfo();
-                    getFragmentManager().beginTransaction().remove(
-                            MemorizerApplication.getMainActivity().
-                                    cardsetPickerFragment).commit();
+                    MemorizerApplication.getCardsetPickerActivity().finish();
                 } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
                     MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
                     MemorizerApplication.setMultiPlayerInterface(multiplayerInterface);
                     multiplayerInterface.requestNewGame(strGID);
-                    getFragmentManager().beginTransaction().remove(
-                            MemorizerApplication.getMainActivity().
-                                    cardsetPickerFragment).commit();
+                    MemorizerApplication.getCardsetPickerActivity().finish();
                 }
             }
         });
+
+        pendingRequests = new ArrayList<String>();
 
         return view;
     }
