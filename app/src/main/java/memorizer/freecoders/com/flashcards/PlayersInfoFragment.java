@@ -121,12 +121,14 @@ public class PlayersInfoFragment extends Fragment{
 
     public void updateScore()
     {
-        if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
-            scoreView.setText("Score: " + scoreList.get(0) + "/" + intTotalQuestions);
-        else if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
-            scoreView.setText("Score: " + scoreList.get(0) + "/" + scoreList.get(1));
-            int progress = 100 * scoreList.get(0) / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
-            styleProgressBar.setProgress(progress, true);
+        if ( (scoreList != null) && ( scoreList.size() > 0) ) {
+            if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+                scoreView.setText("Score: " + scoreList.get(0) + "/" + intTotalQuestions);
+            else if (MemorizerApplication.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+                scoreView.setText("Score: " + scoreList.get(0) + "/" + scoreList.get(1));
+                int progress = 100 * scoreList.get(0) / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
+                styleProgressBar.setProgress(progress, true);
+            }
         }
 
     }
