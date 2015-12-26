@@ -1,6 +1,7 @@
 package memorizer.freecoders.com.flashcards;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,10 +22,6 @@ import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
  * Created by alex-mac on 22.11.15.
  */
 public class MainMenuFragment extends Fragment {
-    private Button buttonTrain;
-    private Button buttonMultiplayer;
-    private Button buttonSettings;
-
     private TextView textViewTrain;
     private TextView textViewMultiplayer;
 
@@ -35,65 +32,35 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.main_menu, container, false);
 
-        buttonTrain = (Button) view.findViewById(R.id.buttonTrain);
-        buttonMultiplayer = (Button) view.findViewById(R.id.buttonMultiplayer);
-        buttonSettings = (Button) view.findViewById(R.id.buttonSettings);
-
         textViewTrain = (TextView) view.findViewById(R.id.TextView_StyleButtonTrain);
         textViewMultiplayer = (TextView) view.findViewById(R.id.TextView_StyleButtonMultiplayer);
 
         textViewTrain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MemorizerApplication.getMainActivity().cardsetPickerFragment = new CardsetPickerFragment();
-                MemorizerApplication.getMainActivity().showNextFragment(
-                        MemorizerApplication.getMainActivity().cardsetPickerFragment,
-                        FragmentTransactionExtended.SLIDE_HORIZONTAL);
-                MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_CARD_PICK;
-                MemorizerApplication.getMainActivity().cardsetPickerFragment.intNextFragment =
-                        Constants.UI_STATE_TRAIN_MODE;
-
-                /*
-                MemorizerApplication.getMainActivity().nextFlashCard();
-
-                MemorizerApplication.getMainActivity().scoreView =
-                        (TextView) MemorizerApplication.getMainActivity().
-                                findViewById(R.id.scoreView);
-
-                MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
-
-                MemorizerApplication.getMainActivity().showPlayersInfo();
-                */
+                Intent intent = new Intent(MemorizerApplication.getMainActivity(),
+                        CardsetPickerActivity.class);
+                intent.putExtra(Constants.INTENT_META_NEXT_FRAGMENT,
+                        Constants.UI_STATE_TRAIN_MODE);
+                startActivity(intent);
             }
         });
 
         textViewMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MemorizerApplication.getMainActivity().cardsetPickerFragment = new CardsetPickerFragment();
-                MemorizerApplication.getMainActivity().showNextFragment(
-                        MemorizerApplication.getMainActivity().cardsetPickerFragment,
-                        FragmentTransactionExtended.SLIDE_HORIZONTAL);
-                MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_CARD_PICK;
-                MemorizerApplication.getMainActivity().cardsetPickerFragment.intNextFragment =
-                        Constants.UI_STATE_MULTIPLAYER_MODE;
-                /*
-
-                MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
-                MemorizerApplication.setMultiPlayerInterface(multiplayerInterface);
-                multiplayerInterface.requestNewGame(null);
-                */
+                Intent intent = new Intent(MemorizerApplication.getMainActivity(),
+                        CardsetPickerActivity.class);
+                intent.putExtra(Constants.INTENT_META_NEXT_FRAGMENT,
+                        Constants.UI_STATE_MULTIPLAYER_MODE);
+                startActivity(intent);
             }
         });
 
-
-        MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+        if (MemorizerApplication.getMainActivity() != null)
+            MemorizerApplication.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
 
         return view;
-    }
-
-    public void onButtonTrainClick (View v){
-
     }
 
 }
