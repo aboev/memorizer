@@ -14,4 +14,10 @@ public class Cardset extends Model {
     public String gid;
     @Column(name = "details")
     public String details;
+    @Column(name = "title")
+    public String title;
+    @Column(name = "created_by")
+    public String created_by;
+    @Column(name = "url")
+    public String url;
 }
