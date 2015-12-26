@@ -8,6 +8,7 @@ import android.util.Log;
 import com.activeandroid.query.Select;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
+import memorizer.freecoders.com.flashcards.common.MemorizerApplication;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -34,17 +36,6 @@ public class FlashCardsDAO {
 
     public FlashCardsDAO(Context context) {
         this.context = context;
-        /*
-        Card card = new Select()
-                .from(Card.class)
-                .orderBy("RANDOM()")
-                .executeSingle();
-        if (card == null)
-            loadFromCSV("english.csv");
-        else
-            Log.d("FlashCardsDAO", "Read item " + card.question);
-            */
-
     }
 
     public void loadFromCSV(String strFilename){
@@ -77,7 +68,7 @@ public class FlashCardsDAO {
         }
     }
 
-    public void importFromWeb(String gid, final CallbackInterface onSuccess,
+    public void importFromWeb(final String gid, final CallbackInterface onSuccess,
                               final CallbackInterface onFail) {
         if (gid.split("_")[0].equals("quizlet")) {
             String setid = gid.split("_")[1];
@@ -87,6 +78,9 @@ public class FlashCardsDAO {
                     public void onResponse(QuizletCardsetDescriptor response) {
                         Cardset cardset = new Cardset();
                         cardset.gid = "quizlet_" + response.id;
+                        cardset.title = response.title;
+                        cardset.created_by = response.created_by;
+                        cardset.url = response.url;
                         cardset.save();
                         int cnt = 0;
                         for (int i = 0; i < response.terms.size(); i++) {
@@ -97,9 +91,12 @@ public class FlashCardsDAO {
                             card.save();
                             cnt++;
                         }
-                        if (cnt > 0)
+                        if (cnt > 0) {
+                            MemorizerApplication.getPreferences().recentSets.put(gid,
+                                    System.currentTimeMillis());
+                            MemorizerApplication.getPreferences().savePreferences();
                             onSuccess.onResponse(cardset.getId());
-                        else
+                        } else
                             onFail.onResponse(null);
                     }
                 }, new Response.ErrorListener() {
@@ -161,8 +158,12 @@ public class FlashCardsDAO {
                 .limit(1)
                 .where("gid = ?", strGID)
                 .execute();
-        if (cardsets.size() > 0)
+        if (cardsets.size() > 0) {
+            MemorizerApplication.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
+            MemorizerApplication.getPreferences().savePreferences();
+            Log.d(LOG_TAG, "Saving recent sets " +
+                    new Gson().toJson(MemorizerApplication.getPreferences().recentSets) );
             return cardsets.get(0);
-        else return null;
+        } else return null;
     }
 }
