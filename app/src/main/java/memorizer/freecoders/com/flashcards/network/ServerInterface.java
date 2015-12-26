@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -239,7 +240,7 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
-    public static final void searchCardsetQuizletRequest(
+    public static final String searchCardsetQuizletRequest(
             String strKeyWords,
             final Response.Listener<QuizletSearchResult> responseListener,
             final Response.ErrorListener errorListener) {
@@ -273,8 +274,11 @@ public class ServerInterface {
             }
         }
         );
+        String strTag = "search_request_" + strKeyWords;
+        request.setTag(strTag);
         VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
                 addToRequestQueue(request);
+        return strTag;
     }
 
     public static final void fetchQuizletCardsetRequest(
@@ -313,6 +317,16 @@ public class ServerInterface {
         );
         VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).
                 addToRequestQueue(request);
+    }
+
+    public static void cancelRequestByTag(final String strTag) {
+        VolleySingleton.getInstance(MemorizerApplication.getMainActivity()).getRequestQueue().
+                cancelAll(new RequestQueue.RequestFilter() {
+                    @Override
+                    public boolean apply(Request<?> request) {
+                        return request.getTag().toString().equals(strTag);
+                    }
+                });
     }
 
     public void setSocketIO (Socket socket){
@@ -358,8 +372,7 @@ public class ServerInterface {
                         SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
                         MemorizerApplication.getMultiplayerInterface().eventNewQuestion(socketMessage.msg_body);
                     } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
-                        Type type = new TypeToken<SocketMessage<Game>>() {
-                        }.getType();
+                        Type type = new TypeToken<SocketMessage<Game>>() {}.getType();
                         SocketMessage<Game> socketMessage = gson.fromJson(args[0].toString(), type);
                         MemorizerApplication.getMultiplayerInterface().currentGame =
                                 socketMessage.msg_body;
