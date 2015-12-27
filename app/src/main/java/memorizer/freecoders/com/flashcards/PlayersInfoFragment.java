@@ -18,6 +18,7 @@ import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 
 /**
@@ -39,10 +40,38 @@ public class PlayersInfoFragment extends Fragment{
     View highlightUserCorrect, highlightUserWrong,
             highlightOpponentCorrect, highlightOpponentWrong;
 
-    public ArrayList<Integer> scoreList;
-    public ArrayList<String> playerNames;
+    public ArrayList<Integer> scoreList = new ArrayList<Integer>();
+    public ArrayList<String> playerNames = new ArrayList<String>();
 
     public int intTotalQuestions = 0;
+
+    public PlayersInfoFragment() {
+        String strPlayer1Name = "Player1";
+        String strPlayer2Name = "Player2";
+        if ((Multicards.getPreferences().strUserName != null) &&
+                (!Multicards.getPreferences().strUserName.isEmpty()))
+            strPlayer1Name = Multicards.getPreferences().strUserName;
+
+        if ((Multicards.getMultiplayerInterface() != null) &&
+                (Multicards.getMultiplayerInterface().currentGame != null) &&
+                (Multicards.getMultiplayerInterface().currentGame.game.profiles != null)) {
+            HashMap<String,UserDetails> profiles = Multicards.
+                    getMultiplayerInterface().currentGame.game.profiles;
+            Iterator it = profiles.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                String strSocketID = (String) pair.getKey();
+                UserDetails userDetails = (UserDetails) pair.getValue();
+                if ((!strSocketID.equals(Multicards.getPreferences().strSocketID)) &&
+                        (userDetails.name != null) && (!userDetails.name.isEmpty()))
+                    strPlayer2Name = userDetails.name;
+                it.remove();
+            }
+        }
+
+        playerNames.add(strPlayer1Name);
+        playerNames.add(strPlayer2Name);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,11 +100,7 @@ public class PlayersInfoFragment extends Fragment{
 
         styleProgressBar = (StyleProgressBar) view.findViewById(R.id.styleprogressbar);
 
-        if ((Multicards.getPreferences().strUserName != null) &&
-                (!Multicards.getPreferences().strUserName.isEmpty()))
-            textViewPlayer1Name.setText(Multicards.getPreferences().strUserName);
-        else
-            textViewPlayer1Name.setText("Player1");
+        textViewPlayer1Name.setText(playerNames.get(0));
 
         if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE) {
             textViewPlayer2Name.setVisibility(View.GONE);
@@ -83,31 +108,11 @@ public class PlayersInfoFragment extends Fragment{
             styleProgressBar.setVisibility(View.GONE);
         } else if (Multicards.getMainActivity().intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
-            if ((Multicards.getMultiplayerInterface() != null) &&
-                    (Multicards.getMultiplayerInterface().currentGame != null) &&
-                    (Multicards.getMultiplayerInterface().currentGame.profiles != null)) {
-                HashMap<String,UserDetails> profiles = Multicards.
-                        getMultiplayerInterface().currentGame.profiles;
-                Iterator it = profiles.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry)it.next();
-                    String strSocketID = (String) pair.getKey();
-                    UserDetails userDetails = (UserDetails) pair.getValue();
-                    if ((!strSocketID.equals(Multicards.getPreferences().strSocketID)) &&
-                            (userDetails.name != null) && (!userDetails.name.isEmpty()))
-                        textViewPlayer2Name.setText(userDetails.name);
-                    it.remove();
-                }
-            }
+            textViewPlayer2Name.setText(playerNames.get(1));
             styleProgressBar.setVisibility(View.VISIBLE);
             styleProgressBar.setProgress(0, false);
         }
 
-        playerNames = new ArrayList<String>();
-        playerNames.add(textViewPlayer1Name.getText().toString());
-        playerNames.add(textViewPlayer2Name.getText().toString());
-
-        scoreList = new ArrayList<Integer>();
         scoreList.add(0);
         scoreList.add(0);
 
@@ -145,19 +150,21 @@ public class PlayersInfoFragment extends Fragment{
             else
                 Animations.scaleAnimation(imageViewPlayer2Avatar, onAnimationEnd);
         }
+    }
 
-/*
-        if (playerID == 0) {
-            if (boolCorrect)
-                Animations.alphaAnimation(highlightUserCorrect);
-            else
-                Animations.alphaAnimation(highlightUserWrong);
-        } else {
-            if (boolCorrect)
-                Animations.alphaAnimation(highlightOpponentCorrect);
-            else
-                Animations.alphaAnimation(highlightOpponentWrong);
+    public void updateGameInfo (Game game) {
+        HashMap<String,UserDetails> profiles = game.profiles;
+        Iterator it = profiles.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String strSocketID = (String) pair.getKey();
+            UserDetails userDetails = (UserDetails) pair.getValue();
+            if ((!strSocketID.equals(Multicards.getPreferences().strSocketID)) &&
+                    (userDetails.name != null) && (!userDetails.name.isEmpty()))
+                playerNames.set(1, userDetails.name);
+            it.remove();
         }
-*/
+        textViewPlayer1Name.setText(playerNames.get(0));
+        textViewPlayer2Name.setText(playerNames.get(1));
     }
 }
