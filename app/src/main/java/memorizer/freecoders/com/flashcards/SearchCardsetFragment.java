@@ -127,6 +127,8 @@ public class SearchCardsetFragment extends Fragment {
                                 public void onResponse(Object obj) {
                                     if (progressDialog != null)
                                         progressDialog.dismiss();
+                                    Multicards.getMainActivity().getFragmentManager().beginTransaction().
+                                            detach(Multicards.getMainActivity().mainMenuFragment).commit();
                                     Long setID = (Long) obj;
                                     Multicards.getMainActivity().setSetID(setID);
                                     Multicards.getMainActivity().nextFlashCard();
@@ -141,6 +143,8 @@ public class SearchCardsetFragment extends Fragment {
                             }, new CallbackInterface() {
                                 @Override
                                 public void onResponse(Object obj) {
+                                    Multicards.getMainActivity().getFragmentManager().beginTransaction().
+                                            detach(Multicards.getMainActivity().mainMenuFragment).commit();
                                     if (progressDialog != null)
                                         progressDialog.dismiss();
                                     Toast.makeText(Multicards.getMainActivity(),
@@ -155,6 +159,8 @@ public class SearchCardsetFragment extends Fragment {
                             Multicards.getCardsetPickerActivity(), "", strMessage, true);
                     progressDialog.setCancelable(true);
                 } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
+                    Multicards.getMainActivity().getFragmentManager().beginTransaction().
+                            detach(Multicards.getMainActivity().mainMenuFragment).commit();
                     Long setID = cardset.getId();
                     Multicards.getMainActivity().setSetID(setID);
                     Multicards.getMainActivity().nextFlashCard();
@@ -166,9 +172,7 @@ public class SearchCardsetFragment extends Fragment {
                     Multicards.getMainActivity().showPlayersInfo();
                     Multicards.getCardsetPickerActivity().finish();
                 } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
-                    MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
-                    Multicards.setMultiPlayerInterface(multiplayerInterface);
-                    multiplayerInterface.requestNewGame(strGID);
+                    GameplayManager.requestMultiplayerGame(strGID);
                     Multicards.getCardsetPickerActivity().finish();
                 }
             }
