@@ -42,9 +42,6 @@ public class ServerInterface {
 
     private static String LOG_TAG = "ServerInterface";
 
-    private Socket mSocketIO;
-    private String strSocketID;
-
     public static final void registerUserRequest(
             UserDetails userDetails,
             final Response.Listener<String> responseListener,
@@ -324,99 +321,6 @@ public class ServerInterface {
                         return request.getTag().toString().equals(strTag);
                     }
                 });
-    }
-
-    public void setSocketIO (Socket socket){
-        this.mSocketIO = socket;
-    }
-
-    public Socket getSocketIO() {
-        return this.mSocketIO;
-    }
-
-    public void setSocketID (String strSocketID) {
-        this.strSocketID = strSocketID;
-    }
-
-    public String getSocketID () {
-        return this.strSocketID;
-    }
-
-    public Emitter.Listener onNewSocketMessage = new Emitter.Listener() {
-        @Override
-        public void call(final Object[] args) {
-            Log.d(LOG_TAG, "Received message " + args[0].toString());
-            Multicards.getMainActivity().
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String strMessageType = "";
-                    try {
-                        strMessageType = new JSONObject(args[0].toString()).
-                                getString(Constants.JSON_SOCK_MSG_TYPE);
-                    } catch (JSONException e) {
-                        Log.d(LOG_TAG, "Json exception while processing " + args[0].toString());
-                    }
-                    Log.d(LOG_TAG, "Received socket message " + args[0]);
-                    if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_SOCKETID)) {
-                        Type type = new TypeToken<SocketMessage<String>>() {}.getType();
-                        SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
-                        String socketID = (String) socketMessage.msg_body;
-                        Multicards.getPreferences().strSocketID = socketID;
-                        Log.d(LOG_TAG, "Assigned socket ID to " + socketID);
-                    } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
-                        Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
-                        SocketMessage<Question> socketMessage = gson.fromJson(args[0].toString(), type);
-                        Multicards.getMultiplayerInterface().eventNewQuestion(socketMessage.msg_body);
-                    } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
-                        Type type = new TypeToken<SocketMessage<Game>>() {}.getType();
-                        SocketMessage<Game> socketMessage = gson.fromJson(args[0].toString(), type);
-                        Multicards.getMultiplayerInterface().currentGame =
-                                socketMessage.msg_body;
-                        Multicards.getMainActivity().showPlayersInfo();
-                    } else if (strMessageType.
-                            equals(Constants.SOCK_MSG_TYPE_PLAYER_ANSWERED)) {
-                        Type type = new TypeToken<SocketMessage<String>>() {}.getType();
-                        SocketMessage<String> socketMessage = gson.fromJson(args[0].toString(), type);
-                        String strAnswerID = socketMessage.msg_body;
-                        Multicards.getMultiplayerInterface().eventOpponentAnswer(strAnswerID);
-                    } else if (strMessageType.
-                            equals(Constants.SOCK_MSG_TYPE_GAME_END)) {
-                        MainMenuFragment mainMenuFragment = new MainMenuFragment();
-                        Multicards.getMainActivity().getFragmentManager()
-                                .beginTransaction().add(R.id.fragment_flashcard_container,
-                                mainMenuFragment).commit();
-                        Multicards.getMainActivity().getFragmentManager()
-                                .beginTransaction().remove(Multicards.getMainActivity().
-                                playersInfoFragment).commit();
-                        Multicards.getMainActivity().getFragmentManager()
-                                .beginTransaction().remove(Multicards.getMainActivity().
-                                currentFlashCardFragment).commit();
-                        InputDialogInterface.showGameOverMessage(null);
-                        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
-                    } else if (strMessageType.
-                            equals(Constants.SOCK_MSG_TYPE_ANSWER_ACCEPTED)) {
-                        Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
-                        SocketMessage<Integer> socketMessage = gson.fromJson(args[0].toString(), type);
-                        int questionID = socketMessage.msg_body;
-                        Multicards.getMultiplayerInterface().eventAnswerAccepted(questionID);
-                    } else if (strMessageType.
-                            equals(Constants.SOCK_MSG_TYPE_ANSWER_REJECTED)) {
-                        Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
-                        SocketMessage<Integer> socketMessage = gson.fromJson(args[0].toString(), type);
-                        int questionID = socketMessage.msg_body;
-                        Multicards.getMultiplayerInterface().eventAnswerRejected(questionID);
-                    }
-                }
-            });
-        }
-    };
-
-    public static final void socketAnnounceUserID (String strUserID) {
-        SocketMessage msg = new SocketMessage();
-        msg.msg_type = Constants.SOCK_MSG_TYPE_ANNOUNCE_USERID;
-        msg.msg_body = strUserID;
-        Multicards.getServerInterface().getSocketIO().emit("message", gson.toJson(msg));
     }
 
     private static HashMap<String, String> makeHTTPHeaders() {
