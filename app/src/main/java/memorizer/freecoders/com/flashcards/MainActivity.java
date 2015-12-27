@@ -27,6 +27,7 @@ import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.network.SocketInterface;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -137,20 +138,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showNextFragment (Fragment newFragment, Integer intTransitionType) {
-            if (intTransitionType == null)
-                getFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
-                                R.anim.slide_in_right, R.anim.slide_out_left)
-                        .replace(R.id.fragment_flashcard_container, newFragment)
-                        .commit();
-            else if (intTransitionType == Constants.ANIMATION_FLIP)
-                getFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.flip_right_in, R.anim.flip_right_out,
-                                R.anim.flip_left_in, R.anim.flip_left_out)
-                        .replace(R.id.fragment_flashcard_container, newFragment)
-                        .commit();
+        if (intTransitionType == null)
+            getFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                            R.anim.slide_in_right, R.anim.slide_out_left)
+                    .replace(R.id.fragment_flashcard_container, newFragment)
+                    .commit();
+        else if (intTransitionType == Constants.ANIMATION_FLIP)
+            getFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.flip_right_in, R.anim.flip_right_out,
+                            R.anim.flip_left_in, R.anim.flip_left_out)
+                    .replace(R.id.fragment_flashcard_container, newFragment)
+                    .commit();
 
         currentFragment = newFragment;
 
@@ -171,10 +172,9 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
-            mSocket.on(Constants.SOCKET_CHANNEL_NAME,
-                    Multicards.getServerInterface().onNewSocketMessage);
+            mSocket.on(Constants.SOCKET_CHANNEL_NAME, SocketInterface.onNewSocketMessage);
             mSocket.connect();
-            Multicards.getServerInterface().setSocketIO(mSocket);
+            SocketInterface.setSocketIO(mSocket);
             Multicards.getPreferences().strSocketID = mSocket.id();
             Log.d(LOG_TAG, "Connected to socket");
         } catch (URISyntaxException e) {
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, null);
         } else
-            ServerInterface.socketAnnounceUserID(Multicards.getPreferences().strUserID);
+            SocketInterface.socketAnnounceUserID(Multicards.getPreferences().strUserID);
     }
 
     public void returnToMainMenu () {
@@ -215,9 +215,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Multicards.getServerInterface().getSocketIO().disconnect();
-        Multicards.getServerInterface().getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
-                Multicards.getServerInterface().onNewSocketMessage);
+        SocketInterface.getSocketIO().disconnect();
+        SocketInterface.getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
+                SocketInterface.onNewSocketMessage);
     }
 
     @Override
