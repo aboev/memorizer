@@ -27,6 +27,8 @@ public class Multicards extends Application {
         mPreferences.loadPreferences();
 
         mServerInterface = new ServerInterface();
+
+        mMultiplayerInterface = new MultiplayerInterface();
     }
 
     public final static void setMainActivity(MainActivity mainActivity) {
