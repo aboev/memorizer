@@ -115,6 +115,8 @@ public class CardsetPickerActivity extends AppCompatActivity {
         cardsetRecentsFragment = new RecentCardsetsFragment();
         cardsetRecentsFragment.intNextFragment = intNextFragment;
 
+        Multicards.getMainActivity().intUIState = Constants.UI_STATE_CARD_PICK;
+
         Multicards.setCardsetPickerActivity(this);
     }
 
