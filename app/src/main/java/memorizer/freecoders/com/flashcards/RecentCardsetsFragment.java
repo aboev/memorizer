@@ -57,6 +57,8 @@ public class RecentCardsetsFragment extends Fragment{
                 Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
                 if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
                     Long setID = cardset.getId();
+                    Multicards.getMainActivity().getFragmentManager().beginTransaction().
+                            detach(Multicards.getMainActivity().mainMenuFragment).commit();
                     Multicards.getMainActivity().setSetID(setID);
                     Multicards.getMainActivity().nextFlashCard();
                     Multicards.getMainActivity().scoreView =
@@ -67,9 +69,7 @@ public class RecentCardsetsFragment extends Fragment{
                     Multicards.getMainActivity().showPlayersInfo();
                     Multicards.getCardsetPickerActivity().finish();
                 } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE)) {
-                    MultiplayerInterface multiplayerInterface = new MultiplayerInterface();
-                    Multicards.setMultiPlayerInterface(multiplayerInterface);
-                    multiplayerInterface.requestNewGame(strGID);
+                    GameplayManager.requestMultiplayerGame(strGID);
                     Multicards.getCardsetPickerActivity().finish();
                 }
             }
