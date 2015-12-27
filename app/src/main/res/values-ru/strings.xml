@@ -11,4 +11,6 @@
     <string name="download_cardset_dialog_message">Загрузка карточек</string>
 
     <string name="cardset_search_message">Введите название карточек</string>
+
+    <string name="waiting_opponent_dialog_message">Поиск соперников</string>
 </resources>

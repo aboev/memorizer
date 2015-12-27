@@ -13,4 +13,5 @@
     <string name="download_cardset_dialog_message">Downloading cardset</string>
 
     <string name="cardset_search_message">Enter keywords</string>
+    <string name="waiting_opponent_dialog_message">Searching for opponents</string>
 </resources>
