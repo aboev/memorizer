@@ -20,11 +20,9 @@ import java.net.URISyntaxException;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
-import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
-import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
@@ -35,14 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     public int intUIState;
 
-    public Fragment currentFragment;
-    public FlashCardFragment currentFlashCardFragment;
     public MainMenuFragment mainMenuFragment;
     public SearchCardsetFragment cardsetPickerFragment;
     public PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
-
-    TextView scoreView;
-    private Long SetID = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,70 +91,9 @@ public class MainActivity extends AppCompatActivity {
             ActiveAndroid.initialize(this);
             initApp();
 
-            mainMenuFragment = new MainMenuFragment();
-            showNextFragment(mainMenuFragment, null);
-
+            FragmentManager.showMainMenu();
         }
 
-    }
-
-    public void setSetID (Long setID) {
-        this.SetID = setID;
-    }
-
-    public Long getSetID () {
-        return this.SetID;
-    }
-
-    public void nextFlashCard(){
-        FlashCardFragment newFlashCardFragment = new FlashCardFragment();
-        showNextFragment(newFlashCardFragment, null);
-    }
-
-    public void nextFlashCard(Question question){
-        FlashCardFragment newFlashCardFragment = new FlashCardFragment();
-        newFlashCardFragment.setActionType(FlashCardFragment.INT_GIVEN_FLASHCARD);
-        FlashCard flashCard = new FlashCard();
-        flashCard.question = question.question;
-        flashCard.options = question.options;
-        flashCard.answer_id = question.answer_id;
-        newFlashCardFragment.setFlashCard(flashCard);
-        showNextFragment(newFlashCardFragment, null);
-    }
-
-    public void showAnswer(int intWrongAnswerID){
-        FlashCardFragment newFlashCardFragment = new FlashCardFragment();
-        newFlashCardFragment.setActionType(FlashCardFragment.INT_SHOW_ANSWER);
-        currentFlashCardFragment.getFlashCard().wrong_answer_id = intWrongAnswerID;
-        newFlashCardFragment.setFlashCard(currentFlashCardFragment.getFlashCard());
-        showNextFragment(newFlashCardFragment, Constants.ANIMATION_FLIP);
-    }
-
-    public void showNextFragment (Fragment newFragment, Integer intTransitionType) {
-        if (intTransitionType == null)
-            getFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
-                            R.anim.slide_in_right, R.anim.slide_out_left)
-                    .replace(R.id.fragment_flashcard_container, newFragment)
-                    .commit();
-        else if (intTransitionType == Constants.ANIMATION_FLIP)
-            getFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.flip_right_in, R.anim.flip_right_out,
-                            R.anim.flip_left_in, R.anim.flip_left_out)
-                    .replace(R.id.fragment_flashcard_container, newFragment)
-                    .commit();
-
-        currentFragment = newFragment;
-
-        if (newFragment instanceof FlashCardFragment)
-            currentFlashCardFragment = (FlashCardFragment) newFragment;
-    }
-
-    public void showPlayersInfo () {
-        getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_players_info_container, playersInfoFragment).commit();
     }
 
     public void initApp(){
@@ -200,12 +132,12 @@ public class MainActivity extends AppCompatActivity {
         mainMenuFragment = new MainMenuFragment();
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
                 mainMenuFragment).commit();
-        if (Multicards.getMainActivity().playersInfoFragment != null)
-            getFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
+        if (FragmentManager.playersInfoFragment != null)
+            getFragmentManager().beginTransaction().remove(FragmentManager.
                 playersInfoFragment).commit();
-        if (Multicards.getMainActivity().currentFlashCardFragment != null)
-            getFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
-                currentFlashCardFragment).commit();
+        if (FragmentManager.currentFlashCardFragment != null)
+            getFragmentManager().beginTransaction().
+                    remove(FragmentManager.currentFlashCardFragment).commit();
         if (Multicards.getMainActivity().cardsetPickerFragment != null)
             getSupportFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
                     cardsetPickerFragment).commit();
