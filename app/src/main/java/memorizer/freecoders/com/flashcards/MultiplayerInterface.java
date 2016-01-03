@@ -67,24 +67,21 @@ public class MultiplayerInterface {
     public void eventAnswerAccepted (int questionID) {
         if ((currentGame.currentQuestion != null) &&
                 (currentGame.currentQuestion.question_id == questionID)) {
-            Multicards.getMainActivity().currentFlashCardFragment.
-                answerHighlight(currentAnswer, false, null);
+            FragmentManager.currentFlashCardFragment.answerHighlight(currentAnswer, false, null);
             CallbackInterface onAnimationEnd = new CallbackInterface() {
                 @Override
                 public void onResponse(Object obj) {
                     invokeEvent(EVENT_USER_WAIT, "");
                 }
             };
-            if (Multicards.getMainActivity().currentFlashCardFragment.mFlashCard.answer_id
+            if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                     == currentAnswer) {
-                Multicards.getMainActivity().playersInfoFragment.increaseScore(0);
-                Multicards.getMainActivity().playersInfoFragment.highlightAnswer(0, true,
-                        onAnimationEnd);
+                FragmentManager.playersInfoFragment.increaseScore(0);
+                FragmentManager.playersInfoFragment.highlightAnswer(0, true, onAnimationEnd);
             } else {
-                Multicards.getMainActivity().playersInfoFragment.highlightAnswer(0, false,
-                        onAnimationEnd);
+                FragmentManager.playersInfoFragment.highlightAnswer(0, false, onAnimationEnd);
             }
-            Multicards.getMainActivity().playersInfoFragment.updateScore();
+            FragmentManager.playersInfoFragment.updateScore();
             currentGame.strUserStatus = Constants.PLAYER_STATUS_ANSWERED;
         }
         currentGame.boolAnswerConfirmed = true;
@@ -97,9 +94,9 @@ public class MultiplayerInterface {
 
     public void eventOpponentAnswer(String strAnswerID) {
         Integer intAnswerID = Integer.valueOf(strAnswerID);
-        Multicards.getMainActivity().currentFlashCardFragment.
-            answerHighlight(intAnswerID, true, null);
-        if (Multicards.getMainActivity().currentFlashCardFragment.mFlashCard.answer_id
+
+        FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true, null);
+        if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                 == intAnswerID) {
             CallbackInterface onAnimationEnd = null;
             if (currentGame.boolAnswerConfirmed ||
@@ -110,20 +107,16 @@ public class MultiplayerInterface {
                         invokeEvent(EVENT_USER_WAIT, "");
                     }
                 };
-                Multicards.getMainActivity().currentFlashCardFragment.
-                        setEmptyOnFlashcardItemClickListener();
+                FragmentManager.currentFlashCardFragment.setEmptyOnFlashcardItemClickListener();
             }
-            Multicards.getMainActivity().playersInfoFragment.highlightAnswer(1, true,
-                    onAnimationEnd);
-            Multicards.getMainActivity().playersInfoFragment.increaseScore(1);
-            Multicards.getMainActivity().playersInfoFragment.updateScore();
+            FragmentManager.playersInfoFragment.highlightAnswer(1, true, onAnimationEnd);
+            FragmentManager.playersInfoFragment.increaseScore(1);
+            FragmentManager.playersInfoFragment.updateScore();
         } else
-            Multicards.getMainActivity().playersInfoFragment.highlightAnswer(1, false, null);
+            FragmentManager.playersInfoFragment.highlightAnswer(1, false, null);
     }
 
     public void eventNewQuestion (Question question) {
-        Multicards.getMainActivity().nextFlashCard(question);
-
         SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_THINKING);
 
         if (currentGame == null)
@@ -131,7 +124,7 @@ public class MultiplayerInterface {
         currentGame.setCurrentQuestion(question);
         currentGame.strUserStatus = Constants.PLAYER_STATUS_THINKING;
         currentGame.boolAnswerConfirmed = false;
-        Multicards.getMainActivity().playersInfoFragment.updateScore();
+        FragmentManager.playersInfoFragment.updateScore();
     }
 
     public void setGameData(Game game, String strGID) {
