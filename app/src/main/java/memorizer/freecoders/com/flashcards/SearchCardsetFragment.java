@@ -99,20 +99,6 @@ public class SearchCardsetFragment extends Fragment {
         });
 
         buttonCardsetPicker = (Button) view.findViewById(R.id.buttonCardSetPicker);
-        buttonCardsetPicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Multicards.getMainActivity().nextFlashCard();
-
-                Multicards.getMainActivity().scoreView =
-                        (TextView) Multicards.getMainActivity().
-                                findViewById(R.id.scoreView);
-
-                Multicards.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
-
-                Multicards.getMainActivity().showPlayersInfo();
-            }
-        });
 
         cardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -127,17 +113,8 @@ public class SearchCardsetFragment extends Fragment {
                                 public void onResponse(Object obj) {
                                     if (progressDialog != null)
                                         progressDialog.dismiss();
-                                    Multicards.getMainActivity().getFragmentManager().beginTransaction().
-                                            detach(Multicards.getMainActivity().mainMenuFragment).commit();
                                     Long setID = (Long) obj;
-                                    Multicards.getMainActivity().setSetID(setID);
-                                    Multicards.getMainActivity().nextFlashCard();
-                                    Multicards.getMainActivity().scoreView =
-                                            (TextView) Multicards.getMainActivity().
-                                                    findViewById(R.id.scoreView);
-                                    Multicards.getMainActivity().intUIState =
-                                            Constants.UI_STATE_TRAIN_MODE;
-                                    Multicards.getMainActivity().showPlayersInfo();
+                                    GameplayManager.startSingleplayerGame(setID);
                                     Multicards.getCardsetPickerActivity().finish();
                                 }
                             }, new CallbackInterface() {
@@ -159,17 +136,7 @@ public class SearchCardsetFragment extends Fragment {
                             Multicards.getCardsetPickerActivity(), "", strMessage, true);
                     progressDialog.setCancelable(true);
                 } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
-                    Multicards.getMainActivity().getFragmentManager().beginTransaction().
-                            detach(Multicards.getMainActivity().mainMenuFragment).commit();
-                    Long setID = cardset.getId();
-                    Multicards.getMainActivity().setSetID(setID);
-                    Multicards.getMainActivity().nextFlashCard();
-                    Multicards.getMainActivity().scoreView =
-                            (TextView) Multicards.getMainActivity().
-                                    findViewById(R.id.scoreView);
-                    Multicards.getMainActivity().intUIState =
-                            Constants.UI_STATE_TRAIN_MODE;
-                    Multicards.getMainActivity().showPlayersInfo();
+                    GameplayManager.startSingleplayerGame(cardset.getId());
                     Multicards.getCardsetPickerActivity().finish();
                 } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
                     GameplayManager.requestMultiplayerGame(strGID);
