@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
 import memorizer.freecoders.com.flashcards.common.Animations;
@@ -135,6 +136,13 @@ public class PlayersInfoFragment extends Fragment{
             }
         }
 
+        if (playerNames.size() > 1) {
+            if (textViewPlayer1Name != null)
+                textViewPlayer1Name.setText(playerNames.get(0));
+            if (textViewPlayer2Name != null)
+                textViewPlayer2Name.setText(playerNames.get(1));
+        }
+
     }
 
     public void increaseScore (int playerID) {
@@ -164,7 +172,9 @@ public class PlayersInfoFragment extends Fragment{
                 playerNames.set(1, userDetails.name);
             it.remove();
         }
-        textViewPlayer1Name.setText(playerNames.get(0));
-        textViewPlayer2Name.setText(playerNames.get(1));
+        if (textViewPlayer1Name != null)
+            textViewPlayer1Name.setText(playerNames.get(0));
+        if (textViewPlayer2Name != null)
+            textViewPlayer2Name.setText(playerNames.get(1));
     }
 }
