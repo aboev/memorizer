@@ -9,6 +9,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
@@ -95,13 +96,12 @@ public class InputDialogInterface {
 
         String strMessage = "Game over. ";
 
-        if (Multicards.getMainActivity().playersInfoFragment.scoreList.get(0) >
-                Multicards.getMainActivity().playersInfoFragment.scoreList.get(1) )
+        if (FragmentManager.playersInfoFragment.scoreList.get(0) >
+                FragmentManager.playersInfoFragment.scoreList.get(1) )
             strMessage = strMessage + "You win!";
         else
             strMessage = strMessage +
-                    Multicards.getMainActivity().
-                    playersInfoFragment.playerNames.get(1).toString() + " win";
+                    FragmentManager.playersInfoFragment.playerNames.get(1).toString() + " win";
 
         Context context = Multicards.getMainActivity();
 
