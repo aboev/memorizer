@@ -3,13 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:paddingBottom="20dp"
-        android:textSize="30sp"/>
+    android:orientation="vertical"
+    android:background="#1e99d7">
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:src="@drawable/logo_title"/>
     <Button
         android:id="@+id/buttonTrain"
         android:layout_width="200dp"
