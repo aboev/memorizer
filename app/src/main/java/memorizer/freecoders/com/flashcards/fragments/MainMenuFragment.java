@@ -1,4 +1,4 @@
-package memorizer.freecoders.com.flashcards;
+package memorizer.freecoders.com.flashcards.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
+import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 

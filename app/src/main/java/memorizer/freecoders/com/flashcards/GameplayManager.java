@@ -2,7 +2,6 @@ package memorizer.freecoders.com.flashcards;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.util.Log;
 
 import com.android.volley.Response;
 
@@ -11,6 +10,7 @@ import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;

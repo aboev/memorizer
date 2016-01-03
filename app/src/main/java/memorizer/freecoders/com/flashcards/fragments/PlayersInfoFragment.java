@@ -1,4 +1,4 @@
-package memorizer.freecoders.com.flashcards;
+package memorizer.freecoders.com.flashcards.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;

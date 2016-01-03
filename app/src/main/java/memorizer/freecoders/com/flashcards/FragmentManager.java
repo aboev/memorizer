@@ -1,10 +1,12 @@
 package memorizer.freecoders.com.flashcards;
 
 import android.app.Fragment;
-import android.util.Log;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
+import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
+import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
 
 /**
  * Created by alex-mac on 27.12.15.

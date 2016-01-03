@@ -1,4 +1,4 @@
-package memorizer.freecoders.com.flashcards;
+package memorizer.freecoders.com.flashcards.fragments;
 
 
 import android.app.ProgressDialog;
@@ -23,6 +23,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import memorizer.freecoders.com.flashcards.GameplayManager;
+import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -41,7 +43,7 @@ public class SearchCardsetFragment extends Fragment {
     CardsetListAdapter cardSetListAdapter;
     EditText inputEditText;
     Button buttonCardsetPicker;
-    int intNextFragment;
+    public int intNextFragment;
 
     public ProgressDialog progressDialog;
 

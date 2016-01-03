@@ -1,4 +1,4 @@
-package memorizer.freecoders.com.flashcards;
+package memorizer.freecoders.com.flashcards.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.AutoResizeTextView;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
@@ -43,7 +44,7 @@ public class FlashCardFragment extends Fragment {
     public FlashCard mFlashCard;
     public CallbackInterface onAnswerPick;
     ListView flashCardsListView;
-    ListViewAdapter listViewAdapter;
+    public ListViewAdapter listViewAdapter;
     AutoResizeTextView questionTextView;
     private int intActionType = INT_LOCAL_FLASHCARD;
 

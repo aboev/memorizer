@@ -1,7 +1,6 @@
 package memorizer.freecoders.com.flashcards;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.Response;
@@ -23,6 +21,9 @@ import io.socket.client.IO;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
+import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
+import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
+import memorizer.freecoders.com.flashcards.fragments.SearchCardsetFragment;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;

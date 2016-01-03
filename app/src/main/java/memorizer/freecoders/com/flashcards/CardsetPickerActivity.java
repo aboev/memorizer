@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.fragments.RecentCardsetsFragment;
+import memorizer.freecoders.com.flashcards.fragments.SearchCardsetFragment;
 
 public class CardsetPickerActivity extends AppCompatActivity {
 

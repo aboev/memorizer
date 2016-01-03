@@ -1,4 +1,4 @@
-package memorizer.freecoders.com.flashcards;
+package memorizer.freecoders.com.flashcards.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import memorizer.freecoders.com.flashcards.GameplayManager;
+import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
@@ -34,7 +36,7 @@ public class RecentCardsetsFragment extends Fragment{
 
     ListView cardSetListView;
     CardsetListAdapter cardSetListAdapter;
-    int intNextFragment;
+    public int intNextFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
