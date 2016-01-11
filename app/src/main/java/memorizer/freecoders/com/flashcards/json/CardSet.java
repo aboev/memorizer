@@ -7,4 +7,6 @@ public class CardSet {
     String id;
     String name;
     String language;
+    String[] likes = new String[]{};
+    Integer like_count;
 }
