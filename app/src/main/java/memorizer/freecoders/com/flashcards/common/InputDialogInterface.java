@@ -96,12 +96,12 @@ public class InputDialogInterface {
 
         String strMessage = "Game over. ";
 
-        if (FragmentManager.playersInfoFragment.scoreList.get(0) >
-                FragmentManager.playersInfoFragment.scoreList.get(1) )
+        if (FragmentManager.playersInfoFragment.player1Score >
+                FragmentManager.playersInfoFragment.player2Score )
             strMessage = strMessage + "You win!";
         else
             strMessage = strMessage +
-                    FragmentManager.playersInfoFragment.playerNames.get(1).toString() + " win";
+                    FragmentManager.playersInfoFragment.player2Name + " win";
 
         Context context = Multicards.getMainActivity();
 
