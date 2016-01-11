@@ -2,10 +2,14 @@ package memorizer.freecoders.com.flashcards.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.squareup.okhttp.internal.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
@@ -21,6 +26,8 @@ import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
+import memorizer.freecoders.com.flashcards.network.StringRequest;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 05.12.15.
@@ -41,38 +48,12 @@ public class PlayersInfoFragment extends Fragment{
     View highlightUserCorrect, highlightUserWrong,
             highlightOpponentCorrect, highlightOpponentWrong;
 
-    public ArrayList<Integer> scoreList = new ArrayList<Integer>();
-    public ArrayList<String> playerNames = new ArrayList<String>();
+    public String player1Name = "";
+    public String player2Name = "";
+    public Integer player1Score = 0;
+    public Integer player2Score = 0;
 
     public int intTotalQuestions = 0;
-
-    public PlayersInfoFragment() {
-        String strPlayer1Name = "Player1";
-        String strPlayer2Name = "Player2";
-        if ((Multicards.getPreferences().strUserName != null) &&
-                (!Multicards.getPreferences().strUserName.isEmpty()))
-            strPlayer1Name = Multicards.getPreferences().strUserName;
-
-        if ((Multicards.getMultiplayerInterface() != null) &&
-                (Multicards.getMultiplayerInterface().currentGame != null) &&
-                (Multicards.getMultiplayerInterface().currentGame.game.profiles != null)) {
-            HashMap<String,UserDetails> profiles = Multicards.
-                    getMultiplayerInterface().currentGame.game.profiles;
-            Iterator it = profiles.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                String strSocketID = (String) pair.getKey();
-                UserDetails userDetails = (UserDetails) pair.getValue();
-                if ((!strSocketID.equals(Multicards.getPreferences().strSocketID)) &&
-                        (userDetails.name != null) && (!userDetails.name.isEmpty()))
-                    strPlayer2Name = userDetails.name;
-                it.remove();
-            }
-        }
-
-        playerNames.add(strPlayer1Name);
-        playerNames.add(strPlayer2Name);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,52 +82,74 @@ public class PlayersInfoFragment extends Fragment{
 
         styleProgressBar = (StyleProgressBar) view.findViewById(R.id.styleprogressbar);
 
-        textViewPlayer1Name.setText(playerNames.get(0));
-
         if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE) {
             textViewPlayer2Name.setVisibility(View.GONE);
             imageViewPlayer2Avatar.setVisibility(View.GONE);
             styleProgressBar.setVisibility(View.GONE);
         } else if (Multicards.getMainActivity().intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
-            textViewPlayer2Name.setText(playerNames.get(1));
+            textViewPlayer2Name.setText(player2Name);
             styleProgressBar.setVisibility(View.VISIBLE);
             styleProgressBar.setProgress(0, false);
         }
 
-        scoreList.add(0);
-        scoreList.add(0);
+        initInfo();
+        updateInfo();
 
-        updateScore();
-
-        intTotalQuestions = 0;
+        textViewPlayer1Name.setText(player1Name);
+        textViewPlayer2Name.setText(player2Name);
 
         return view;
     }
 
-    public void updateScore()
+    public void initInfo() {
+        player1Name = "Player 1";
+        player1Name = "Player 2";
+
+        if ((Multicards.getPreferences().strUserName != null) &&
+                (!Multicards.getPreferences().strUserName.isEmpty()))
+            player1Name = Multicards.getPreferences().strUserName;
+
+        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+            Game currentGame = Multicards.getMultiplayerInterface().currentGame.game;
+            if (Utils.extractOpponentProfile(currentGame.profiles) != null)
+                player2Name = Utils.extractOpponentProfile(currentGame.profiles).name;
+        }
+
+        player1Score = 0;
+        player2Score = 0;
+
+        intTotalQuestions = 0;
+    }
+
+    public void updateInfo()
     {
-        if ( (scoreList != null) && ( scoreList.size() > 0) ) {
-            if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
-                scoreView.setText("Score: " + scoreList.get(0) + "/" + intTotalQuestions);
-            else if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
-                scoreView.setText("Score: " + scoreList.get(0) + "/" + scoreList.get(1));
-                int progress = 100 * scoreList.get(0) / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
+        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+            scoreView.setText("Score: " + player1Score + "/" + intTotalQuestions);
+        else if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+            HashMap<String, Integer> scores = Multicards.getMultiplayerInterface().currentScores;
+            if (scores != null) {
+                player1Score = scores.get(Multicards.getPreferences().strSocketID);
+                player2Score = Utils.extractOpponentScore(scores);
+            }
+
+            Log.d(LOG_TAG, "Socket id "+Multicards.getPreferences().strSocketID);
+            Log.d(LOG_TAG, "Setting scores "+player1Score+"-"+player2Score);
+            if ((scoreView != null) && (player1Score != null)) {
+                Log.d(LOG_TAG, "Setting scores "+player1Score+"-"+player2Score);
+                scoreView.setText("Score: " + player1Score + "/" + player2Score);
+                int progress = 100 * player1Score / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
                 styleProgressBar.setProgress(progress, true);
             }
         }
-
-        if (playerNames.size() > 1) {
-            if (textViewPlayer1Name != null)
-                textViewPlayer1Name.setText(playerNames.get(0));
-            if (textViewPlayer2Name != null)
-                textViewPlayer2Name.setText(playerNames.get(1));
-        }
-
     }
 
-    public void increaseScore (int playerID) {
-        scoreList.set(playerID, scoreList.get(playerID) + 1);
+    public void eventPlayer1Answer (Boolean boolAnswerCorrect) {
+        if (boolAnswerCorrect) {
+            intTotalQuestions++;
+            player1Score++;
+        } else
+            intTotalQuestions++;
     }
 
     public void highlightAnswer (int playerID, Boolean boolCorrect, CallbackInterface onAnimationEnd) {
@@ -158,23 +161,5 @@ public class PlayersInfoFragment extends Fragment{
             else
                 Animations.scaleAnimation(imageViewPlayer2Avatar, onAnimationEnd);
         }
-    }
-
-    public void updateGameInfo (Game game) {
-        HashMap<String,UserDetails> profiles = game.profiles;
-        Iterator it = profiles.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            String strSocketID = (String) pair.getKey();
-            UserDetails userDetails = (UserDetails) pair.getValue();
-            if ((!strSocketID.equals(Multicards.getPreferences().strSocketID)) &&
-                    (userDetails.name != null) && (!userDetails.name.isEmpty()))
-                playerNames.set(1, userDetails.name);
-            it.remove();
-        }
-        if (textViewPlayer1Name != null)
-            textViewPlayer1Name.setText(playerNames.get(0));
-        if (textViewPlayer2Name != null)
-            textViewPlayer2Name.setText(playerNames.get(1));
     }
 }
