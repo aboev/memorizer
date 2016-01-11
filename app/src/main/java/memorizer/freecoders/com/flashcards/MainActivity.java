@@ -106,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
         try {
             Socket mSocket = IO.socket(Constants.SOCKET_SERVER_URL);
             mSocket.on(Constants.SOCKET_CHANNEL_NAME, SocketInterface.onNewSocketMessage);
+            mSocket.on("connect", SocketInterface.onConnect);
             mSocket.connect();
             SocketInterface.setSocketIO(mSocket);
-            Multicards.getPreferences().strSocketID = mSocket.id();
-            Log.d(LOG_TAG, "Connected to socket");
+            Log.d(LOG_TAG, "Connecting to socket");
         } catch (URISyntaxException e) {
             Log.d(LOG_TAG, "Failed to connect to socket");
         }
