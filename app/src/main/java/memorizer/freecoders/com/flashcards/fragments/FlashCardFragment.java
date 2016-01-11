@@ -34,9 +34,6 @@ public class FlashCardFragment extends Fragment {
     public final static int INT_LOCAL_FLASHCARD = 1; // Show new flashcard (default)
     public final static int INT_SERVER_FLASHCARD = 2; // Show server flashcard
 
-    public static int numCorrectAnswers=0;
-    public static int numTotalAnswers=0;
-
     private View view;
 
     private AdapterView.OnItemClickListener onFlashCardItemClickListener;
@@ -117,56 +114,21 @@ public class FlashCardFragment extends Fragment {
         flashCardsListView = (ListView) view.findViewById(R.id.ListView_FlashCard);
         questionTextView = (AutoResizeTextView) view.findViewById(R.id.TextView_Question);
         listViewAdapter = new ListViewAdapter(view.getContext());
-        //Multicards.getMainActivity().updateScore();
 
-        if (intActionType == INT_LOCAL_FLASHCARD) {
-            questionTextView.setText(mFlashCard.question);
-            listViewAdapter.setValues(mFlashCard.options);
+        questionTextView.setText(mFlashCard.question);
+        listViewAdapter.setValues(mFlashCard.options);
+        flashCardsListView.setAdapter(listViewAdapter);
+        flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                onAnswerPick.onResponse(position);
+            }
+        });
 
-            flashCardsListView.setAdapter(listViewAdapter);
-
-            flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    onAnswerPick.onResponse(position);
-                }
-            });
-
-            Multicards.getMainActivity().playersInfoFragment.intTotalQuestions++;
-        } else if (intActionType == INT_SHOW_ANSWER) {
-            questionTextView.setText(mFlashCard.question);
-            listViewAdapter.setValues(mFlashCard.options);
+        if (intActionType == INT_SHOW_ANSWER) {
             listViewAdapter.setCorrectAnswer(mFlashCard.answer_id);
             listViewAdapter.setWrongAnswer(mFlashCard.wrong_answer_id);
-
-            flashCardsListView.setAdapter(listViewAdapter);
-
-            flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    onAnswerPick.onResponse(position);
-                }
-            });
-
-        } else if (intActionType == INT_SERVER_FLASHCARD) {
-            questionTextView.setText(mFlashCard.question);
-            listViewAdapter.setValues(mFlashCard.options);
-
-            flashCardsListView.setAdapter(listViewAdapter);
-
-            flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    Multicards.getMultiplayerInterface().invokeEvent(
-                            Multicards.getMultiplayerInterface().EVENT_USER_ANSWER,
-                            String.valueOf(position));
-                    setEmptyOnFlashcardItemClickListener();
-                }
-            });
-            Multicards.getMainActivity().playersInfoFragment.intTotalQuestions++;
         }
 
         return true;
