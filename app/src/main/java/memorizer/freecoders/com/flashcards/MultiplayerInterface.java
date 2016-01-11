@@ -2,11 +2,13 @@ package memorizer.freecoders.com.flashcards;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -29,6 +31,7 @@ public class MultiplayerInterface {
 
     public GameData currentGame;
     private int currentAnswer;
+    public HashMap<String, Integer> currentScores;
 
     Gson gson = new Gson();
 
@@ -76,12 +79,10 @@ public class MultiplayerInterface {
             };
             if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                     == currentAnswer) {
-                FragmentManager.playersInfoFragment.increaseScore(0);
                 FragmentManager.playersInfoFragment.highlightAnswer(0, true, onAnimationEnd);
             } else {
                 FragmentManager.playersInfoFragment.highlightAnswer(0, false, onAnimationEnd);
             }
-            FragmentManager.playersInfoFragment.updateScore();
             currentGame.strUserStatus = Constants.PLAYER_STATUS_ANSWERED;
         }
         currentGame.boolAnswerConfirmed = true;
@@ -110,13 +111,11 @@ public class MultiplayerInterface {
                 FragmentManager.currentFlashCardFragment.setEmptyOnFlashcardItemClickListener();
             }
             FragmentManager.playersInfoFragment.highlightAnswer(1, true, onAnimationEnd);
-            FragmentManager.playersInfoFragment.increaseScore(1);
-            FragmentManager.playersInfoFragment.updateScore();
         } else
             FragmentManager.playersInfoFragment.highlightAnswer(1, false, null);
     }
 
-    public void eventNewQuestion (Question question) {
+    public void eventNewQuestion (Question question, HashMap<String, Integer> scores) {
         SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_THINKING);
 
         if (currentGame == null)
@@ -124,7 +123,8 @@ public class MultiplayerInterface {
         currentGame.setCurrentQuestion(question);
         currentGame.strUserStatus = Constants.PLAYER_STATUS_THINKING;
         currentGame.boolAnswerConfirmed = false;
-        FragmentManager.playersInfoFragment.updateScore();
+        currentScores = scores;
+        FragmentManager.playersInfoFragment.updateInfo();
     }
 
     public void setGameData(Game game, String strGID) {
