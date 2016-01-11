@@ -10,15 +10,18 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
+import memorizer.freecoders.com.flashcards.json.SocketMessageExtra;
 
 /**
  * Created by alex-mac on 27.12.15.
@@ -64,23 +67,19 @@ public class SocketInterface {
                             Log.d(LOG_TAG, "Json exception while processing " + args[0].toString());
                         }
                         Log.d(LOG_TAG, "Received socket message " + args[0]);
-                        if (strMessageType.equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_SOCKETID)) {
-                            Type type = new TypeToken<SocketMessage<String>>() {}.getType();
-                            SocketMessage<String> socketMessage =
-                                    gson.fromJson(args[0].toString(), type);
-                            String socketID = (String) socketMessage.msg_body;
-                            msgAnnounceSocketID(socketID);
-                        } else if (strMessageType.
+                        if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
-                            Type type = new TypeToken<SocketMessage<Question>>() {}.getType();
-                            SocketMessage<Question> socketMessage =
+                            Type type = new TypeToken<SocketMessageExtra<Question,
+                                    HashMap<String, Integer>> >() {}.getType();
+                            SocketMessageExtra<Question, HashMap<String, Integer>> socketMessage =
                                     gson.fromJson(args[0].toString(), type);
                             Question question = socketMessage.msg_body;
-                            msgNewQuestion(question);
+                            HashMap<String, Integer> scores = socketMessage.msg_extra;
+                            msgNewQuestion(question, scores);
                         } else if (strMessageType.equals(Constants.SOCK_MSG_TYPE_GAME_START)) {
-                            if (Multicards.getMainActivity().mainMenuFragment.isAdded())
+                            if (FragmentManager.mainMenuFragment.isAdded())
                                 Multicards.getMainActivity().getFragmentManager().
-                                        beginTransaction().remove(Multicards.getMainActivity().
+                                        beginTransaction().remove(FragmentManager.
                                         mainMenuFragment).commit();
                             Type type = new TypeToken<SocketMessage<Game>>() {}.getType();
                             SocketMessage<Game> socketMessage =
@@ -117,6 +116,14 @@ public class SocketInterface {
         }
     };
 
+    public final static Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(final Object[] args) {
+            Multicards.getPreferences().strSocketID = mSocketIO.id();
+            Log.d(LOG_TAG, "Connected to socket, session id = " + mSocketIO.id());
+        }
+    };
+
     public static final void socketAnnounceUserID (String strUserID) {
         SocketMessage msg = new SocketMessage();
         msg.msg_type = Constants.SOCK_MSG_TYPE_ANNOUNCE_USERID;
@@ -129,8 +136,8 @@ public class SocketInterface {
         Log.d(LOG_TAG, "Assigned socket ID to " + strSocketID);
     }
 
-    private static void msgNewQuestion (Question question) {
-        GameplayManager.newServerQuestion(question);
+    private static void msgNewQuestion (Question question, HashMap<String, Integer> scores) {
+        GameplayManager.newServerQuestion(question, scores);
     }
 
     private static void msgGameStart (Game game) {
