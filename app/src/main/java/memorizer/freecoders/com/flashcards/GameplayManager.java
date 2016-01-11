@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 
 import com.android.volley.Response;
 
+import java.util.HashMap;
+
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -40,7 +42,7 @@ public class GameplayManager {
     public static final void quitSingleplayerGame() {
     }
 
-    public static final void newServerQuestion(Question question) {
+    public static final void newServerQuestion(Question question, HashMap<String, Integer> scores) {
         if (Multicards.getMainActivity().intUIState != Constants.UI_STATE_MULTIPLAYER_MODE) {
             FragmentManager.hideMainMenu();
             FragmentManager.hideCardsetPickerActivity();
@@ -54,12 +56,22 @@ public class GameplayManager {
         mFlashcard.options = question.options;
         mFlashcard.answer_id = question.answer_id;
 
-        FlashCardFragment mFlashcardFragment = new FlashCardFragment();
-        mFlashcardFragment.setActionType(FlashCardFragment.INT_SERVER_FLASHCARD);
+        final FlashCardFragment mFlashcardFragment = new FlashCardFragment();
         mFlashcardFragment.setFlashCard(mFlashcard);
+        mFlashcardFragment.setActionType(FlashCardFragment.INT_SERVER_FLASHCARD);
+        mFlashcardFragment.setOnAnswerPickListener(new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                Integer position = (Integer) obj;
+                Multicards.getMultiplayerInterface().invokeEvent(
+                        Multicards.getMultiplayerInterface().EVENT_USER_ANSWER,
+                        String.valueOf(position));
+                mFlashcardFragment.setEmptyOnFlashcardItemClickListener();
+            }
+        });
         FragmentManager.showFragment(mFlashcardFragment, null);
 
-        Multicards.getMultiplayerInterface().eventNewQuestion(question);
+        Multicards.getMultiplayerInterface().eventNewQuestion(question, scores);
     }
 
     public static final void newLocalQuestion (Question question) {
@@ -71,18 +83,17 @@ public class GameplayManager {
             @Override
             public void onResponse(Object obj) {
                 int position = (int) obj;
-                FragmentManager.playersInfoFragment.intTotalQuestions++;
                 if (mFlashcardFragment.mFlashCard.answer_id == position) {
                     mFlashcardFragment.listViewAdapter.
                             setCorrectAnswer(mFlashcardFragment.mFlashCard.answer_id);
                     mFlashcardFragment.listViewAdapter.notifyDataSetChanged();
-                    mFlashcardFragment.numCorrectAnswers++;
-                    FragmentManager.playersInfoFragment.updateScore();
+                    FragmentManager.playersInfoFragment.eventPlayer1Answer(true);
+                    FragmentManager.playersInfoFragment.updateInfo();
                     newLocalQuestion(null);
-                    FragmentManager.playersInfoFragment.increaseScore(0);
                     FragmentManager.playersInfoFragment.highlightAnswer(0, true, null);
                 } else {
-                    FragmentManager.playersInfoFragment.updateScore();
+                    FragmentManager.playersInfoFragment.eventPlayer1Answer(false);
+                    FragmentManager.playersInfoFragment.updateInfo();
                     mFlashcardFragment.wrongAnswerNotify();
                     showAnswer(position);
                     FragmentManager.playersInfoFragment.highlightAnswer(0, false, null);
@@ -170,10 +181,10 @@ public class GameplayManager {
     }
 
     public static final void startMultiplayerGame(Game game) {
+        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
         Multicards.getMultiplayerInterface().setGameData(game, null);
         FragmentManager.showPlayersInfo();
-        FragmentManager.playersInfoFragment.updateGameInfo(game);
-
+        FragmentManager.playersInfoFragment.initInfo();
     }
 
     public static final void quitMultilayerGame() {
