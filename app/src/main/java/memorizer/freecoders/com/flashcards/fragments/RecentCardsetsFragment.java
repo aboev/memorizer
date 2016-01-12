@@ -49,13 +49,13 @@ public class RecentCardsetsFragment extends Fragment{
         cardSetListAdapter = new CardsetListAdapter(Multicards.getMainActivity());
         cardSetListView.setAdapter(cardSetListAdapter);
 
-        cardSetListAdapter.setValues(fetchRecentFlashcards());
+        cardSetListAdapter.setQValues(fetchRecentFlashcards());
         cardSetListAdapter.notifyDataSetChanged();
 
         cardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
+                String strGID = String.valueOf(cardSetListAdapter.qvalues.get(position).gid);
                 Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
                 if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
                     Long setID = cardset.getId();
