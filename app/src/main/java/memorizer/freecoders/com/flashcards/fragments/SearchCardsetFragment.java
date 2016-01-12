@@ -30,6 +30,7 @@ import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
+import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletSearchResult;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -40,8 +41,11 @@ public class SearchCardsetFragment extends Fragment {
     private static String LOG_TAG = "SearchCardsetFragment";
 
     ListView cardSetListView;
+    ListView popularCardSetListView;
     CardsetListAdapter cardSetListAdapter;
+    CardsetListAdapter popularCardSetListAdapter;
     EditText inputEditText;
+    TextView popularCardsetsTextView;
     Button buttonCardsetPicker;
     public int intNextFragment;
 
@@ -57,6 +61,11 @@ public class SearchCardsetFragment extends Fragment {
         setRetainInstance(true);
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search_cardset, container, false);
+
+        popularCardsetsTextView = (TextView) view.findViewById(R.id.textViewPopularCardsets);
+        popularCardSetListView = (ListView) view.findViewById(R.id.listViewPopularCardsets);
+        popularCardSetListAdapter = new CardsetListAdapter(Multicards.getMainActivity());
+        popularCardSetListView.setAdapter(popularCardSetListAdapter);
 
         cardSetListView = (ListView) view.findViewById(R.id.listViewCardSetPicker);
         cardSetListAdapter = new CardsetListAdapter(Multicards.getMainActivity());
@@ -92,7 +101,7 @@ public class SearchCardsetFragment extends Fragment {
                         new Response.Listener<QuizletSearchResult>() {
                             @Override
                             public void onResponse(QuizletSearchResult response) {
-                                cardSetListAdapter.setValues(response.sets);
+                                cardSetListAdapter.setQValues(response.sets);
                                 cardSetListAdapter.notifyDataSetChanged();
                             }
                         }, null);
@@ -105,7 +114,7 @@ public class SearchCardsetFragment extends Fragment {
         cardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String strSetID = String.valueOf(cardSetListAdapter.values.get(position).id);
+                String strSetID = String.valueOf(cardSetListAdapter.qvalues.get(position).id);
                 String strGID = "quizlet_" + strSetID;
                 Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
                 if ((cardset == null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
@@ -149,7 +158,68 @@ public class SearchCardsetFragment extends Fragment {
 
         pendingRequests = new ArrayList<String>();
 
+        populateView();
+
         return view;
+    }
+
+    public void populateView() {
+        ServerInterface.getPopularCardsetsRequest(new Response.Listener<ArrayList<CardSet>>() {
+            @Override
+            public void onResponse(ArrayList<CardSet> response) {
+                if (response.size()>0) {
+                    Log.d(LOG_TAG, "Received " + response.size() + " items");
+                    popularCardsetsTextView.setVisibility(View.VISIBLE);
+                    popularCardSetListView.setVisibility(View.VISIBLE);
+                    popularCardSetListAdapter.setValues(response);
+                    popularCardSetListAdapter.notifyDataSetChanged();
+                    popularCardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            String strGID = String.valueOf(
+                                    popularCardSetListAdapter.values.get(position).gid);
+                            Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+                            if ((cardset == null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
+                                Multicards.getFlashCardsDAO().importFromWeb(strGID,
+                                        new CallbackInterface() {
+                                            @Override
+                                            public void onResponse(Object obj) {
+                                                if (progressDialog != null)
+                                                    progressDialog.dismiss();
+                                                Long setID = (Long) obj;
+                                                GameplayManager.startSingleplayerGame(setID);
+                                                Multicards.getCardsetPickerActivity().finish();
+                                            }
+                                        }, new CallbackInterface() {
+                                            @Override
+                                            public void onResponse(Object obj) {
+                                                Multicards.getMainActivity().getFragmentManager().beginTransaction().
+                                                        detach(Multicards.getMainActivity().mainMenuFragment).commit();
+                                                if (progressDialog != null)
+                                                    progressDialog.dismiss();
+                                                Toast.makeText(Multicards.getMainActivity(),
+                                                        "Failed to fetch cardset",
+                                                        Toast.LENGTH_LONG).show();
+                                                Multicards.getMainActivity().returnToMainMenu();
+                                            }
+                                        });
+                                String strMessage = getResources().
+                                        getString(R.string.download_cardset_dialog_message);
+                                progressDialog = ProgressDialog.show(
+                                        Multicards.getCardsetPickerActivity(), "", strMessage, true);
+                                progressDialog.setCancelable(true);
+                            } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
+                                GameplayManager.startSingleplayerGame(cardset.getId());
+                                Multicards.getCardsetPickerActivity().finish();
+                            } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
+                                GameplayManager.requestMultiplayerGame(strGID);
+                                Multicards.getCardsetPickerActivity().finish();
+                            }
+                        }
+                    });
+                }
+            }
+        }, null);
     }
 
     public void setNextFragment (int intNextFragment) {
