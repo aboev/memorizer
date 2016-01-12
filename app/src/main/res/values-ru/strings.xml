@@ -14,10 +14,13 @@
 
     <string name="waiting_opponent_dialog_message">Поиск соперников</string>
 
+    <string name="string_enter_opponent_nickname">Введите имя соперника (указано на экране)</string>
+
+    <string name="string_choose_opponent">Выберите соперника</string>
     <string-array name="dialog_items_multiplayer">
         <item>Случайный соперник</item>
-        <item>Пригласить друга</item>
-        <item>Подключиться к другу</item>
+        <item>Начать свою игру</item>
+        <item>Присоединиться к игре</item>
     </string-array>
 
     <string name="button_like">Нравится</string>

@@ -15,10 +15,13 @@
     <string name="cardset_search_message">Enter keywords</string>
     <string name="waiting_opponent_dialog_message">Searching for opponents</string>
 
+    <string name="string_enter_opponent_nickname">Enter opponent nickname</string>
+
+    <string name="string_choose_opponent">Choose opponent</string>
     <string-array name="dialog_items_multiplayer">
         <item>Random opponent</item>
-        <item>Invite friend</item>
-        <item>Join friend</item>
+        <item>Host game</item>
+        <item>Join game</item>
     </string-array>
 
     <string name="button_like">Like</string>
