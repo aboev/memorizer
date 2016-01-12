@@ -28,6 +28,7 @@ public class Constants {
     public final static String HEADER_USERID = "id";
     public final static String HEADER_SOCKETID = "socketid";
     public final static String HEADER_SETID = "setid";
+    public final static String HEADER_OPPONENTNAME = "opponentname";
 
     public final static String KEY_ID = "id";
 
@@ -47,8 +48,9 @@ public class Constants {
     public static String SOCK_MSG_TYPE_ANSWER_REJECTED = "answer_rejected";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
-    public static Integer GAME_STATUS_IN_PROGRESS = 1;
-    public static Integer GAME_STATUS_COMPLETED = 2;
+    public static Integer GAME_STATUS_WAITING_OPPONENT = 1;
+    public static Integer GAME_STATUS_IN_PROGRESS = 2;
+    public static Integer GAME_STATUS_COMPLETED = 3;
 
     public static String PLAYER_STATUS_THINKING = "player_thinking";
     public static String PLAYER_STATUS_ANSWERED = "player_answered";
