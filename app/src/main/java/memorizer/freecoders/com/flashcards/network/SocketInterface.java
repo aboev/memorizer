@@ -97,6 +97,9 @@ public class SocketInterface {
                                 equals(Constants.SOCK_MSG_TYPE_GAME_END)) {
                             msgGameEnd();
                         } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_GAME_STOP)) {
+                            msgGameStop();
+                        } else if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_ANSWER_ACCEPTED)) {
                             Type type = new TypeToken<SocketMessage<Integer>>() {}.getType();
                             SocketMessage<Integer> socketMessage =
@@ -150,6 +153,10 @@ public class SocketInterface {
 
     private static void msgGameEnd () {
         GameplayManager.quitMultilayerGame();
+    }
+
+    private static void msgGameStop () {
+        GameplayManager.stopMultilayerGame();
     }
 
     private static void msgAnswerAccepted (int intQuestionID) {
