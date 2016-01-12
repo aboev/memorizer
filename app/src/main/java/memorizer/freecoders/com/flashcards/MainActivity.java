@@ -120,10 +120,11 @@ public class MainActivity extends AppCompatActivity {
                 Multicards.getPreferences().strUserID.isEmpty()) {
             ServerInterface.registerUserRequest(
                     new UserDetails(),
-                    new Response.Listener<String> () {
+                    new Response.Listener<UserDetails> () {
                         @Override
-                        public void onResponse(String response) {
-                            Multicards.getPreferences().strUserID = response;
+                        public void onResponse(UserDetails response) {
+                            Multicards.getPreferences().strUserID = response.id;
+                            Multicards.getPreferences().strUserName = response.name;
                             Multicards.getPreferences().savePreferences();
                         }
                     }, null);
