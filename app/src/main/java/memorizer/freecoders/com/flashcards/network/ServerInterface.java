@@ -34,7 +34,7 @@ public class ServerInterface {
 
     public static final void registerUserRequest(
             UserDetails userDetails,
-            final Response.Listener<String> responseListener,
+            final Response.Listener<UserDetails> responseListener,
             final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
         Log.d(LOG_TAG, "Register user request");
@@ -46,14 +46,13 @@ public class ServerInterface {
                     public void onResponse(String response) {
                         Log.d(LOG_TAG, "Response: " + response);
                         Type type = new TypeToken<ServerResponse
-                                <HashMap<String,String>>>(){}.getType();
+                                <UserDetails>>(){}.getType();
                         try {
-                            ServerResponse<HashMap<String, String>> res =
+                            ServerResponse<UserDetails> res =
                                     gson.fromJson(response, type);
                             if ( res != null && res.isSuccess() && res.data != null
-                                    && res.data.containsKey(Constants.KEY_ID)
                                     && responseListener != null)
-                                responseListener.onResponse(res.data.get(Constants.KEY_ID));
+                                responseListener.onResponse(res.data);
                             else if (errorListener != null)
                                 errorListener.onErrorResponse(new VolleyError());
                         } catch (Exception e) {
@@ -114,9 +113,11 @@ public class ServerInterface {
 
     public static final void newGameRequest(
             String strSetID,
+            String strOpponentName,
             final Response.Listener<Game> responseListener,
             final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
+        headers.put(Constants.HEADER_OPPONENTNAME, strOpponentName);
         Log.d(LOG_TAG, "New game request");
         if (strSetID != null)
             headers.put(Constants.HEADER_SETID, strSetID);
