@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import memorizer.freecoders.com.flashcards.R;
+import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 
 /**
@@ -17,21 +18,28 @@ import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor
  */
 public class CardsetListAdapter extends ArrayAdapter<String> {
     private Context context;
-    public ArrayList<QuizletCardsetDescriptor> values = new ArrayList<QuizletCardsetDescriptor>();
+    public ArrayList<QuizletCardsetDescriptor> qvalues = new ArrayList<QuizletCardsetDescriptor>();
+    public ArrayList<CardSet> values = null;
 
     public CardsetListAdapter(Context context) {
         super(context, -1);
         this.context = context;
     }
 
-    public void setValues(ArrayList<QuizletCardsetDescriptor> values) {
+    public void setQValues(ArrayList<QuizletCardsetDescriptor> values) {
+        this.qvalues.clear();
+        this.qvalues.addAll(values);
+    }
+
+    public void setValues(ArrayList<CardSet> values) {
+        if (this.values == null) this.values = new ArrayList<CardSet>();
         this.values.clear();
         this.values.addAll(values);
     }
 
     @Override
     public int getCount() {
-        return values.size();
+        return (values != null) ? values.size() : qvalues.size();
     }
 
     @Override
@@ -44,8 +52,13 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
         TextView textView = (TextView) rowView.findViewById(R.id.textViewCardsetPickerItem);
         TextView textViewAuthor = (TextView) rowView.findViewById(R.id.textViewCardsetSearchAuthor);
 
-        textView.setText(values.get(position).title);
-        textViewAuthor.setText(values.get(position).created_by);
+        if (values != null) {
+            textView.setText(values.get(position).title);
+            textViewAuthor.setText("");
+        } else {
+            textView.setText(qvalues.get(position).title);
+            textViewAuthor.setText(qvalues.get(position).created_by);
+        }
 
         return rowView;
     }
