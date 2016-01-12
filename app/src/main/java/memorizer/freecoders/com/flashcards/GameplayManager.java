@@ -188,8 +188,14 @@ public class GameplayManager {
     }
 
     public static final void quitMultilayerGame() {
-        Multicards.getMainActivity().returnToMainMenu();
+        FragmentManager.showGameOverFragment(Multicards.
+                        getMultiplayerInterface().currentGame.strGID);
         InputDialogInterface.showGameOverMessage(null);
+    }
+
+    public static final void stopMultilayerGame() {
+        Multicards.getMainActivity().returnToMainMenu();
+        InputDialogInterface.showGameStopMessage(null);
         Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 
