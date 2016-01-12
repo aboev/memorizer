@@ -19,4 +19,9 @@
         <item>Пригласить друга</item>
         <item>Подключиться к другу</item>
     </string-array>
+
+    <string name="button_like">Нравится</string>
+    <string name="string_popular_cardsets">Популярные наборы</string>
+    <string name="string_game_stopped">Игра прервана. Проверьте соединение с интернетом</string>
+
 </resources>

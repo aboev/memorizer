@@ -21,4 +21,8 @@
         <item>Join friend</item>
     </string-array>
 
+    <string name="button_like">Like</string>
+    <string name="string_popular_cardsets">Popular cardsets</string>
+    <string name="string_game_stopped">Game interrupted. Check network connectivity</string>
+
 </resources>
