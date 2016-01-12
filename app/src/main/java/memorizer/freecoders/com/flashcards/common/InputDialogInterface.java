@@ -9,6 +9,8 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import java.util.ArrayList;
+
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
@@ -150,6 +152,49 @@ public class InputDialogInterface {
                             Multicards.getMainActivity().intUIState =
                                     Constants.UI_STATE_MULTIPLAYER_MODE;
                         }
+                    }
+                })
+                .show();
+    }
+
+    public static final void showPickOpponentDialog (final CallbackInterface onClick) {
+        String strTitle = Multicards.getMainActivity().
+                getResources().getString(R.string.string_choose_opponent);
+        String[] mItems = Multicards.getMainActivity().
+                getResources().getStringArray(R.array.dialog_items_multiplayer);
+        CharSequence colors[] = new CharSequence[] {mItems[0], mItems[1], mItems[2]};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+        builder.setTitle(strTitle);
+        builder.setItems(colors, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (onClick != null) onClick.onResponse(which);
+            }
+        });
+        builder.show();
+    }
+
+    public static final void showEnterOpponentNameDialog (final CallbackInterface onEnter) {
+        Context context = Multicards.getMainActivity();
+        final EditText txtNickname = new EditText(context);
+
+        String strTitle = Multicards.getMainActivity().
+                getResources().getString(R.string.string_enter_opponent_nickname);
+
+        new AlertDialog.Builder(context)
+                .setTitle("")
+                .setMessage(strTitle)
+                .setView(txtNickname)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String strName = txtNickname.getText().toString();
+                        onEnter.onResponse(strName);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        onEnter.onResponse(null);
                     }
                 })
                 .show();
