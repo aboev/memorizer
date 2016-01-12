@@ -303,6 +303,84 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
+    public static final void getPopularCardsetsRequest(
+            final Response.Listener<ArrayList<CardSet>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Get popular cardsets request");
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_POPULAR,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        try {
+                            Type type = new TypeToken<ServerResponse
+                                    <ArrayList<CardSet>>>(){}.getType();
+                            ServerResponse<ArrayList<CardSet>> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.data != null && (responseListener != null))
+                                responseListener.onResponse(res.data);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void likeCardsetRequest(
+            String strSetID,
+            final Response.Listener<Boolean> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        headers.put(Constants.HEADER_SETID, strSetID);
+        Log.d(LOG_TAG, "Like cardset request");
+        StringRequest request = new StringRequest(Request.Method.POST,
+                Constants.SERVER_URL + Constants.SERVER_PATH_LIKE,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        try {
+                            Type type = new TypeToken<ServerResponse
+                                    <String>>(){}.getType();
+                            ServerResponse<String> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && (responseListener != null))
+                                responseListener.onResponse(true);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
     public static void cancelRequestByTag(final String strTag) {
         VolleySingleton.getInstance(Multicards.getMainActivity()).getRequestQueue().
                 cancelAll(new RequestQueue.RequestFilter() {
