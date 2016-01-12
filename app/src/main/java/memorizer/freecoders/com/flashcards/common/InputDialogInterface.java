@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
+import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -102,6 +103,34 @@ public class InputDialogInterface {
         else
             strMessage = strMessage +
                     FragmentManager.playersInfoFragment.player2Name + " win";
+
+        Context context = Multicards.getMainActivity();
+
+        new AlertDialog.Builder(context)
+                .setTitle("Game")
+                .setMessage(strMessage)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                })
+                .setNegativeButton("Play again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (Multicards.getMultiplayerInterface().currentGame != null) {
+                            GameplayManager.requestMultiplayerGame(
+                                    Multicards.getMultiplayerInterface().currentGame.strGID);
+                            Multicards.getMainActivity().intUIState =
+                                    Constants.UI_STATE_MULTIPLAYER_MODE;
+                        }
+                    }
+                })
+                .show();
+    }
+
+    public static final void showGameStopMessage (final CallbackInterface onReply) {
+
+        String strMessage = Multicards.getMainActivity().getResources().
+                getString(R.string.string_game_stopped);
 
         Context context = Multicards.getMainActivity();
 
