@@ -2,6 +2,7 @@ package memorizer.freecoders.com.flashcards;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.util.Log;
 
 import com.android.volley.Response;
 
@@ -25,6 +26,7 @@ public class GameplayManager {
     private static String LOG_TAG = "GameplayManager";
 
     private static Long currentSetID;
+    public static String strOpponentName = null;
 
     public static ProgressDialog progressDialog;
 
@@ -124,12 +126,13 @@ public class GameplayManager {
                 Multicards.getPreferences().strUserID.isEmpty())
             return;
 
+        Log.d(LOG_TAG, "request multiplayer");
         if ((Multicards.getPreferences().strUserName == null) ||
                 Multicards.getPreferences().strUserName.isEmpty())
             InputDialogInterface.updateUserName(new CallbackInterface() {
                 @Override
                 public void onResponse(Object obj) {
-                ServerInterface.newGameRequest(strGID,
+                ServerInterface.newGameRequest(strGID, strOpponentName,
                     new Response.Listener<Game>() {
                         @Override
                         public void onResponse(Game response) {
@@ -154,11 +157,12 @@ public class GameplayManager {
                 }
             });
         else
-            ServerInterface.newGameRequest(strGID,
+            ServerInterface.newGameRequest(strGID, strOpponentName,
                 new Response.Listener<Game>() {
                     @Override
                     public void onResponse(Game response) {
-                        if (response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) {
+                        if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
                             Multicards.getMultiplayerInterface().setGameData(null, strGID);
                             String strMessage = Multicards.getMainActivity().
                                     getResources().getString(
@@ -189,7 +193,7 @@ public class GameplayManager {
 
     public static final void quitMultilayerGame() {
         FragmentManager.showGameOverFragment(Multicards.
-                        getMultiplayerInterface().currentGame.strGID);
+                getMultiplayerInterface().currentGame.strGID);
         InputDialogInterface.showGameOverMessage(null);
     }
 
