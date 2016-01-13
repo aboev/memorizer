@@ -26,6 +26,7 @@ public final class Preferences {
     private String KEY_FIRST_START = "first_start";
     private String KEY_SOCKET_ID = "socket_id";
     private String KEY_AVATAR = "avatar";
+    private String KEY_AVATAR_LOCAL = "avatar_local";
     private String KEY_RECENT_SETS = "recent_sets";
 
     public String strUserID = "";
@@ -34,6 +35,7 @@ public final class Preferences {
     public String strEmail = "";
     public String strSocketID = "";
     public String strAvatar = "";
+    public String strAvatarLocal = "";
     public Integer intRegisterStatus = 0;   // 0 - not registered,
     // 1 - waiting for sms code, 2 registered
     public Integer intLastOpenedTab = 0;
@@ -52,6 +54,7 @@ public final class Preferences {
         strEmail = settings.getString(KEY_EMAIL, "");
         strSocketID = settings.getString(KEY_SOCKET_ID, "");
         strAvatar = settings.getString(KEY_AVATAR, "");
+        strAvatarLocal = settings.getString(KEY_AVATAR_LOCAL, "");
         intRegisterStatus = settings.getInt(KEY_REGISTER_STATUS, 0);
 
         Type type = new TypeToken<HashMap<String, Long>>() {}.getType();
@@ -67,6 +70,7 @@ public final class Preferences {
         editor.putString(KEY_PHONE, strPhone);
         editor.putString(KEY_EMAIL, strEmail);
         editor.putString(KEY_AVATAR, strAvatar);
+        editor.putString(KEY_AVATAR_LOCAL, strAvatarLocal);
         editor.putInt(KEY_REGISTER_STATUS, intRegisterStatus);
         editor.putBoolean(KEY_FIRST_START, boolFirstStart);
         editor.putString(KEY_RECENT_SETS, gson.toJson(recentSets));
