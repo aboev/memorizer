@@ -8,6 +8,7 @@ import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.fragments.GameOverFragment;
 import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
+import memorizer.freecoders.com.flashcards.fragments.UserProfileFragment;
 
 /**
  * Created by alex-mac on 27.12.15.
@@ -21,6 +22,8 @@ public class FragmentManager {
     private static Fragment currentFragment;
     public static FlashCardFragment currentFlashCardFragment;
     public static MainMenuFragment mainMenuFragment;
+    public static UserProfileFragment userProfileFragment;
+    public Boolean boolAvatarChosen = false;
 
     public static final void showFragment (Fragment newFragment, Integer intTransitionType) {
         if (intTransitionType == null)
@@ -102,6 +105,27 @@ public class FragmentManager {
         if (!mainMenuFragment.isAdded())
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
                     .add(R.id.fragment_flashcard_container, mainMenuFragment).commit();
+    }
+
+    public static final void showUserProfileFragment () {
+        hidePlayersInfo();
+        hideCurrentFlashcardFragment();
+        hideMainMenu();
+
+        if (userProfileFragment == null) {
+            userProfileFragment = new UserProfileFragment();
+        }
+
+        if (!userProfileFragment.isAdded())
+            Multicards.getMainActivity().getFragmentManager().beginTransaction()
+                    .add(R.id.fragment_flashcard_container, userProfileFragment).commit();
+        Multicards.getMainActivity().intUIState = Constants.UI_STATE_SETTINGS;
+    }
+
+    public static final void hideUserProfileFragment() {
+        if (userProfileFragment.isAdded())
+            Multicards.getMainActivity().getFragmentManager().beginTransaction().
+                    remove(userProfileFragment).commit();
     }
 
 }

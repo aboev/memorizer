@@ -1,6 +1,8 @@
 package memorizer.freecoders.com.flashcards;
 
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +16,9 @@ import android.view.MenuItem;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.Response;
+import com.soundcloud.android.crop.Crop;
+
+import java.io.File;
 import java.net.URISyntaxException;
 
 import io.socket.client.Socket;
@@ -25,9 +30,13 @@ import memorizer.freecoders.com.flashcards.fragments.GameOverFragment;
 import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
 import memorizer.freecoders.com.flashcards.fragments.SearchCardsetFragment;
+import memorizer.freecoders.com.flashcards.fragments.UserProfileFragment;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
+import memorizer.freecoders.com.flashcards.utils.FileUtils;
+
+import android.net.Uri;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -120,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 Multicards.getPreferences().strUserID.isEmpty()) {
             ServerInterface.registerUserRequest(
                     new UserDetails(),
-                    new Response.Listener<UserDetails> () {
+                    new Response.Listener<UserDetails>() {
                         @Override
                         public void onResponse(UserDetails response) {
                             Multicards.getPreferences().strUserID = response.id;
@@ -135,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void returnToMainMenu () {
         mainMenuFragment = new MainMenuFragment();
+        FragmentManager.mainMenuFragment = mainMenuFragment;
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
                 mainMenuFragment).commit();
         if (FragmentManager.playersInfoFragment != null)
@@ -146,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
         if (Multicards.getMainActivity().cardsetPickerFragment != null)
             getSupportFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
                     cardsetPickerFragment).commit();
+        if (FragmentManager.userProfileFragment != null)
+            getFragmentManager().beginTransaction().remove(
+                    FragmentManager.userProfileFragment).commit();
         Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 
@@ -177,4 +190,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == Constants.INTENT_PICK_IMAGE && data != null && data.getData() != null) {
+            Uri _uri = data.getData();
+
+            //User had pick an image.
+            Cursor cursor = getContentResolver().query(_uri, new String[]
+                    { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+            cursor.moveToFirst();
+
+            File tmpFile = new File(getCacheDir(), Constants.FILENAME_AVATAR);
+            FileUtils.copyFileFromUri(new File(FileUtils.getRealPathFromURI(this, _uri)), tmpFile);
+            cursor.close();
+            File dstFile = new File(getFilesDir(), Constants.FILENAME_AVATAR);
+            new Crop(Uri.fromFile(tmpFile)).output(Uri.fromFile(dstFile)).asSquare().start(this);
+        } else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            Multicards.getPreferences().strAvatarLocal = Crop.getOutput(data).toString();
+            Multicards.getPreferences().savePreferences();
+            FragmentManager.userProfileFragment.uploadAvatar();
+            Log.d(LOG_TAG, "Setting avatar URI to " + Crop.getOutput(data));
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
