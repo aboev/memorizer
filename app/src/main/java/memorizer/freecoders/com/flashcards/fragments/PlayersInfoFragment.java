@@ -113,7 +113,7 @@ public class PlayersInfoFragment extends Fragment{
                 (!Multicards.getPreferences().strAvatar.isEmpty())) {
             player1AvatarURL = Multicards.getPreferences().strAvatar;
             Multicards.getAvatarLoader().get(player1AvatarURL,
-                    new AvatarListener(imageViewPlayer1Avatar));
+                    new Utils.AvatarListener(imageViewPlayer1Avatar));
         }
 
         if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
@@ -124,7 +124,7 @@ public class PlayersInfoFragment extends Fragment{
                 if ((opponentDetails.avatar != null) && (!opponentDetails.avatar.isEmpty())) {
                     player2AvatarURL = opponentDetails.avatar;
                     Multicards.getAvatarLoader().get(player2AvatarURL,
-                            new AvatarListener(imageViewPlayer2Avatar));
+                            new Utils.AvatarListener(imageViewPlayer2Avatar));
                 }
             }
         }
@@ -176,23 +176,4 @@ public class PlayersInfoFragment extends Fragment{
         }
     }
 
-    private class AvatarListener implements ImageLoader.ImageListener {
-        CircleImageView imageView;
-
-        public AvatarListener(CircleImageView imgView) {
-            this.imageView = imgView;
-        }
-
-        @Override
-        public void onErrorResponse(VolleyError error) {
-        }
-
-        @Override
-        public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-            if (response.getBitmap() != null) {
-                imageView.setImageResource(0);
-                imageView.setImageBitmap(response.getBitmap());
-            }
-        }
-    }
 }

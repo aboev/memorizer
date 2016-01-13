@@ -2,10 +2,14 @@ package memorizer.freecoders.com.flashcards.utils;
 
 import android.content.Intent;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.StringRequest;
@@ -39,6 +43,26 @@ public class Utils {
             it.remove();
         }
         return null;
+    }
+
+    public final static class AvatarListener implements ImageLoader.ImageListener {
+        CircleImageView imageView;
+
+        public AvatarListener(CircleImageView imgView) {
+            this.imageView = imgView;
+        }
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+        }
+
+        @Override
+        public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+            if (response.getBitmap() != null) {
+                imageView.setImageResource(0);
+                imageView.setImageBitmap(response.getBitmap());
+            }
+        }
     }
 
 }
