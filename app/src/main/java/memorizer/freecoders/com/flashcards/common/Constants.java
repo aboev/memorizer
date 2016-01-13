@@ -15,7 +15,7 @@ public class Constants {
     public final static String SOCKET_SERVER_URL = "http://multicards.snufan.com:5001";
     public final static String SERVER_PATH_USER = "/user";
     public final static String SERVER_PATH_GAME = "/game";
-    public final static String SERVER_PATH_UPLOAD = "/upload";
+    public final static String SERVER_PATH_UPLOAD = "/image";
     public final static String SERVER_PATH_CARDSETS = "/cardsets";
     public final static String SERVER_PATH_POPULAR = "/popular";
     public final static String SERVER_PATH_LIKE = "/like";
@@ -61,6 +61,7 @@ public class Constants {
     public static Integer UI_STATE_MULTIPLAYER_MODE = 20;
     public static Integer UI_STATE_CARD_PICK = 30;
     public static Integer UI_STATE_GAME_OVER = 40;
+    public static Integer UI_STATE_SETTINGS = 50;
 
     public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 25;
 
@@ -71,5 +72,8 @@ public class Constants {
 
     public final static int ANIMATION_SLIDE = 0;
     public final static int ANIMATION_FLIP = 1;
+
+    public final static int INTENT_PICK_IMAGE = 111;
+    public final static String FILENAME_AVATAR = "avatar.jpg";
 
 }
