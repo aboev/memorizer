@@ -46,5 +46,6 @@ dependencies {
     compile 'org.apache.httpcomponents:httpcore:4.4.1'
     compile 'org.apache.httpcomponents:httpmime:4.4.1'
     compile 'com.soundcloud.android:android-crop:0.9.10@aar'
+    compile 'com.jakewharton:disklrucache:2.0.2'
     compile files('../libs/ActiveAndroid.jar')
 }
