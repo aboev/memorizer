@@ -28,4 +28,8 @@
     <string name="string_popular_cardsets">Popular cardsets</string>
     <string name="string_game_stopped">Game interrupted. Check network connectivity</string>
 
+    <string name="string_main_menu_train">Train</string>
+    <string name="string_main_menu_multiplayer">Multiplayer</string>
+    <string name="string_main_menu_settings">Settings</string>
+
 </resources>

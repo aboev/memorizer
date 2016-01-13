@@ -27,4 +27,8 @@
     <string name="string_popular_cardsets">Популярные наборы</string>
     <string name="string_game_stopped">Игра прервана. Проверьте соединение с интернетом</string>
 
+    <string name="string_main_menu_train">Тренировка</string>
+    <string name="string_main_menu_multiplayer">Играть вдвоем</string>
+    <string name="string_main_menu_settings">Настройки</string>
+
 </resources>
