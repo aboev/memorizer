@@ -8,16 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.squareup.okhttp.internal.Util;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
@@ -25,8 +21,6 @@ import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.Game;
-import memorizer.freecoders.com.flashcards.json.UserDetails;
-import memorizer.freecoders.com.flashcards.network.StringRequest;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
@@ -50,6 +44,8 @@ public class PlayersInfoFragment extends Fragment{
 
     public String player1Name = "";
     public String player2Name = "";
+    public String player1AvatarURL = "";
+    public String player2AvatarURL = "";
     public Integer player1Score = 0;
     public Integer player2Score = 0;
 
@@ -62,9 +58,9 @@ public class PlayersInfoFragment extends Fragment{
         // Inflate the layout for this fragment
         View view;
         if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
-            view = inflater.inflate(R.layout.players_info_single, container, false);
+            view = inflater.inflate(R.layout.fragment_players_info_single, container, false);
         else
-            view = inflater.inflate(R.layout.players_info_multi, container, false);
+            view = inflater.inflate(R.layout.fragment_players_info_multi, container, false);
 
         textViewPlayer1Name = (TextView) view.findViewById(R.id.TextViewPlayer1Name);
         textViewPlayer2Name = (TextView) view.findViewById(R.id.TextViewPlayer2Name);
@@ -109,6 +105,25 @@ public class PlayersInfoFragment extends Fragment{
         if ((Multicards.getPreferences().strUserName != null) &&
                 (!Multicards.getPreferences().strUserName.isEmpty()))
             player1Name = Multicards.getPreferences().strUserName;
+
+        if ((Multicards.getPreferences().strAvatar != null) &&
+                (!Multicards.getPreferences().strAvatar.isEmpty())) {
+            player1AvatarURL = Multicards.getPreferences().strAvatar;
+            Multicards.getAvatarLoader().get(player1AvatarURL, new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                    if (response.getBitmap() != null) {
+                        imageViewPlayer1Avatar.setImageResource(0);
+                        imageViewPlayer1Avatar.setImageBitmap(response.getBitmap());
+                    }
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+        }
 
         if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
             Game currentGame = Multicards.getMultiplayerInterface().currentGame.game;
