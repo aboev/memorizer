@@ -1,23 +1,36 @@
 package memorizer.freecoders.com.flashcards.common;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import com.android.volley.toolbox.ImageLoader;
+
+import java.io.IOException;
 
 import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
 import memorizer.freecoders.com.flashcards.MainActivity;
 import memorizer.freecoders.com.flashcards.MultiplayerInterface;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.network.VolleySingleton;
+import memorizer.freecoders.com.flashcards.utils.DiskLruBitmapCache;
+import memorizer.freecoders.com.flashcards.utils.MemoryLruCache;
 
 /**
  * Created by alex-mac on 08.11.15.
  */
 public class Multicards extends Application {
+    private static String LOG_TAG = "Multicards";
+
     private static MainActivity mMainActivity;
     private static FlashCardsDAO mFlashCardsDAO;
     private static ServerInterface mServerInterface;
     private static Preferences mPreferences;
     private static MultiplayerInterface mMultiplayerInterface;
     private static CardsetPickerActivity mCardsetPickerActivity;
+    private static DiskLruBitmapCache mAvatarDiskLruCache;
+    private static ImageLoader mAvatarLoader;
 
     @Override
     public void onCreate() {
@@ -29,6 +42,22 @@ public class Multicards extends Application {
         mServerInterface = new ServerInterface();
 
         mMultiplayerInterface = new MultiplayerInterface();
+
+        try {
+            mAvatarDiskLruCache = new DiskLruBitmapCache(this, "AvatarsDiskCache",
+                    2000000, Bitmap.CompressFormat.JPEG, 100);
+
+            mAvatarLoader = new ImageLoader(VolleySingleton.getInstance(
+                    this).getRequestQueue(),
+                    mAvatarDiskLruCache);
+        } catch (IOException e) {
+            mAvatarDiskLruCache = null;
+            ImageLoader.ImageCache memoryCache = new MemoryLruCache();
+            mAvatarLoader = new ImageLoader(VolleySingleton.getInstance(
+                    this).getRequestQueue(),
+                    memoryCache);
+            Log.d(LOG_TAG, "Failed to initialize disk cache");
+        }
     }
 
     public final static void setMainActivity(MainActivity mainActivity) {
@@ -74,5 +103,7 @@ public class Multicards extends Application {
     public final static CardsetPickerActivity getCardsetPickerActivity(){
         return mCardsetPickerActivity;
     }
+
+    public final static ImageLoader getAvatarLoader() {return mAvatarLoader;}
 
 }
