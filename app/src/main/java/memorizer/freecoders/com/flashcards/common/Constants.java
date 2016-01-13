@@ -74,6 +74,7 @@ public class Constants {
     public final static int ANIMATION_FLIP = 1;
 
     public final static int INTENT_PICK_IMAGE = 111;
+    public final static int INTENT_PICK_IMAGE_KITKAT = 112;
     public final static String FILENAME_AVATAR = "avatar.jpg";
 
 }
