@@ -1,28 +1,15 @@
 package memorizer.freecoders.com.flashcards.utils;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Alex on 2014-11-22.
