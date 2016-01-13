@@ -31,4 +31,6 @@
     <string name="string_main_menu_multiplayer">Играть вдвоем</string>
     <string name="string_main_menu_settings">Настройки</string>
 
+    <string name="alert_select_image">Выберите аватар</string>
+
 </resources>
