@@ -60,11 +60,14 @@ public class DiskLruBitmapCache implements ImageLoader.ImageCache {
 
         // Check if media is mounted or storage is built-in, if so, try and use external cache dir
         // otherwise use internal cache dir
-        final String cachePath =
-                Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
-                        !isExternalStorageRemovable() ?
-                        getExternalCacheDir(context).getPath() :
-                        context.getCacheDir().getPath();
+        String cachePath = context.getCacheDir().getPath();; // you still need a default value if not mounted
+
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+                !Environment.isExternalStorageRemovable()) {
+            if (getExternalCacheDir(context) != null) {
+                cachePath = getExternalCacheDir(context).getPath();
+            }
+        }
 
         return new File(cachePath + File.separator + uniqueName);
     }
