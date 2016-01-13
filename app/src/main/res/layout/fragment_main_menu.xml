@@ -65,5 +65,23 @@
         android:textColor="#383838"
         android:background="@drawable/stylebutton"/>
 
+    <TextView
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:clickable="true"
+        android:id="@+id/TextView_StyleButtonSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_main_menu_settings"
+        android:textSize="20dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="10dp"
+        android:fontFamily="sans-serif"
+        android:textColor="#383838"
+        android:background="@drawable/stylebutton"/>
+
 
 </LinearLayout>
