@@ -43,8 +43,9 @@ dependencies {
     compile 'io.socket:socket.io-client:0.6.2'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
-    compile 'org.apache.httpcomponents:httpcore:4.4.1'
-    compile 'org.apache.httpcomponents:httpmime:4.4.1'
+    compile 'org.apache.httpcomponents:httpcore:4.3.1'
+    compile 'org.apache.httpcomponents:httpmime:4.3.1'
+
     compile 'com.soundcloud.android:android-crop:0.9.10@aar'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile files('../libs/ActiveAndroid.jar')
