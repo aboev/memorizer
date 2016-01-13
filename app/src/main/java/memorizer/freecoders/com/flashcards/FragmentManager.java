@@ -53,9 +53,11 @@ public class FragmentManager {
     }
 
     public static final void showPlayersInfo () {
-        if (!playersInfoFragment.isAdded())
+        if (!playersInfoFragment.isAdded()) {
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
-                .add(R.id.fragment_players_info_container, playersInfoFragment).commit();
+                    .add(R.id.fragment_players_info_container, playersInfoFragment).commit();
+            Multicards.getMainActivity().getFragmentManager().executePendingTransactions();
+        }
     }
 
     public static final void hidePlayersInfo () {
