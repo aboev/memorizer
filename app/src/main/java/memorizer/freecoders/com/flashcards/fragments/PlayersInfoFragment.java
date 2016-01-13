@@ -1,6 +1,8 @@
 package memorizer.freecoders.com.flashcards.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,13 +23,14 @@ import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 05.12.15.
  */
 public class PlayersInfoFragment extends Fragment{
-    private static String LOG_TAG = "FlashCardFragment";
+    private static String LOG_TAG = "PlayersInfoFragment";
 
     TextView textViewPlayer1Name;
     TextView textViewPlayer2Name;
@@ -109,26 +112,21 @@ public class PlayersInfoFragment extends Fragment{
         if ((Multicards.getPreferences().strAvatar != null) &&
                 (!Multicards.getPreferences().strAvatar.isEmpty())) {
             player1AvatarURL = Multicards.getPreferences().strAvatar;
-            Multicards.getAvatarLoader().get(player1AvatarURL, new ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                    if (response.getBitmap() != null) {
-                        imageViewPlayer1Avatar.setImageResource(0);
-                        imageViewPlayer1Avatar.setImageBitmap(response.getBitmap());
-                    }
-                }
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            });
+            Multicards.getAvatarLoader().get(player1AvatarURL,
+                    new AvatarListener(imageViewPlayer1Avatar));
         }
 
         if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
             Game currentGame = Multicards.getMultiplayerInterface().currentGame.game;
-            if (Utils.extractOpponentProfile(currentGame.profiles) != null)
-                player2Name = Utils.extractOpponentProfile(currentGame.profiles).name;
+            UserDetails opponentDetails = Utils.extractOpponentProfile(currentGame.profiles);
+            if (opponentDetails != null) {
+                player2Name = opponentDetails.name;
+                if ((opponentDetails.avatar != null) && (!opponentDetails.avatar.isEmpty())) {
+                    player2AvatarURL = opponentDetails.avatar;
+                    Multicards.getAvatarLoader().get(player2AvatarURL,
+                            new AvatarListener(imageViewPlayer2Avatar));
+                }
+            }
         }
 
         player1Score = 0;
@@ -175,6 +173,26 @@ public class PlayersInfoFragment extends Fragment{
                 Animations.scaleAnimation(imageViewPlayer1Avatar, onAnimationEnd);
             else
                 Animations.scaleAnimation(imageViewPlayer2Avatar, onAnimationEnd);
+        }
+    }
+
+    private class AvatarListener implements ImageLoader.ImageListener {
+        CircleImageView imageView;
+
+        public AvatarListener(CircleImageView imgView) {
+            this.imageView = imgView;
+        }
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+        }
+
+        @Override
+        public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+            if (response.getBitmap() != null) {
+                imageView.setImageResource(0);
+                imageView.setImageBitmap(response.getBitmap());
+            }
         }
     }
 }
