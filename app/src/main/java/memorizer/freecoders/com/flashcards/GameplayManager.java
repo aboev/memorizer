@@ -31,11 +31,11 @@ public class GameplayManager {
     public static ProgressDialog progressDialog;
 
     public static final void startSingleplayerGame(Long setID) {
+        Multicards.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
         currentSetID = setID;
         FragmentManager.hideMainMenu();
         FragmentManager.showPlayersInfo();
         newLocalQuestion(null);
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
     }
 
     public static final void playAgain() {
