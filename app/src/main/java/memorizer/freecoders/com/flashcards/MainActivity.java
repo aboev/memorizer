@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(UserDetails response) {
                             Multicards.getPreferences().strUserID = response.id;
                             Multicards.getPreferences().strUserName = response.name;
+                            Multicards.getPreferences().strAvatar = response.avatar;
                             Multicards.getPreferences().savePreferences();
                         }
                     }, null);
