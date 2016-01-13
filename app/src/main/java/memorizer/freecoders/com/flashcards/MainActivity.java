@@ -143,10 +143,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void returnToMainMenu () {
-        mainMenuFragment = new MainMenuFragment();
-        FragmentManager.mainMenuFragment = mainMenuFragment;
+        FragmentManager.mainMenuFragment = new MainMenuFragment();
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
-                mainMenuFragment).commit();
+                FragmentManager.mainMenuFragment).commit();
         if (FragmentManager.playersInfoFragment != null)
             getFragmentManager().beginTransaction().remove(FragmentManager.
                 playersInfoFragment).commit();
@@ -191,27 +190,4 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
     };
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Constants.INTENT_PICK_IMAGE && data != null && data.getData() != null) {
-            Uri _uri = data.getData();
-
-            //User had pick an image.
-            Cursor cursor = getContentResolver().query(_uri, new String[]
-                    { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
-            cursor.moveToFirst();
-
-            File tmpFile = new File(getCacheDir(), Constants.FILENAME_AVATAR);
-            FileUtils.copyFileFromUri(new File(FileUtils.getRealPathFromURI(this, _uri)), tmpFile);
-            cursor.close();
-            File dstFile = new File(getFilesDir(), Constants.FILENAME_AVATAR);
-            new Crop(Uri.fromFile(tmpFile)).output(Uri.fromFile(dstFile)).asSquare().start(this);
-        } else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
-            Multicards.getPreferences().strAvatarLocal = Crop.getOutput(data).toString();
-            Multicards.getPreferences().savePreferences();
-            FragmentManager.userProfileFragment.uploadAvatar();
-            Log.d(LOG_TAG, "Setting avatar URI to " + Crop.getOutput(data));
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

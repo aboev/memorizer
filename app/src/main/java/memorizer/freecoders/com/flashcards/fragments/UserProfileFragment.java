@@ -1,8 +1,14 @@
 package memorizer.freecoders.com.flashcards.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +18,7 @@ import android.widget.EditText;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONObject;
 
@@ -27,6 +34,7 @@ import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.MultipartRequest;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.VolleySingleton;
+import memorizer.freecoders.com.flashcards.utils.FileUtils;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
@@ -58,10 +66,7 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void populateView() {
-        if ((Multicards.getPreferences().strAvatar != null)
-                &&(!Multicards.getPreferences().strAvatar.isEmpty()))
-            Multicards.getAvatarLoader().get(Multicards.getPreferences().strAvatar,
-                new Utils.AvatarListener(circleImageView));
+        loadAvatar();
 
         if ((Multicards.getPreferences().strUserName != null)
                 &&(!Multicards.getPreferences().strUserName.isEmpty()))
@@ -77,7 +82,7 @@ public class UserProfileFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String strUsername = editTextUsername.getText().toString();
+                final String strUsername = editTextUsername.getText().toString();
                 if ((strUsername != null) && (!strUsername.isEmpty())) {
                     UserDetails userDetails = new UserDetails();
                     userDetails.setNullFields();
@@ -86,9 +91,15 @@ public class UserProfileFragment extends Fragment {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    FragmentManager.returnToMainMenu();
+                                    Multicards.getPreferences().strUserName = strUsername;
+                                    Multicards.getMainActivity().returnToMainMenu();
                                 }
-                    }, null);
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Multicards.getMainActivity().returnToMainMenu();
+                                }
+                            });
                 }
             }
         });
@@ -96,12 +107,19 @@ public class UserProfileFragment extends Fragment {
     }
 
     public void doAvatarPick(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,
-                        getResources().getString(R.string.alert_select_image)),
-                Constants.INTENT_PICK_IMAGE);
+        if (Build.VERSION.SDK_INT <19){
+            Intent intent = new Intent();
+            intent.setType("image/jpeg");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, getResources().
+                    getString(R.string.alert_select_image)), Constants.INTENT_PICK_IMAGE);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/jpeg");
+            startActivityForResult(Intent.createChooser(intent, getResources().
+                    getString(R.string.alert_select_image)), Constants.INTENT_PICK_IMAGE_KITKAT);
+        }
     }
 
     public void uploadAvatar() {
@@ -113,12 +131,20 @@ public class UserProfileFragment extends Fragment {
                 (Multicards.getPreferences().strSocketID.isEmpty()))
             return;
 
+
+        String strMessage = getResources().getString(R.string.dialog_uploading_avatar);
+        final ProgressDialog progressDialog = ProgressDialog.show(
+                Multicards.getMainActivity(), "", strMessage, true);
+        progressDialog.setCancelable(true);
         HashMap<String, String> headers = new HashMap<String,String>();
         headers.put(Constants.HEADER_USERID, Multicards.getPreferences().strUserID);
         headers.put(Constants.HEADER_SOCKETID, Multicards.getPreferences().strSocketID);
+
+        File avatarImage = new File(Multicards.getMainActivity().getFilesDir(),
+                Constants.FILENAME_AVATAR);
         MultipartRequest uploadRequest = new MultipartRequest(
                 Constants.SERVER_URL + Constants.SERVER_PATH_UPLOAD,
-                Multicards.getPreferences().strAvatarLocal,
+                avatarImage,
                 headers,
                 new Response.Listener<String>() {
 
@@ -129,7 +155,10 @@ public class UserProfileFragment extends Fragment {
                             JSONObject obj = new JSONObject( response);
                             String strAvatarUrl = obj.getString(Constants.RESPONSE_DATA);
                             Multicards.getPreferences().strAvatar = strAvatarUrl;
+                            loadAvatar();
+                            progressDialog.dismiss();
                         } catch (Exception e) {
+                            progressDialog.dismiss();
                             e.printStackTrace();
                             Log.d(LOG_TAG, "Exception " + e.getLocalizedMessage());
                         }
@@ -137,12 +166,48 @@ public class UserProfileFragment extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
                         error.printStackTrace();
                         Log.d(LOG_TAG, "Error: " + error.getMessage());
                     }
                 }
         );
         VolleySingleton.getInstance(Multicards.getMainActivity()).addToRequestQueue(uploadRequest);
+    }
+
+    private void loadAvatar() {
+        if ((Multicards.getPreferences().strAvatar != null)
+                &&(!Multicards.getPreferences().strAvatar.isEmpty()))
+            Multicards.getAvatarLoader().get(Multicards.getPreferences().strAvatar,
+                    new Utils.AvatarListener(circleImageView));
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(((requestCode == Constants.INTENT_PICK_IMAGE) || (requestCode == Constants.INTENT_PICK_IMAGE_KITKAT))
+                && data != null && data.getData() != null) {
+            Uri originalUri = data.getData();
+
+            if (requestCode == Constants.INTENT_PICK_IMAGE_KITKAT) {
+                originalUri = data.getData();
+                int takeFlags = data.getFlags();
+                takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                Multicards.getMainActivity().
+                        getContentResolver().takePersistableUriPermission(originalUri, takeFlags);
+            }
+
+            File dstFile = new File(Multicards.getMainActivity().getFilesDir(),
+                    Constants.FILENAME_AVATAR);
+            new Crop(originalUri).output(Uri.fromFile(dstFile)).
+                    asSquare().start(Multicards.getMainActivity(), this);
+        } else if (requestCode == Crop.REQUEST_CROP
+                && resultCode == Multicards.getMainActivity().RESULT_OK) {
+            Multicards.getPreferences().savePreferences();
+            FragmentManager.userProfileFragment.uploadAvatar();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }
