@@ -106,6 +106,14 @@ public class SearchCardsetFragment extends Fragment {
                             }
                         }, null);
                 pendingRequests.add(strTag);
+
+                if (inputEditText.getText().toString().isEmpty()) {
+                    popularCardSetListView.setVisibility(View.VISIBLE);
+                    popularCardsetsTextView.setVisibility(View.VISIBLE);
+                } else {
+                    popularCardSetListView.setVisibility(View.GONE);
+                    popularCardsetsTextView.setVisibility(View.GONE);
+                }
             }
         });
 
