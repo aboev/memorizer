@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     public MainMenuFragment mainMenuFragment;
     public SearchCardsetFragment cardsetPickerFragment;
-    public GameOverFragment gameOverFragment;
-    public PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
         if (FragmentManager.userProfileFragment != null)
             getFragmentManager().beginTransaction().remove(
                     FragmentManager.userProfileFragment).commit();
+        if (FragmentManager.gameOverFragment != null)
+            getFragmentManager().beginTransaction().remove(
+                    FragmentManager.gameOverFragment).commit();
         Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 

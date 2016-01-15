@@ -10,11 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import memorizer.freecoders.com.flashcards.R;
+import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 public class GameOverFragment extends Fragment {
     private static String LOG_TAG = "GameOverFragment";
@@ -23,6 +28,10 @@ public class GameOverFragment extends Fragment {
 
     private Button buttonLikeCardset;
     private String strCardsetID;
+    private GameOverMessage gameOverMessage;
+    private TextView textViewWinnerName;
+    private CircleImageView imageViewWinner;
+    private TextView textViewWinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,6 +40,10 @@ public class GameOverFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_game_over, container, false);
         this.view = view;
+
+        textViewWinnerName = (TextView) view.findViewById(R.id.textViewWinnerName);
+        imageViewWinner = (CircleImageView) view.findViewById(R.id.imageViewWinner);
+        textViewWinner = (TextView) view.findViewById(R.id.textViewWinner);
 
         populateView();
 
@@ -54,5 +67,20 @@ public class GameOverFragment extends Fragment {
                 }, null);
             }
         });
+    }
+
+    public void setGameOverMessage (GameOverMessage msg) {
+        gameOverMessage = msg;
+        if (msg.winner.name != null) {
+            textViewWinnerName.setText(msg.winner.name);
+            if (msg.winner.name.equals(Multicards.getPreferences().strUserName))
+                textViewWinner.setText(getResources().getString(R.string.string_winner_you));
+            else
+                textViewWinner.setText(getResources().getString(R.string.string_winner));
+        }
+        if (msg.winner.avatar != null)
+            Multicards.getAvatarLoader().get(msg.winner.avatar,
+                    new Utils.AvatarListener(imageViewWinner));
+
     }
 }

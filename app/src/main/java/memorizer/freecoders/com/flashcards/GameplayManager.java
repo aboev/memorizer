@@ -15,6 +15,7 @@ import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -141,6 +142,12 @@ public class GameplayManager {
                                 String strMessage = Multicards.getMainActivity().
                                         getResources().getString(
                                         R.string.waiting_opponent_dialog_message);
+                                if ((GameplayManager.strOpponentName != null) &&
+                                        (GameplayManager.strOpponentName.equals("-1")))
+                                    strMessage = strMessage + ".\n" + Multicards.getMainActivity().
+                                            getResources().getString(
+                                            R.string.string_your_id) +
+                                            Multicards.getPreferences().strUserName;
                                 progressDialog = ProgressDialog.show(
                                         Multicards.getMainActivity(), "", strMessage, true);
                                 progressDialog.setOnCancelListener(
@@ -167,6 +174,12 @@ public class GameplayManager {
                             String strMessage = Multicards.getMainActivity().
                                     getResources().getString(
                                     R.string.waiting_opponent_dialog_message);
+                            if ((GameplayManager.strOpponentName != null) &&
+                                    (GameplayManager.strOpponentName.equals("-1")))
+                                strMessage = strMessage + ".\n" + Multicards.getMainActivity().
+                                        getResources().getString(
+                                        R.string.string_your_id) +
+                                        Multicards.getPreferences().strUserName;
                             progressDialog = ProgressDialog.show(
                                     Multicards.getMainActivity(),
                                     "",
@@ -191,10 +204,9 @@ public class GameplayManager {
         FragmentManager.playersInfoFragment.initInfo();
     }
 
-    public static final void quitMultilayerGame() {
+    public static final void quitMultilayerGame(GameOverMessage gameOverMessage) {
         FragmentManager.showGameOverFragment(Multicards.
-                getMultiplayerInterface().currentGame.strGID);
-        InputDialogInterface.showGameOverMessage(null);
+                getMultiplayerInterface().currentGame.strGID, gameOverMessage);
     }
 
     public static final void stopMultilayerGame() {

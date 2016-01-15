@@ -9,6 +9,7 @@ import memorizer.freecoders.com.flashcards.fragments.GameOverFragment;
 import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
 import memorizer.freecoders.com.flashcards.fragments.UserProfileFragment;
+import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 
 /**
  * Created by alex-mac on 27.12.15.
@@ -23,6 +24,7 @@ public class FragmentManager {
     public static FlashCardFragment currentFlashCardFragment;
     public static MainMenuFragment mainMenuFragment;
     public static UserProfileFragment userProfileFragment;
+    public static GameOverFragment gameOverFragment;
     public Boolean boolAvatarChosen = false;
 
     public static final void showFragment (Fragment newFragment, Integer intTransitionType) {
@@ -69,20 +71,24 @@ public class FragmentManager {
                     .remove(playersInfoFragment).commit();
     }
 
-    public static final void showGameOverFragment (String strCardsetID) {
+    public static final void showGameOverFragment (String strCardsetID,
+                                                   GameOverMessage gameOverMessage) {
         hidePlayersInfo();
         hideCurrentFlashcardFragment();
 
-        if (Multicards.getMainActivity().gameOverFragment == null) {
-            Multicards.getMainActivity().gameOverFragment = new GameOverFragment();
-            Multicards.getMainActivity().gameOverFragment.setCardsetID(strCardsetID);
+        if (gameOverFragment == null) {
+            gameOverFragment = new GameOverFragment();
+            gameOverFragment.setCardsetID(strCardsetID);
         }
 
-        if (!Multicards.getMainActivity().gameOverFragment.isAdded())
+        if (!gameOverFragment.isAdded())
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_flashcard_container,
-                            Multicards.getMainActivity().gameOverFragment).commit();
+                    .add(R.id.fragment_flashcard_container, gameOverFragment).commit();
         Multicards.getMainActivity().intUIState = Constants.UI_STATE_GAME_OVER;
+
+        Multicards.getMainActivity().getFragmentManager().executePendingTransactions();
+
+        gameOverFragment.setGameOverMessage(gameOverMessage);
     }
 
     public static final void hideMainMenu () {
