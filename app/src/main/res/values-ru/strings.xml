@@ -14,6 +14,8 @@
 
     <string name="waiting_opponent_dialog_message">Поиск соперников</string>
 
+    <string name="string_your_id">Ваш id:</string>
+
     <string name="string_enter_opponent_nickname">Введите имя соперника (указано на экране)</string>
 
     <string name="string_choose_opponent">Выберите соперника</string>
@@ -23,7 +25,7 @@
         <item>Присоединиться к игре</item>
     </string-array>
 
-    <string name="button_like">Нравится</string>
+    <string name="button_like">Набор понравился!</string>
     <string name="string_popular_cardsets">Популярные наборы</string>
     <string name="string_game_stopped">Игра прервана. Проверьте соединение с интернетом</string>
 
@@ -32,5 +34,13 @@
     <string name="string_main_menu_settings">Настройки</string>
 
     <string name="alert_select_image">Выберите аватар</string>
+
+    <string name="dialog_uploading_avatar">Загрузка аватара</string>
+
+    <string name="dialog_name_taken">Имя уже занято, попробуйте выбрать другое</string>
+
+    <string name="string_winner">Победитель</string>
+
+    <string name="string_choose_tags">Выберите теги</string>
 
 </resources>

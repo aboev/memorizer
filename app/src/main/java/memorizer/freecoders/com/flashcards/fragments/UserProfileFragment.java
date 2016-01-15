@@ -9,12 +9,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -29,10 +34,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.MultipartRequest;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.network.VolleySingleton;
 import memorizer.freecoders.com.flashcards.utils.FileUtils;
 import memorizer.freecoders.com.flashcards.utils.Utils;
@@ -47,6 +54,9 @@ public class UserProfileFragment extends Fragment {
     private CircleImageView circleImageView;
     private EditText editTextUsername;
     private Button saveButton;
+    private ImageView nameFreeImageView;
+    private ImageView nameTakenImageView;
+    private Boolean boolNameFree = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +69,8 @@ public class UserProfileFragment extends Fragment {
         circleImageView = (CircleImageView) view.findViewById(R.id.imageViewAvatar);
         editTextUsername = (EditText) view.findViewById(R.id.editTextUserName);
         saveButton = (Button) view.findViewById(R.id.buttonSave);
+        nameTakenImageView = (ImageView) view.findViewById(R.id.imageViewNameTaken);
+        nameFreeImageView = (ImageView) view.findViewById(R.id.imageViewNameFree);
 
         populateView();
 
@@ -84,25 +96,49 @@ public class UserProfileFragment extends Fragment {
             public void onClick(View v) {
                 final String strUsername = editTextUsername.getText().toString();
                 if ((strUsername != null) && (!strUsername.isEmpty())) {
-                    UserDetails userDetails = new UserDetails();
-                    userDetails.setNullFields();
-                    userDetails.name = strUsername;
-                    ServerInterface.updateUserDetailsRequest(userDetails,
-                            new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    Multicards.getPreferences().strUserName = strUsername;
-                                    Multicards.getMainActivity().returnToMainMenu();
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Multicards.getMainActivity().returnToMainMenu();
-                                }
-                            });
+                    if (boolNameFree) {
+                        UserDetails userDetails = new UserDetails();
+                        userDetails.setNullFields();
+                        userDetails.name = strUsername;
+                        ServerInterface.updateUserDetailsRequest(userDetails,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        Multicards.getPreferences().strUserName = strUsername;
+                                        Multicards.getMainActivity().returnToMainMenu();
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Multicards.getMainActivity().returnToMainMenu();
+                                    }
+                                });
+                    } else {
+                        String strMessage = getResources().getString(R.string.dialog_name_taken);
+                        InputDialogInterface.showModalDialog(strMessage);
+                    }
                 }
             }
         });
+
+        editTextUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                SocketInterface.socketCheckName(editTextUsername.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        SocketInterface.socketCheckName(editTextUsername.getText().toString());
 
     }
 
@@ -208,6 +244,27 @@ public class UserProfileFragment extends Fragment {
             FragmentManager.userProfileFragment.uploadAvatar();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void nameStatus(HashMap<String, Boolean> nameMap) {
+        String strCurrentName = editTextUsername.getText().toString();
+        if (nameMap.containsKey(strCurrentName)) {
+            if (nameMap.get(strCurrentName)) {
+                nameFreeImageView.setVisibility(View.VISIBLE);
+                nameTakenImageView.setVisibility(View.GONE);
+                boolNameFree = true;
+                saveButton.setEnabled(true);
+                editTextUsername.setTextColor(
+                        ContextCompat.getColor(Multicards.getMainActivity(), R.color.colorBlack));
+            } else {
+                nameFreeImageView.setVisibility(View.GONE);
+                nameTakenImageView.setVisibility(View.VISIBLE);
+                boolNameFree = false;
+                saveButton.setEnabled(false);
+                editTextUsername.setTextColor(
+                        ContextCompat.getColor(Multicards.getMainActivity(), R.color.colorRed));
+            }
+        }
     }
 
 }

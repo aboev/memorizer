@@ -46,6 +46,7 @@ public class Constants {
     public static String SOCK_MSG_TYPE_ANNOUNCE_USERID = "announce_userid";
     public static String SOCK_MSG_TYPE_ANSWER_ACCEPTED = "answer_accepted";
     public static String SOCK_MSG_TYPE_ANSWER_REJECTED = "answer_rejected";
+    public static String SOCK_MSG_TYPE_CHECK_NAME = "check_name";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_WAITING_OPPONENT = 1;

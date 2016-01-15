@@ -6,14 +6,34 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/avatar"/>
 
-    <EditText
-        android:id="@+id/editTextUserName"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <EditText
+            android:id="@+id/editTextUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"/>
+        <ImageView
+            android:id="@+id/imageViewNameFree"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/tick_green"
+            android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/imageViewNameTaken"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/tick_red"
+            android:visibility="gone"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonSave"

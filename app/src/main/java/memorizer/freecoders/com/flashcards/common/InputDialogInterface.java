@@ -199,4 +199,16 @@ public class InputDialogInterface {
                 })
                 .show();
     }
+
+    public static final void showModalDialog(String strMessage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+        builder.setMessage(strMessage)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //do things
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 }

@@ -18,7 +18,9 @@ import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.fragments.GameOverFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.SocketMessageExtra;
@@ -95,7 +97,10 @@ public class SocketInterface {
                             msgPlayerAnswered(strAnswerID);
                         } else if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_GAME_END)) {
-                            msgGameEnd();
+                            Type type = new TypeToken<SocketMessage<GameOverMessage>>() {}.getType();
+                            SocketMessage<GameOverMessage> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            msgGameEnd(socketMessage.msg_body);
                         } else if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_GAME_STOP)) {
                             msgGameStop();
@@ -113,6 +118,14 @@ public class SocketInterface {
                                     gson.fromJson(args[0].toString(), type);
                             int questionID = socketMessage.msg_body;
                             msgAnswerRejected(questionID);
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_CHECK_NAME)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<HashMap<String, Boolean>>>() {}.getType();
+                            SocketMessage<HashMap<String, Boolean>> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            HashMap<String, Boolean> nameMap = socketMessage.msg_body;
+                            msgCheckName(nameMap);
                         }
                     }
                 });
@@ -134,6 +147,13 @@ public class SocketInterface {
         mSocketIO.emit("message", gson.toJson(msg));
     }
 
+    public static final void socketCheckName (String strName) {
+        SocketMessage msg = new SocketMessage();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_CHECK_NAME;
+        msg.msg_body = strName;
+        mSocketIO.emit("message", gson.toJson(msg));
+    }
+
     private static void msgAnnounceSocketID (String strSocketID){
         Multicards.getPreferences().strSocketID = strSocketID;
         Log.d(LOG_TAG, "Assigned socket ID to " + strSocketID);
@@ -151,8 +171,8 @@ public class SocketInterface {
         Multicards.getMultiplayerInterface().eventOpponentAnswer(strAnswerID);
     }
 
-    private static void msgGameEnd () {
-        GameplayManager.quitMultilayerGame();
+    private static void msgGameEnd (GameOverMessage gameOverMessage) {
+        GameplayManager.quitMultilayerGame(gameOverMessage);
     }
 
     private static void msgGameStop () {
@@ -165,6 +185,11 @@ public class SocketInterface {
 
     private static void msgAnswerRejected (int intQuestionID) {
         Multicards.getMultiplayerInterface().eventAnswerRejected(intQuestionID);
+    }
+
+    private static void msgCheckName (HashMap<String, Boolean> nameMap) {
+        if (FragmentManager.userProfileFragment != null)
+            FragmentManager.userProfileFragment.nameStatus(nameMap);
     }
 
     //====================================================================================
