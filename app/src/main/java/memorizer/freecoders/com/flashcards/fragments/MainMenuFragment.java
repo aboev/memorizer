@@ -16,6 +16,7 @@ import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
 /**
@@ -98,6 +99,10 @@ public class MainMenuFragment extends Fragment {
             Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
 
         return view;
+    }
+
+    private void saveRecentOpponent (String strOpponentName) {
+
     }
 
 }
