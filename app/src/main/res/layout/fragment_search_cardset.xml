@@ -51,4 +51,14 @@
         android:text="OK"
         android:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/textViewPoweredByQuizlet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/string_powered_by_quizlet"
+        android:textStyle="bold"
+        android:textColor="#278ed7"
+        android:gravity="center_horizontal"
+        android:layout_gravity="bottom"/>
+
 </LinearLayout>

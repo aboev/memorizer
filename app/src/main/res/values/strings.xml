@@ -46,4 +46,7 @@
 
     <string name="string_choose_tags">Pick tags</string>
 
+    <string name="string_powered_by_quizlet">Powered by Quizlet</string>
+    <string name="string_powered_by_quizlet_link">https://quizlet.com</string>
+
 </resources>

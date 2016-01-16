@@ -2,6 +2,8 @@ package memorizer.freecoders.com.flashcards.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -47,6 +49,7 @@ public class SearchCardsetFragment extends Fragment {
     EditText inputEditText;
     TextView popularCardsetsTextView;
     Button buttonCardsetPicker;
+    TextView textViewPoweredByQuizlet;
     public int intNextFragment;
 
     public ProgressDialog progressDialog;
@@ -132,6 +135,8 @@ public class SearchCardsetFragment extends Fragment {
             }
         });
 
+        textViewPoweredByQuizlet = (TextView) view.findViewById(R.id.textViewPoweredByQuizlet);
+
         pendingRequests = new ArrayList<String>();
 
         populateView();
@@ -164,6 +169,16 @@ public class SearchCardsetFragment extends Fragment {
                 }
             }
         }, null);
+
+        textViewPoweredByQuizlet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                        Multicards.getMainActivity().getResources().
+                                getString(R.string.string_powered_by_quizlet_link)));
+                Multicards.getMainActivity().startActivity(browserIntent);
+            }
+        });
     }
 
     public void setNextFragment (int intNextFragment) {
