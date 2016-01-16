@@ -86,9 +86,9 @@ public class ServerInterface {
                     public void onResponse(String response) {
                         Log.d(LOG_TAG, "Response: " + response);
                         Type type = new TypeToken<ServerResponse
-                                <String>>(){}.getType();
+                                <UserDetails>>(){}.getType();
                         try {
-                            ServerResponse<String> res =
+                            ServerResponse<UserDetails> res =
                                     gson.fromJson(response, type);
                             if ( res != null && res.isSuccess() && responseListener != null)
                                 responseListener.onResponse(null);
