@@ -89,9 +89,6 @@ public class FlashCardsDAO {
                             cnt++;
                         }
                         if (cnt > 0) {
-                            Multicards.getPreferences().recentSets.put(gid,
-                                    System.currentTimeMillis());
-                            Multicards.getPreferences().savePreferences();
                             onSuccess.onResponse(cardset.getId());
                         } else
                             onFail.onResponse(null);
@@ -162,5 +159,11 @@ public class FlashCardsDAO {
                     new Gson().toJson(Multicards.getPreferences().recentSets) );
             return cardsets.get(0);
         } else return null;
+    }
+
+    public void setRecentCardset (String strGID) {
+        Log.d(LOG_TAG, "Setting recent cardset " +  strGID);
+        Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
+        Multicards.getPreferences().savePreferences();
     }
 }
