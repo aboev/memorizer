@@ -139,8 +139,11 @@ public class MainActivity extends AppCompatActivity {
                             Multicards.getPreferences().savePreferences();
                         }
                     }, null);
-        } else
+        } else {
             SocketInterface.socketAnnounceUserID(Multicards.getPreferences().strUserID);
+            ServerInterface.getTagsRequest(null, null);
+        }
+
     }
 
     public void returnToMainMenu () {

@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,15 +26,20 @@ import com.android.volley.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
+import memorizer.freecoders.com.flashcards.classes.TagView;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.CardSet;
+import memorizer.freecoders.com.flashcards.json.TagDescriptor;
+import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletSearchResult;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -50,11 +57,13 @@ public class SearchCardsetFragment extends Fragment {
     TextView popularCardsetsTextView;
     Button buttonCardsetPicker;
     TextView textViewPoweredByQuizlet;
+    LinearLayout linearLayoutTags;
     public int intNextFragment;
 
     public ProgressDialog progressDialog;
 
     private ArrayList<String> pendingRequests;
+    private ArrayList<String> selectedTags = new ArrayList<String>();
 
     private int intFragmentType = 0;
 
@@ -129,13 +138,17 @@ public class SearchCardsetFragment extends Fragment {
                 String strGID = "quizlet_" + strSetID;
                 if (intNextFragment == Constants.UI_STATE_TRAIN_MODE) {
                     startSinglePlayer(strGID);
+                    setRecentCardset(cardSetListAdapter.qvalues.get(position), strGID);
                 } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
                     startMultiplayer(strGID);
+                    setRecentCardset(cardSetListAdapter.qvalues.get(position), strGID);
                 }
             }
         });
 
         textViewPoweredByQuizlet = (TextView) view.findViewById(R.id.textViewPoweredByQuizlet);
+
+        linearLayoutTags = (LinearLayout) view.findViewById(R.id.linearLayoutTags);
 
         pendingRequests = new ArrayList<String>();
 
@@ -161,8 +174,10 @@ public class SearchCardsetFragment extends Fragment {
                                     popularCardSetListAdapter.values.get(position).gid);
                             if (intNextFragment == Constants.UI_STATE_TRAIN_MODE) {
                                 startSinglePlayer(strGID);
+                                setRecentCardset(popularCardSetListAdapter.values.get(position));
                             } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
                                 startMultiplayer(strGID);
+                                setRecentCardset(popularCardSetListAdapter.values.get(position));
                             }
                         }
                     });
@@ -179,6 +194,8 @@ public class SearchCardsetFragment extends Fragment {
                 Multicards.getMainActivity().startActivity(browserIntent);
             }
         });
+
+        initTags();
     }
 
     public void setNextFragment (int intNextFragment) {
@@ -194,7 +211,6 @@ public class SearchCardsetFragment extends Fragment {
                         public void onResponse(Object obj) {
                             if (progressDialog != null)
                                 progressDialog.dismiss();
-                            Multicards.getFlashCardsDAO().setRecentCardset(strGID);
                             Long setID = (Long) obj;
                             GameplayManager.startSingleplayerGame(setID);
                             Multicards.getCardsetPickerActivity().finish();
@@ -218,7 +234,6 @@ public class SearchCardsetFragment extends Fragment {
                     Multicards.getCardsetPickerActivity(), "", strMessage, true);
             progressDialog.setCancelable(true);
         } else {
-            Multicards.getFlashCardsDAO().setRecentCardset(strGID);
             GameplayManager.startSingleplayerGame(cardset.getId());
             Multicards.getCardsetPickerActivity().finish();
         }
@@ -227,5 +242,86 @@ public class SearchCardsetFragment extends Fragment {
     private void startMultiplayer (String strGID) {
         GameplayManager.requestMultiplayerGame(strGID);
         Multicards.getCardsetPickerActivity().finish();
+    }
+
+    private void setRecentCardset(QuizletCardsetDescriptor cardset, String strGID) {
+        Log.d(LOG_TAG, "Setting recent qcardset " + strGID);
+        cardset.gid = strGID;
+        Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
+        Multicards.getPreferences().recentSetDescriptors.put(strGID, cardset);
+        Multicards.getPreferences().savePreferences();
+    }
+
+    private void setRecentCardset(CardSet cardset) {
+        Log.d(LOG_TAG, "Setting recent cardset " + cardset.gid);
+        QuizletCardsetDescriptor qcardset = new QuizletCardsetDescriptor();
+        qcardset.title = cardset.title;
+        qcardset.gid = cardset.gid;
+        Multicards.getPreferences().recentSets.put(qcardset.gid, System.currentTimeMillis());
+        Multicards.getPreferences().recentSetDescriptors.put(qcardset.gid, qcardset);
+        Multicards.getPreferences().savePreferences();
+    }
+
+    private void showTags (final ArrayList<TagDescriptor> tags) {
+        linearLayoutTags.removeAllViews();
+        for (int i = 0; i < tags.size(); i++) {
+            final TagView tagView = new TagView(Multicards.getMainActivity());
+            tagView.setTag(tags.get(i));
+            tagView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Boolean boolSelected = tagView.onSelect();
+                    if (boolSelected)
+                        if (!selectedTags.contains(tagView.getTagID()))
+                            selectedTags.add(tagView.getTagID());
+                    else
+                        if (selectedTags.contains(tagView.getTagID()))
+                            selectedTags.remove(tagView.getTagID());
+                    searchCardsetsByTags();
+                }
+            });
+            linearLayoutTags.addView(tagView);
+        }
+    }
+
+    private void initTags () {
+        ArrayList<TagDescriptor> tags = new ArrayList<TagDescriptor>();
+        Iterator it = Multicards.getPreferences().tagDescriptors.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            TagDescriptor tag = (TagDescriptor) pair.getValue();
+            tags.add(tag);
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        showTags(tags);
+        ServerInterface.getTagsRequest(new Response.Listener<ArrayList<TagDescriptor>>() {
+            @Override
+            public void onResponse(ArrayList<TagDescriptor> response) {
+                showTags(response);
+            }
+        }, null);
+    }
+
+    private void searchCardsetsByTags () {
+        if (selectedTags.size() > 0)
+            ServerInterface.searchCardsetsRequest(selectedTags, new Response.Listener<ArrayList<CardSet>>() {
+                @Override
+                public void onResponse(ArrayList<CardSet> response) {
+                    cardSetListAdapter.setValues(response);
+                    cardSetListAdapter.notifyDataSetChanged();
+
+                    if ((inputEditText.getText().toString().isEmpty()) && (selectedTags.size() == 0)) {
+                        popularCardSetListView.setVisibility(View.VISIBLE);
+                        popularCardsetsTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        popularCardSetListView.setVisibility(View.GONE);
+                        popularCardsetsTextView.setVisibility(View.GONE);
+                    }
+                }
+            }, null);
+        else if (inputEditText.getText().toString().isEmpty()) {
+            popularCardSetListView.setVisibility(View.VISIBLE);
+            popularCardsetsTextView.setVisibility(View.VISIBLE);
+        }
     }
 }
