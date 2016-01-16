@@ -35,6 +35,7 @@ import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.utils.FileUtils;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 import android.net.Uri;
 
@@ -125,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
         if ((Multicards.getPreferences().strUserID == null) ||
                 Multicards.getPreferences().strUserID.isEmpty()) {
+            UserDetails userDetails = new UserDetails();
+            userDetails.locale = Utils.getLocale();
             ServerInterface.registerUserRequest(
                     new UserDetails(),
                     new Response.Listener<UserDetails>() {

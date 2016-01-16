@@ -12,6 +12,7 @@ public class UserDetails {
     public String id = "";
     public String socket_id = "";
     public Integer status;
+    public String locale = "";
 
     public void setNullFields(){
         if (name.isEmpty()) name = null;

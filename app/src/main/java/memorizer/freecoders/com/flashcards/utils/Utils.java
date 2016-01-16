@@ -9,6 +9,7 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -67,4 +68,8 @@ public class Utils {
         }
     }
 
+    public final static String getLocale () {
+        String lang = Locale.getDefault().getISO3Language().substring(0, 2);
+        return lang;
+    }
 }
