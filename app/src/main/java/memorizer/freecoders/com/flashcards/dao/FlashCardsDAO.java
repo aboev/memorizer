@@ -67,6 +67,7 @@ public class FlashCardsDAO {
 
     public void importFromWeb(final String gid, final CallbackInterface onSuccess,
                               final CallbackInterface onFail) {
+        Log.d(LOG_TAG, "Import cardset from web for " + gid);
         if (gid.split("_")[0].equals("quizlet")) {
             String setid = gid.split("_")[1];
             ServerInterface.fetchQuizletCardsetRequest(setid,
@@ -100,6 +101,8 @@ public class FlashCardsDAO {
                     }
                 }
             );
+        } else {
+            onFail.onResponse(null);
         }
     }
 
@@ -149,8 +152,8 @@ public class FlashCardsDAO {
     public Cardset fetchCardset(String strGID){
         List<Cardset> cardsets = new Select()
                 .from(Cardset.class)
-                .limit(1)
                 .where("gid = ?", strGID)
+                .limit(1)
                 .execute();
         if (cardsets.size() > 0) {
             Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
