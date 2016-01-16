@@ -105,6 +105,7 @@ public class UserProfileFragment extends Fragment {
                                     @Override
                                     public void onResponse(String response) {
                                         Multicards.getPreferences().strUserName = strUsername;
+                                        Multicards.getPreferences().savePreferences();
                                         Multicards.getMainActivity().returnToMainMenu();
                                     }
                                 }, new Response.ErrorListener() {
