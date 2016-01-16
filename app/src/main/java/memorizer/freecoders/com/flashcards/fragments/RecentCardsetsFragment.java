@@ -58,10 +58,12 @@ public class RecentCardsetsFragment extends Fragment{
                 String strGID = String.valueOf(cardSetListAdapter.qvalues.get(position).gid);
                 Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
                 if ((cardset != null) && (intNextFragment == Constants.UI_STATE_TRAIN_MODE)) {
+                    Multicards.getFlashCardsDAO().setRecentCardset(strGID);
                     Long setID = cardset.getId();
                     GameplayManager.startSingleplayerGame(setID);
                     Multicards.getCardsetPickerActivity().finish();
                 } else if ((cardset != null) && (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE)) {
+                    Multicards.getFlashCardsDAO().setRecentCardset(strGID);
                     GameplayManager.requestMultiplayerGame(strGID);
                     Multicards.getCardsetPickerActivity().finish();
                 }
