@@ -18,7 +18,11 @@ public class Constants {
     public final static String SERVER_PATH_UPLOAD = "/image";
     public final static String SERVER_PATH_CARDSETS = "/cardsets";
     public final static String SERVER_PATH_POPULAR = "/popular";
+    public final static String SERVER_PATH_SEARCH = "/search";
     public final static String SERVER_PATH_LIKE = "/like";
+    public final static String SERVER_PATH_TAGS = "/tags";
+    public final static String SERVER_PATH_TAG = "/tag";
+    public final static String SERVER_PATH_UNTAG = "/untag";
 
     public final static String RESPONSE_RESULT = "result";
     public final static String RESPONSE_RESULT_OK = "OK";
@@ -29,6 +33,7 @@ public class Constants {
     public final static String HEADER_SOCKETID = "socketid";
     public final static String HEADER_SETID = "setid";
     public final static String HEADER_OPPONENTNAME = "opponentname";
+    public final static String HEADER_TAGID = "tagid";
 
     public final static String KEY_ID = "id";
 
@@ -77,5 +82,7 @@ public class Constants {
     public final static int INTENT_PICK_IMAGE = 111;
     public final static int INTENT_PICK_IMAGE_KITKAT = 112;
     public final static String FILENAME_AVATAR = "avatar.jpg";
+
+    public final static String DEFAULT_LOCALE = "en";
 
 }
