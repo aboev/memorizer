@@ -56,6 +56,7 @@ public class MainMenuFragment extends Fragment {
                     public void onResponse(Object obj) {
                         Integer index = (Integer) obj;
                         if (index == 0) {
+                            GameplayManager.strOpponentName = null;
                             Intent intent = new Intent(Multicards.getMainActivity(),
                                     CardsetPickerActivity.class);
                             intent.putExtra(Constants.INTENT_META_NEXT_FRAGMENT,
