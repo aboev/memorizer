@@ -32,9 +32,13 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
     }
 
     public void setValues(ArrayList<CardSet> values) {
-        if (this.values == null) this.values = new ArrayList<CardSet>();
-        this.values.clear();
-        this.values.addAll(values);
+        if (values != null) {
+            if (this.values == null) this.values = new ArrayList<CardSet>();
+            this.values.clear();
+            this.values.addAll(values);
+        } else {
+            this.values = null;
+        }
     }
 
     @Override
