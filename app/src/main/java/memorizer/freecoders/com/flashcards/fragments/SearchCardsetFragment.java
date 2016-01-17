@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
+import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -272,11 +273,10 @@ public class SearchCardsetFragment extends Fragment {
                 public void onClick(View v) {
                     Boolean boolSelected = tagView.onSelect();
                     if (boolSelected)
-                        if (!selectedTags.contains(tagView.getTagID()))
-                            selectedTags.add(tagView.getTagID());
+                        addTag(tagView.getTagID().toString());
                     else
-                        if (selectedTags.contains(tagView.getTagID()))
-                            selectedTags.remove(tagView.getTagID());
+                        removeTag(tagView.getTagID().toString());
+                    Log.d(LOG_TAG, "Selected tags " + new Gson().toJson(selectedTags) );
                     searchCardsetsByTags();
                 }
             });
@@ -319,9 +319,33 @@ public class SearchCardsetFragment extends Fragment {
                     }
                 }
             }, null);
-        else if (inputEditText.getText().toString().isEmpty()) {
+        else {
             popularCardSetListView.setVisibility(View.VISIBLE);
             popularCardsetsTextView.setVisibility(View.VISIBLE);
+            cardSetListAdapter.setValues(null);
+            cardSetListAdapter.setQValues(new ArrayList<QuizletCardsetDescriptor>());
+            cardSetListAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void removeTag (String strTagID) {
+        for (int i = 0; i < selectedTags.size(); i++) {
+            if (selectedTags.get(i).equals(strTagID)) {
+                selectedTags.remove(i);
+                break;
+            }
+        }
+    }
+
+    private void addTag (String strTagID) {
+        Boolean boolContains = false;
+        for (int i = 0; i < selectedTags.size(); i++) {
+            if (selectedTags.get(i).equals(strTagID)) {
+                boolContains = true;
+                break;
+            }
+        }
+        if (!boolContains)
+            selectedTags.add(strTagID);
     }
 }
