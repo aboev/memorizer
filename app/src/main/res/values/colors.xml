@@ -6,5 +6,6 @@
     <color name="colorGreen">#6cf15a</color>
     <color name="colorRed">#e7725a</color>
     <color name="colorBlack">#434343</color>
-    <color name="colorSelected">#c9c9c9</color>
+    <color name="colorDeselected">#c9c9c9</color>
+    <color name="colorSelected">#b2fc92</color>
 </resources>
