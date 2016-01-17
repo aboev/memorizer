@@ -63,16 +63,7 @@ public class TagView extends FrameLayout {
     public void setTag (TagDescriptor tag) {
         textViewTagName.setText(tag.getName());
         this.strTagID = tag.tag_id;
-        if ((tag.color != null) && (!tag.color.isEmpty())) {
-            color = Color.parseColor(tag.color);
-            if (background instanceof ShapeDrawable) {
-                ShapeDrawable shapeDrawable = (ShapeDrawable)background;
-                shapeDrawable.getPaint().setColor(color);
-            } else if (background instanceof GradientDrawable) {
-                GradientDrawable gradientDrawable = (GradientDrawable)background;
-                gradientDrawable.setColor(color);
-            }
-        }
+        setColor();
         invalidate();
     }
 
@@ -81,6 +72,11 @@ public class TagView extends FrameLayout {
             this.boolSelected = false;
         else
             this.boolSelected = true;
+        setColor();
+        return  boolSelected;
+    }
+
+    private void setColor () {
         if (boolSelected) {
             int colorSelected =
                     ContextCompat.getColor(Multicards.getMainActivity(), R.color.colorSelected);
@@ -92,14 +88,15 @@ public class TagView extends FrameLayout {
                 gradientDrawable.setColor(colorSelected);
             }
         } else {
+            int colorDeselected =
+                    ContextCompat.getColor(Multicards.getMainActivity(), R.color.colorDeselected);
             if (background instanceof ShapeDrawable) {
                 ShapeDrawable shapeDrawable = (ShapeDrawable)background;
-                shapeDrawable.getPaint().setColor(color);
+                shapeDrawable.getPaint().setColor(colorDeselected);
             } else if (background instanceof GradientDrawable) {
                 GradientDrawable gradientDrawable = (GradientDrawable)background;
-                gradientDrawable.setColor(color);
+                gradientDrawable.setColor(colorDeselected);
             }
         }
-        return  boolSelected;
     }
 }
