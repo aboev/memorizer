@@ -16,6 +16,7 @@ import com.android.volley.Response;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import memorizer.freecoders.com.flashcards.R;
+import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -32,6 +33,9 @@ public class GameOverFragment extends Fragment {
     private TextView textViewWinnerName;
     private CircleImageView imageViewWinner;
     private TextView textViewWinner;
+    public static int INT_GAME_TYPE_SINGLEPLAYER = 0;
+    public static int INT_GAME_TYPE_MULTIPLAYER = 1;
+    public int INT_GAME_TYPE = INT_GAME_TYPE_MULTIPLAYER;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +71,16 @@ public class GameOverFragment extends Fragment {
                 }, null);
             }
         });
+
+        if (INT_GAME_TYPE == INT_GAME_TYPE_MULTIPLAYER) {
+            textViewWinnerName.setVisibility(View.VISIBLE);
+            textViewWinner.setVisibility(View.VISIBLE);
+            imageViewWinner.setVisibility(View.VISIBLE);
+        } else if (INT_GAME_TYPE == INT_GAME_TYPE_SINGLEPLAYER) {
+            textViewWinnerName.setVisibility(View.GONE);
+            textViewWinner.setVisibility(View.GONE);
+            imageViewWinner.setVisibility(View.GONE);
+        }
     }
 
     public void setGameOverMessage (GameOverMessage msg) {
