@@ -81,6 +81,11 @@ public class FragmentManager {
             gameOverFragment.setCardsetID(strCardsetID);
         }
 
+        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+            gameOverFragment.INT_GAME_TYPE = GameOverFragment.INT_GAME_TYPE_MULTIPLAYER;
+        else if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+            gameOverFragment.INT_GAME_TYPE = GameOverFragment.INT_GAME_TYPE_SINGLEPLAYER;
+
         if (!gameOverFragment.isAdded())
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
                     .add(R.id.fragment_flashcard_container, gameOverFragment).commit();
@@ -88,7 +93,8 @@ public class FragmentManager {
 
         Multicards.getMainActivity().getFragmentManager().executePendingTransactions();
 
-        gameOverFragment.setGameOverMessage(gameOverMessage);
+        if (gameOverMessage != null)
+            gameOverFragment.setGameOverMessage(gameOverMessage);
     }
 
     public static final void hideMainMenu () {

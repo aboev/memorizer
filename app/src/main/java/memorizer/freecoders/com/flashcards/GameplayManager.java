@@ -27,22 +27,27 @@ public class GameplayManager {
     private static String LOG_TAG = "GameplayManager";
 
     private static Long currentSetID;
+    private static String currentGID = "";
+    private static int intQuestionCount = 0;
     public static String strOpponentName = null;
 
     public static ProgressDialog progressDialog;
 
-    public static final void startSingleplayerGame(Long setID) {
+    public static final void startSingleplayerGame(Long setID, String strGID) {
         Multicards.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
         currentSetID = setID;
         FragmentManager.hideMainMenu();
         FragmentManager.showPlayersInfo();
         newLocalQuestion(null);
+        currentGID = strGID;
+        intQuestionCount = 0;
     }
 
     public static final void playAgain() {
     }
 
     public static final void quitSingleplayerGame() {
+        FragmentManager.showGameOverFragment(currentGID, null);
     }
 
     public static final void newServerQuestion(Question question, HashMap<String, Integer> scores) {
@@ -85,6 +90,12 @@ public class GameplayManager {
         mFlashcardFragment.setOnAnswerPickListener(new CallbackInterface() {
             @Override
             public void onResponse(Object obj) {
+                intQuestionCount++;
+                Log.d(LOG_TAG, "Question count " + intQuestionCount);
+                if (intQuestionCount >= Constants.GAMEPLAY_QUESTIONS_PER_GAME) {
+                    quitSingleplayerGame();
+                    return;
+                }
                 int position = (int) obj;
                 if (mFlashcardFragment.mFlashCard.answer_id == position) {
                     mFlashcardFragment.listViewAdapter.
