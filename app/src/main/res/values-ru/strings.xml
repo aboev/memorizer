@@ -43,4 +43,6 @@
 
     <string name="string_choose_tags">Выберите теги</string>
 
+    <string name="string_score">Счёт</string>
+
 </resources>

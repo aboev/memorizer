@@ -49,4 +49,6 @@
     <string name="string_powered_by_quizlet">Powered by Quizlet</string>
     <string name="string_powered_by_quizlet_link">https://quizlet.com</string>
 
+    <string name="string_score">Score</string>
+
 </resources>
