@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import memorizer.freecoders.com.flashcards.R;
+import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 
@@ -18,8 +19,11 @@ import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor
  */
 public class CardsetListAdapter extends ArrayAdapter<String> {
     private Context context;
+    public static int INT_ITEMS_TYPE_QUIZLET = 0;
+    public static int INT_ITEMS_TYPE_CARDSET = 1;
+    public int INT_ITEMS_TYPE = INT_ITEMS_TYPE_QUIZLET;
     public ArrayList<QuizletCardsetDescriptor> qvalues = new ArrayList<QuizletCardsetDescriptor>();
-    public ArrayList<CardSet> values = null;
+    public ArrayList<CardSet> values = new ArrayList<CardSet>();
 
     public CardsetListAdapter(Context context) {
         super(context, -1);
@@ -29,21 +33,18 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
     public void setQValues(ArrayList<QuizletCardsetDescriptor> values) {
         this.qvalues.clear();
         this.qvalues.addAll(values);
+        INT_ITEMS_TYPE = INT_ITEMS_TYPE_QUIZLET;
     }
 
     public void setValues(ArrayList<CardSet> values) {
-        if (values != null) {
-            if (this.values == null) this.values = new ArrayList<CardSet>();
-            this.values.clear();
-            this.values.addAll(values);
-        } else {
-            this.values = null;
-        }
+        this.values.clear();
+        this.values.addAll(values);
+        INT_ITEMS_TYPE = INT_ITEMS_TYPE_CARDSET;
     }
 
     @Override
     public int getCount() {
-        return (values != null) ? values.size() : qvalues.size();
+        return (INT_ITEMS_TYPE == INT_ITEMS_TYPE_CARDSET) ? values.size() : qvalues.size();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
         TextView textView = (TextView) rowView.findViewById(R.id.textViewCardsetPickerItem);
         TextView textViewAuthor = (TextView) rowView.findViewById(R.id.textViewCardsetSearchAuthor);
 
-        if (values != null) {
+        if (INT_ITEMS_TYPE == INT_ITEMS_TYPE_CARDSET) {
             textView.setText(values.get(position).title);
             textViewAuthor.setText("");
         } else {
