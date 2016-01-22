@@ -26,7 +26,7 @@ public class TagView extends FrameLayout {
     private TextView textViewTagName;
     private String strTagID = "";
     private int color;
-    private Boolean boolSelected = false;
+    public Boolean boolSelected = false;
     private Drawable background;
     private View view;
 
