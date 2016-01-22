@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +26,9 @@ import com.google.gson.Gson;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -65,6 +67,7 @@ public class SearchCardsetFragment extends Fragment {
 
     private ArrayList<String> pendingRequests;
     private ArrayList<String> selectedTags = new ArrayList<String>();
+    private ArrayList<TagDescriptor> allTags = new ArrayList<TagDescriptor>();
 
     private int intFragmentType = 0;
 
@@ -127,6 +130,8 @@ public class SearchCardsetFragment extends Fragment {
                     popularCardSetListView.setVisibility(View.GONE);
                     popularCardsetsTextView.setVisibility(View.GONE);
                 }
+
+                showTags(null, strKeywords);
             }
         });
 
@@ -135,15 +140,19 @@ public class SearchCardsetFragment extends Fragment {
         cardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String strSetID = String.valueOf(cardSetListAdapter.qvalues.get(position).id);
-                String strGID = "quizlet_" + strSetID;
-                if (intNextFragment == Constants.UI_STATE_TRAIN_MODE) {
-                    startSinglePlayer(strGID);
-                    setRecentCardset(cardSetListAdapter.qvalues.get(position), strGID);
-                } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
-                    startMultiplayer(strGID);
+                String strGID = "";
+
+                if (cardSetListAdapter.INT_ITEMS_TYPE == CardsetListAdapter.INT_ITEMS_TYPE_CARDSET) {
+                    strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
+                    setRecentCardset(cardSetListAdapter.values.get(position));
+                } else {
+                    strGID = "quizlet_" + String.valueOf(cardSetListAdapter.qvalues.get(position).id);
                     setRecentCardset(cardSetListAdapter.qvalues.get(position), strGID);
                 }
+                if (intNextFragment == Constants.UI_STATE_TRAIN_MODE)
+                    startSinglePlayer(strGID);
+                else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE)
+                    startMultiplayer(strGID);
             }
         });
 
@@ -213,7 +222,7 @@ public class SearchCardsetFragment extends Fragment {
                             if (progressDialog != null)
                                 progressDialog.dismiss();
                             Long setID = (Long) obj;
-                            GameplayManager.startSingleplayerGame(setID);
+                            GameplayManager.startSingleplayerGame(setID, strGID);
                             Multicards.getCardsetPickerActivity().finish();
                         }
                     }, new CallbackInterface() {
@@ -235,7 +244,7 @@ public class SearchCardsetFragment extends Fragment {
                     Multicards.getCardsetPickerActivity(), "", strMessage, true);
             progressDialog.setCancelable(true);
         } else {
-            GameplayManager.startSingleplayerGame(cardset.getId());
+            GameplayManager.startSingleplayerGame(cardset.getId(), strGID);
             Multicards.getCardsetPickerActivity().finish();
         }
     }
@@ -263,8 +272,20 @@ public class SearchCardsetFragment extends Fragment {
         Multicards.getPreferences().savePreferences();
     }
 
-    private void showTags (final ArrayList<TagDescriptor> tags) {
+    private void showTags (final ArrayList<TagDescriptor> tagsList, String strFilter) {
+        ArrayList<TagDescriptor> tags = tagsList;
+        if (tagsList == null)
+            tags = allTags;
+        else
+            allTags = tagsList;
+        Collections.sort(tags, new Comparator<TagDescriptor>() {
+            @Override
+            public int compare(TagDescriptor lhs, TagDescriptor rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
         linearLayoutTags.removeAllViews();
+        selectedTags.clear();
         for (int i = 0; i < tags.size(); i++) {
             final TagView tagView = new TagView(Multicards.getMainActivity());
             tagView.setTag(tags.get(i));
@@ -276,11 +297,13 @@ public class SearchCardsetFragment extends Fragment {
                         addTag(tagView.getTagID().toString());
                     else
                         removeTag(tagView.getTagID().toString());
-                    Log.d(LOG_TAG, "Selected tags " + new Gson().toJson(selectedTags) );
+                    Log.d(LOG_TAG, "Selected tags " + new Gson().toJson(selectedTags));
                     searchCardsetsByTags();
                 }
             });
-            linearLayoutTags.addView(tagView);
+            if ((strFilter.isEmpty()) || (tags.get(i).getName().toLowerCase().
+                    contains(strFilter.toLowerCase())) || tagView.boolSelected)
+                linearLayoutTags.addView(tagView);
         }
     }
 
@@ -293,11 +316,11 @@ public class SearchCardsetFragment extends Fragment {
             tags.add(tag);
             it.remove(); // avoids a ConcurrentModificationException
         }
-        showTags(tags);
+        showTags(tags, "");
         ServerInterface.getTagsRequest(new Response.Listener<ArrayList<TagDescriptor>>() {
             @Override
             public void onResponse(ArrayList<TagDescriptor> response) {
-                showTags(response);
+                showTags(response, "");
             }
         }, null);
     }
@@ -322,7 +345,6 @@ public class SearchCardsetFragment extends Fragment {
         else {
             popularCardSetListView.setVisibility(View.VISIBLE);
             popularCardsetsTextView.setVisibility(View.VISIBLE);
-            cardSetListAdapter.setValues(null);
             cardSetListAdapter.setQValues(new ArrayList<QuizletCardsetDescriptor>());
             cardSetListAdapter.notifyDataSetChanged();
         }

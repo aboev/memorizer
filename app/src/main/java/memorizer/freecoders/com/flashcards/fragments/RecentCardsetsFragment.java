@@ -61,7 +61,11 @@ public class RecentCardsetsFragment extends Fragment{
         cardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String strGID = String.valueOf(cardSetListAdapter.qvalues.get(position).gid);
+                String strGID = "";
+                if (cardSetListAdapter.INT_ITEMS_TYPE == CardsetListAdapter.INT_ITEMS_TYPE_CARDSET)
+                    strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
+                else
+                    strGID = String.valueOf(cardSetListAdapter.qvalues.get(position).gid);
                 if (intNextFragment == Constants.UI_STATE_TRAIN_MODE) {
                     startSinglePlayer(strGID);
                 } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
@@ -137,7 +141,7 @@ public class RecentCardsetsFragment extends Fragment{
                             if (progressDialog != null)
                                 progressDialog.dismiss();
                             Long setID = (Long) obj;
-                            GameplayManager.startSingleplayerGame(setID);
+                            GameplayManager.startSingleplayerGame(setID, strGID);
                             Multicards.getCardsetPickerActivity().finish();
                             Multicards.getFlashCardsDAO().setRecentCardset(strGID);
                         }
@@ -157,7 +161,7 @@ public class RecentCardsetsFragment extends Fragment{
                     Multicards.getCardsetPickerActivity(), "", strMessage, true);
             progressDialog.setCancelable(true);
         } else {
-            GameplayManager.startSingleplayerGame(cardset.getId());
+            GameplayManager.startSingleplayerGame(cardset.getId(), strGID);
             Multicards.getCardsetPickerActivity().finish();
             Multicards.getFlashCardsDAO().setRecentCardset(strGID);
         }
