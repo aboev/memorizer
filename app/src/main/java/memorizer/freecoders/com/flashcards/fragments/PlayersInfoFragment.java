@@ -16,6 +16,7 @@ import com.android.volley.toolbox.ImageLoader;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.StyleProgressBar;
@@ -60,7 +61,7 @@ public class PlayersInfoFragment extends Fragment{
         setRetainInstance(true);
         // Inflate the layout for this fragment
         View view;
-        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+        if (FragmentManager.intUIState == Constants.UI_STATE_TRAIN_MODE)
             view = inflater.inflate(R.layout.fragment_players_info_single, container, false);
         else
             view = inflater.inflate(R.layout.fragment_players_info_multi, container, false);
@@ -81,11 +82,11 @@ public class PlayersInfoFragment extends Fragment{
 
         styleProgressBar = (StyleProgressBar) view.findViewById(R.id.styleprogressbar);
 
-        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE) {
+        if (FragmentManager.intUIState == Constants.UI_STATE_TRAIN_MODE) {
             textViewPlayer2Name.setVisibility(View.GONE);
             imageViewPlayer2Avatar.setVisibility(View.GONE);
             styleProgressBar.setVisibility(View.GONE);
-        } else if (Multicards.getMainActivity().intUIState ==
+        } else if (FragmentManager.intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
             textViewPlayer2Name.setText(player2Name);
             styleProgressBar.setVisibility(View.VISIBLE);
@@ -116,7 +117,7 @@ public class PlayersInfoFragment extends Fragment{
                     new Utils.AvatarListener(imageViewPlayer1Avatar));
         }
 
-        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+        if (FragmentManager.intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
             Game currentGame = Multicards.getMultiplayerInterface().currentGame.game;
             UserDetails opponentDetails = Utils.extractOpponentProfile(currentGame.profiles);
             if (opponentDetails != null) {
@@ -137,9 +138,9 @@ public class PlayersInfoFragment extends Fragment{
 
     public void updateInfo()
     {
-        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+        if (FragmentManager.intUIState == Constants.UI_STATE_TRAIN_MODE)
             scoreView.setText("Score: " + player1Score + "/" + intTotalQuestions);
-        else if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+        else if (FragmentManager.intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
             HashMap<String, Integer> scores = Multicards.getMultiplayerInterface().currentScores;
             if (scores != null) {
                 player1Score = scores.get(Multicards.getPreferences().strSocketID);
@@ -166,7 +167,7 @@ public class PlayersInfoFragment extends Fragment{
     }
 
     public void highlightAnswer (int playerID, Boolean boolCorrect, CallbackInterface onAnimationEnd) {
-        if (Multicards.getMainActivity().intUIState ==
+        if (FragmentManager.intUIState ==
                 Constants.UI_STATE_MULTIPLAYER_MODE) {
 
             if (playerID == 0)

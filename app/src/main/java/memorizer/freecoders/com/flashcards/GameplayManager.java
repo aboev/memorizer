@@ -18,6 +18,7 @@ import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 26.12.15.
@@ -34,7 +35,7 @@ public class GameplayManager {
     public static ProgressDialog progressDialog;
 
     public static final void startSingleplayerGame(Long setID, String strGID) {
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_TRAIN_MODE;
+        FragmentManager.intUIState = Constants.UI_STATE_TRAIN_MODE;
         currentSetID = setID;
         FragmentManager.hideMainMenu();
         FragmentManager.showPlayersInfo();
@@ -51,10 +52,10 @@ public class GameplayManager {
     }
 
     public static final void newServerQuestion(Question question, HashMap<String, Integer> scores) {
-        if (Multicards.getMainActivity().intUIState != Constants.UI_STATE_MULTIPLAYER_MODE) {
+        if (FragmentManager.intUIState != Constants.UI_STATE_MULTIPLAYER_MODE) {
             FragmentManager.hideMainMenu();
             FragmentManager.hideCardsetPickerActivity();
-            Multicards.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
+            FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
         }
         if ((progressDialog != null) && (progressDialog.isShowing()))
             progressDialog.dismiss();
@@ -209,8 +210,9 @@ public class GameplayManager {
     }
 
     public static final void startMultiplayerGame(Game game) {
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
+        FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
         Multicards.getMultiplayerInterface().setGameData(game, null);
+        Multicards.getPreferences().saveRecentOpponent(Utils.extractOpponentProfile(game.profiles));
         FragmentManager.showPlayersInfo();
         FragmentManager.playersInfoFragment.initInfo();
     }
@@ -223,7 +225,7 @@ public class GameplayManager {
     public static final void stopMultilayerGame() {
         Multicards.getMainActivity().returnToMainMenu();
         InputDialogInterface.showGameStopMessage(null);
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+        FragmentManager.intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 
 }

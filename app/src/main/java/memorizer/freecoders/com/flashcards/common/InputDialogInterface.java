@@ -121,7 +121,7 @@ public class InputDialogInterface {
                         if (Multicards.getMultiplayerInterface().currentGame != null) {
                             GameplayManager.requestMultiplayerGame(
                                     Multicards.getMultiplayerInterface().currentGame.strGID);
-                            Multicards.getMainActivity().intUIState =
+                            FragmentManager.intUIState =
                                     Constants.UI_STATE_MULTIPLAYER_MODE;
                         }
                     }
@@ -149,7 +149,7 @@ public class InputDialogInterface {
                         if (Multicards.getMultiplayerInterface().currentGame != null) {
                             GameplayManager.requestMultiplayerGame(
                                     Multicards.getMultiplayerInterface().currentGame.strGID);
-                            Multicards.getMainActivity().intUIState =
+                            FragmentManager.intUIState =
                                     Constants.UI_STATE_MULTIPLAYER_MODE;
                         }
                     }

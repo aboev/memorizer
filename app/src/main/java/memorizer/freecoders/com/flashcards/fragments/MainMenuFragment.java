@@ -96,7 +96,7 @@ public class MainMenuFragment extends Fragment {
         });
 
         if (Multicards.getMainActivity() != null)
-            Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+            FragmentManager.intUIState = Constants.UI_STATE_MAIN_MENU;
 
         return view;
     }

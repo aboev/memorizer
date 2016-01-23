@@ -19,6 +19,8 @@ public class FragmentManager {
 
     private static String LOG_TAG = "FragmentManager";
 
+    public static int intUIState = Constants.UI_STATE_MAIN_MENU;
+
     public static PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
     private static Fragment currentFragment;
     public static FlashCardFragment currentFlashCardFragment;
@@ -81,15 +83,15 @@ public class FragmentManager {
             gameOverFragment.setCardsetID(strCardsetID);
         }
 
-        if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+        if (intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
             gameOverFragment.INT_GAME_TYPE = GameOverFragment.INT_GAME_TYPE_MULTIPLAYER;
-        else if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_TRAIN_MODE)
+        else if (intUIState == Constants.UI_STATE_TRAIN_MODE)
             gameOverFragment.INT_GAME_TYPE = GameOverFragment.INT_GAME_TYPE_SINGLEPLAYER;
 
         if (!gameOverFragment.isAdded())
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
                     .add(R.id.fragment_flashcard_container, gameOverFragment).commit();
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_GAME_OVER;
+        intUIState = Constants.UI_STATE_GAME_OVER;
 
         Multicards.getMainActivity().getFragmentManager().executePendingTransactions();
 
@@ -111,8 +113,8 @@ public class FragmentManager {
     public static final void returnToMainMenu () {
     }
 
-    public static final void showMainMenu () {
-        if (mainMenuFragment == null)
+    public static final void showMainMenu (Boolean boolConfigurationChange) {
+        if ((mainMenuFragment == null) || boolConfigurationChange)
             mainMenuFragment = new MainMenuFragment();
         if (!mainMenuFragment.isAdded())
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
@@ -131,7 +133,7 @@ public class FragmentManager {
         if (!userProfileFragment.isAdded())
             Multicards.getMainActivity().getFragmentManager().beginTransaction()
                     .add(R.id.fragment_flashcard_container, userProfileFragment).commit();
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_SETTINGS;
+        intUIState = Constants.UI_STATE_SETTINGS;
     }
 
     public static final void hideUserProfileFragment() {

@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "MainActivity";
 
-    public int intUIState;
-
     public MainMenuFragment mainMenuFragment;
     public SearchCardsetFragment cardsetPickerFragment;
 
@@ -95,21 +93,25 @@ public class MainActivity extends AppCompatActivity {
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if ( savedInstanceState != null) {
-                return;
+            if ( savedInstanceState == null) {
+                ActiveAndroid.initialize(this);
+                initApp(false);
+                FragmentManager.showMainMenu(false);
+            } else {
+                initApp(true);
+                FragmentManager.showMainMenu(true);
             }
-
-            ActiveAndroid.initialize(this);
-            initApp();
-
-            FragmentManager.showMainMenu();
         }
 
     }
 
-    public void initApp(){
-        Multicards.setFlashCardsDAO(new FlashCardsDAO(this));
+    public void initApp(Boolean boolConfigurationChange){
         Multicards.setMainActivity(this);
+
+        if (boolConfigurationChange)
+            return;
+
+        Multicards.setFlashCardsDAO(new FlashCardsDAO(this));
 
         Multicards.setServerInterface(new ServerInterface());
 
@@ -146,6 +148,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void restoreApp () {
+
+    }
+
     public void returnToMainMenu () {
         FragmentManager.mainMenuFragment = new MainMenuFragment();
         getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
@@ -165,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         if (FragmentManager.gameOverFragment != null)
             getFragmentManager().beginTransaction().remove(
                     FragmentManager.gameOverFragment).commit();
-        Multicards.getMainActivity().intUIState = Constants.UI_STATE_MAIN_MENU;
+        FragmentManager.intUIState = Constants.UI_STATE_MAIN_MENU;
     }
 
     @Override
@@ -180,10 +186,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-            if (Multicards.getMainActivity().intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+            if (FragmentManager.intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
                 Multicards.getMultiplayerInterface().quitGame();
 
-            if (Multicards.getMainActivity().intUIState != Constants.UI_STATE_MAIN_MENU )
+            if (FragmentManager.intUIState != Constants.UI_STATE_MAIN_MENU )
                 returnToMainMenu();
             else
                 finish();
