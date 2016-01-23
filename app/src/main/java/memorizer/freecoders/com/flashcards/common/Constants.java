@@ -14,6 +14,7 @@ public class Constants {
     public final static String SERVER_URL = "http://multicards.snufan.com:80";
     public final static String SOCKET_SERVER_URL = "http://multicards.snufan.com:5001";
     public final static String SERVER_PATH_USER = "/user";
+    public final static String SERVER_PATH_USERS = "/users";
     public final static String SERVER_PATH_GAME = "/game";
     public final static String SERVER_PATH_UPLOAD = "/image";
     public final static String SERVER_PATH_CARDSETS = "/cardsets";
@@ -30,10 +31,12 @@ public class Constants {
     public final static String RESPONSE_CODE = "code";
 
     public final static String HEADER_USERID = "id";
+    public final static String HEADER_USERNAME = "name";
     public final static String HEADER_SOCKETID = "socketid";
     public final static String HEADER_SETID = "setid";
     public final static String HEADER_OPPONENTNAME = "opponentname";
     public final static String HEADER_TAGID = "tagid";
+    public final static String HEADER_IDS = "ids";
 
     public final static String KEY_ID = "id";
 
@@ -52,6 +55,7 @@ public class Constants {
     public static String SOCK_MSG_TYPE_ANSWER_ACCEPTED = "answer_accepted";
     public static String SOCK_MSG_TYPE_ANSWER_REJECTED = "answer_rejected";
     public static String SOCK_MSG_TYPE_CHECK_NAME = "check_name";
+    public static String SOCK_MSG_TYPE_CHECK_NETWORK = "check_network";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_WAITING_OPPONENT = 1;
@@ -84,5 +88,7 @@ public class Constants {
     public final static String FILENAME_AVATAR = "avatar.jpg";
 
     public final static String DEFAULT_LOCALE = "en";
+
+    public final static String TAG_PICK_OPPONENT_FRAGMENT = "pick_opponent_dialog";
 
 }
