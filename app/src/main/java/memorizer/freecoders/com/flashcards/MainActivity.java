@@ -20,6 +20,10 @@ import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     }, null);
         } else {
             SocketInterface.socketAnnounceUserID(Multicards.getPreferences().strUserID);
-            ServerInterface.getTagsRequest(null, null);
+            networkRequests();
         }
 
     }
@@ -191,5 +195,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
     };
+
+    private void networkRequests () {
+        ServerInterface.getTagsRequest(null, null);
+        if (Multicards.getPreferences().userDetailsCache.size() > 0) {
+            ArrayList<String> idList = new ArrayList<String>();
+            Set set = Multicards.getPreferences().userDetailsCache.entrySet();
+            Iterator iterator = set.iterator();
+            while(iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String strID = (String) entry.getKey();
+                idList.add(strID);
+            }
+            ServerInterface.getUserProfiles(idList, new Response.Listener<ArrayList<UserDetails>>() {
+                @Override
+                public void onResponse(ArrayList<UserDetails> response) {
+                   for (int i = 0; i < response.size(); i++) {
+                       UserDetails userDetails = response.get(i);
+                       String strID = userDetails.id;
+                       if (Multicards.getPreferences().userDetailsCache.containsKey(strID))
+                           Multicards.getPreferences().userDetailsCache.put(strID, userDetails);
+                   }
+                }
+            }, null);
+        }
+    }
 
 }
