@@ -51,4 +51,10 @@
 
     <string name="string_score">Score</string>
 
+    <string name="alert_new_version_available">New version is available. Would you like to update?</string>
+    <string name="alert_update_required">You must update application to proceed. Would you like to update now?</string>
+
+    <string name="string_ok">OK</string>
+    <string name="string_cancel">Cancel</string>
+
 </resources>

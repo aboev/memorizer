@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 
 import com.android.volley.Response;
@@ -15,6 +17,7 @@ import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
+import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -176,28 +179,11 @@ public class InputDialogInterface {
     }
 
     public static final void showEnterOpponentNameDialog (final CallbackInterface onEnter) {
-        Context context = Multicards.getMainActivity();
-        final EditText txtNickname = new EditText(context);
-
-        String strTitle = Multicards.getMainActivity().
-                getResources().getString(R.string.string_enter_opponent_nickname);
-
-        new AlertDialog.Builder(context)
-                .setTitle("")
-                .setMessage(strTitle)
-                .setView(txtNickname)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String strName = txtNickname.getText().toString();
-                        onEnter.onResponse(strName);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        onEnter.onResponse(null);
-                    }
-                })
-                .show();
+        android.app.FragmentManager fm =
+                Multicards.getMainActivity().getFragmentManager();
+        PickOpponentFragment pickOpponentFragment = new PickOpponentFragment();
+        pickOpponentFragment.setOnClickOKListener(onEnter);
+        pickOpponentFragment.show(fm, Constants.TAG_PICK_OPPONENT_FRAGMENT);
     }
 
     public static final void showModalDialog(String strMessage) {

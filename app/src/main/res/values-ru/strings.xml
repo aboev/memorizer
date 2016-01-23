@@ -45,4 +45,10 @@
 
     <string name="string_score">Счёт</string>
 
+    <string name="alert_new_version_available">Вышла новая версия приложения. Обновить сейчас?</string>
+    <string name="alert_update_required">Необходимо обновить приложение. Обновить сейчас?</string>
+
+    <string name="string_ok">ОК</string>
+    <string name="string_cancel">Отмена</string>
+
 </resources>

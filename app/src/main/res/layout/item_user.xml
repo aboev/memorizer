@@ -7,11 +7,13 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewAvatar"
         android:layout_width="20dp"
-        android:layout_height="20dp" />
+        android:layout_height="20dp"
+        android:src="@drawable/avatar"/>
     <TextView
         android:id="@+id/textViewName"
         android:padding="2dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"/>
+        android:layout_height="match_parent"
+        android:text="Name"
+        android:layout_gravity="center_vertical"/>
 </LinearLayout>

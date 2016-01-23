@@ -3,6 +3,7 @@ package memorizer.freecoders.com.flashcards.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.MutableBoolean;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,6 +20,8 @@ import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor
  * Created by alex-mac on 27.11.15.
  */
 public final class Preferences {
+    private static String LOG_TAG = "Preferences";
+
     private SharedPreferences settings;
     private Context context;
 
@@ -35,6 +38,7 @@ public final class Preferences {
     private String KEY_RECENT_SETS = "recent_sets";
     private String KEY_RECENT_SET_DESCRIPTORS = "recent_set_descriptors";
     private String KEY_RECENT_OPPONENTS = "recent_opponents";
+    private String KEY_USER_DETAILS_CACHE = "user_details_cache";
     private String KEY_TAG_DESCRIPTORS = "tag_descriptors";
 
     public String strUserID = "";
@@ -49,7 +53,8 @@ public final class Preferences {
     public Boolean boolFirstStart = true;
     public HashMap<String, Long> recentSets;
     public HashMap<String, QuizletCardsetDescriptor> recentSetDescriptors;
-    public HashMap<UserDetails, Long> recentOpponents;
+    public HashMap<String, Long> recentOpponents;
+    public HashMap<String, UserDetails> userDetailsCache;
     public HashMap<String, TagDescriptor> tagDescriptors;
 
     public Preferences(Context context) {
@@ -72,8 +77,11 @@ public final class Preferences {
         type = new TypeToken<HashMap<String, QuizletCardsetDescriptor>>() {}.getType();
         recentSetDescriptors = gson.fromJson(settings.getString(KEY_RECENT_SET_DESCRIPTORS, "{}"), type);
 
-        type = new TypeToken<HashMap<UserDetails, Long>>() {}.getType();
+        type = new TypeToken<HashMap<String, Long>>() {}.getType();
         recentOpponents = gson.fromJson(settings.getString(KEY_RECENT_OPPONENTS, "{}"), type);
+
+        type = new TypeToken<HashMap<String, UserDetails>>() {}.getType();
+        userDetailsCache = gson.fromJson(settings.getString(KEY_USER_DETAILS_CACHE, "{}"), type);
 
         type = new TypeToken<HashMap<String, TagDescriptor>>() {}.getType();
         tagDescriptors = gson.fromJson(settings.getString(KEY_TAG_DESCRIPTORS, "{}"), type);
@@ -93,12 +101,17 @@ public final class Preferences {
         editor.putString(KEY_RECENT_SETS, gson.toJson(recentSets));
         editor.putString(KEY_RECENT_SET_DESCRIPTORS, gson.toJson(recentSetDescriptors));
         editor.putString(KEY_RECENT_OPPONENTS, gson.toJson(recentOpponents));
+        editor.putString(KEY_USER_DETAILS_CACHE, gson.toJson(userDetailsCache));
         editor.putString(KEY_TAG_DESCRIPTORS, gson.toJson(tagDescriptors));
         editor.commit();
     }
 
     public void saveRecentOpponent (UserDetails opponent) {
-        recentOpponents.put(UserDetails.cloneUser(opponent), System.currentTimeMillis());
+        Log.d(LOG_TAG, "Saving recent opponent " + gson.toJson(recentOpponents) );
+        Log.d(LOG_TAG, "Saving recent opponent " + gson.toJson(userDetailsCache) );
+        recentOpponents.put(opponent.id, System.currentTimeMillis());
+        userDetailsCache.put(opponent.id, opponent);
+        savePreferences();
     }
 
 }
