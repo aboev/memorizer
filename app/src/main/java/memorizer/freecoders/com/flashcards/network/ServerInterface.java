@@ -564,6 +564,91 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
+    public static final void getUserProfiles(
+            ArrayList<String> userIDList,
+            final Response.Listener<ArrayList<UserDetails>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+
+        String strList = userIDList.get(0);
+        for (int i = 1; i < userIDList.size(); i++)
+            strList = strList + "," + userIDList.get(i);
+        headers.put(Constants.HEADER_IDS, strList);
+
+        Log.d(LOG_TAG, "Get user details for " + strList);
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_USERS,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        try {
+                            Type type = new TypeToken<ServerResponse
+                                    <ArrayList<UserDetails>>>(){}.getType();
+                            ServerResponse<ArrayList<UserDetails>> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.data != null && (responseListener != null))
+                                responseListener.onResponse(res.data);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void getUserProfileByName(
+            String strName,
+            final Response.Listener<UserDetails> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+
+        headers.put(Constants.HEADER_USERNAME, strName);
+
+        Log.d(LOG_TAG, "Get user details by name for " + strName);
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_USER,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        try {
+                            Type type = new TypeToken<ServerResponse<UserDetails>>(){}.getType();
+                            ServerResponse<UserDetails> res = gson.fromJson(response, type);
+                            if ( res != null && res.data != null && (responseListener != null))
+                                responseListener.onResponse(res.data);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
     public static void cancelRequestByTag(final String strTag) {
         VolleySingleton.getInstance(Multicards.getMainActivity()).getRequestQueue().
                 cancelAll(new RequestQueue.RequestFilter() {
