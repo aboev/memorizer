@@ -21,4 +21,17 @@ public class UserDetails {
         if (avatar.isEmpty()) avatar = null;
         if (id.isEmpty()) id = null;
     }
+
+    public final static UserDetails cloneUser (UserDetails user) {
+        UserDetails clone = new UserDetails();
+        clone.name = user.name;
+        clone.phone = user.phone;
+        clone.email = user.email;
+        clone.avatar = user.avatar;
+        clone.id = user.id;
+        clone.socket_id = user.socket_id;
+        clone.status = user.status;
+        clone.locale = user.locale;
+        return clone;
+    }
 }
