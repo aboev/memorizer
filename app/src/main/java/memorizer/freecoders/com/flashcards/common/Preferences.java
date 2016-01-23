@@ -97,4 +97,8 @@ public final class Preferences {
         editor.commit();
     }
 
+    public void saveRecentOpponent (UserDetails opponent) {
+        recentOpponents.put(UserDetails.cloneUser(opponent), System.currentTimeMillis());
+    }
+
 }
