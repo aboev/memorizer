@@ -138,9 +138,13 @@ public class PlayersInfoFragment extends Fragment{
 
     public void updateInfo()
     {
-        if (FragmentManager.intUIState == Constants.UI_STATE_TRAIN_MODE)
+        if (FragmentManager.intUIState == Constants.UI_STATE_TRAIN_MODE) {
             scoreView.setText("Score: " + player1Score + "/" + intTotalQuestions);
-        else if (FragmentManager.intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
+            if ((scoreView != null) && (player1Score != null)) {
+                int progress = 100 * player1Score / Constants.GAMEPLAY_QUESTIONS_PER_GAME;
+                styleProgressBar.setProgress(progress, true);
+            }
+        } else if (FragmentManager.intUIState == Constants.UI_STATE_MULTIPLAYER_MODE) {
             HashMap<String, Integer> scores = Multicards.getMultiplayerInterface().currentScores;
             if (scores != null) {
                 player1Score = scores.get(Multicards.getPreferences().strSocketID);

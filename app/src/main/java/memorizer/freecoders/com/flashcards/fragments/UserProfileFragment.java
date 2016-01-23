@@ -106,12 +106,12 @@ public class UserProfileFragment extends Fragment {
                                     public void onResponse(String response) {
                                         Multicards.getPreferences().strUserName = strUsername;
                                         Multicards.getPreferences().savePreferences();
-                                        Multicards.getMainActivity().returnToMainMenu();
+                                        FragmentManager.returnToMainMenu(false);
                                     }
                                 }, new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
-                                        Multicards.getMainActivity().returnToMainMenu();
+                                        FragmentManager.returnToMainMenu(false);
                                     }
                                 });
                     } else {
@@ -167,7 +167,6 @@ public class UserProfileFragment extends Fragment {
         if ((Multicards.getPreferences().strSocketID == null) ||
                 (Multicards.getPreferences().strSocketID.isEmpty()))
             return;
-
 
         String strMessage = getResources().getString(R.string.dialog_uploading_avatar);
         final ProgressDialog progressDialog = ProgressDialog.show(

@@ -171,4 +171,13 @@ public class FlashCardFragment extends Fragment {
             return super.onCreateAnimator(transit, enter, nextAnim);
         }
     }
+
+    public static FlashCardFragment cloneFragment (FlashCardFragment fragment) {
+        FlashCardFragment newFragment = new FlashCardFragment();
+        newFragment.mFlashCard = fragment.getFlashCard();
+        newFragment.onAnswerPick = fragment.onAnswerPick;
+        newFragment.intActionType = fragment.intActionType;
+        newFragment.view = fragment.view;
+        return newFragment;
+    }
 }

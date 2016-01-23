@@ -43,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "MainActivity";
 
-    public MainMenuFragment mainMenuFragment;
-    public SearchCardsetFragment cardsetPickerFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,13 +90,14 @@ public class MainActivity extends AppCompatActivity {
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
+            Log.d(LOG_TAG, "Populating view " + savedInstanceState != null ? "restoring" : "");
             if ( savedInstanceState == null) {
                 ActiveAndroid.initialize(this);
                 initApp(false);
                 FragmentManager.showMainMenu(false);
             } else {
                 initApp(true);
-                FragmentManager.showMainMenu(true);
+                restoreApp();
             }
         }
 
@@ -149,37 +147,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void restoreApp () {
-
-    }
-
-    public void returnToMainMenu () {
-        FragmentManager.mainMenuFragment = new MainMenuFragment();
-        getFragmentManager().beginTransaction().add(R.id.fragment_flashcard_container,
-                FragmentManager.mainMenuFragment).commit();
-        if (FragmentManager.playersInfoFragment != null)
-            getFragmentManager().beginTransaction().remove(FragmentManager.
-                playersInfoFragment).commit();
-        if (FragmentManager.currentFlashCardFragment != null)
-            getFragmentManager().beginTransaction().
-                    remove(FragmentManager.currentFlashCardFragment).commit();
-        if (Multicards.getMainActivity().cardsetPickerFragment != null)
-            getSupportFragmentManager().beginTransaction().remove(Multicards.getMainActivity().
-                    cardsetPickerFragment).commit();
-        if (FragmentManager.userProfileFragment != null)
-            getFragmentManager().beginTransaction().remove(
-                    FragmentManager.userProfileFragment).commit();
-        if (FragmentManager.gameOverFragment != null)
-            getFragmentManager().beginTransaction().remove(
-                    FragmentManager.gameOverFragment).commit();
-        FragmentManager.intUIState = Constants.UI_STATE_MAIN_MENU;
+        Log.d(LOG_TAG, "Restoring state " + FragmentManager.intUIState);
+        if (FragmentManager.intUIState == Constants.UI_STATE_MAIN_MENU)
+            FragmentManager.returnToMainMenu(true);
+        else if (FragmentManager.intUIState == Constants.UI_STATE_TRAIN_MODE)
+            FragmentManager.showGamePlayFragments(true, Constants.UI_STATE_TRAIN_MODE);
+        else if (FragmentManager.intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
+            FragmentManager.showGamePlayFragments(true, Constants.UI_STATE_MULTIPLAYER_MODE);
+        else if (FragmentManager.intUIState == Constants.UI_STATE_SETTINGS)
+            FragmentManager.showUserProfileFragment(true);
+        else if (FragmentManager.intUIState == Constants.UI_STATE_GAME_OVER)
+            FragmentManager.showGameOverFragment(FragmentManager.gameOverFragment.getCardsetID(),
+                    FragmentManager.gameOverFragment.getGameOverMessage(), true);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SocketInterface.getSocketIO().disconnect();
-        SocketInterface.getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
-                SocketInterface.onNewSocketMessage);
+        if (isFinishing()) {
+            SocketInterface.getSocketIO().disconnect();
+            SocketInterface.getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
+                    SocketInterface.onNewSocketMessage);
+        }
     }
 
     @Override
@@ -190,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 Multicards.getMultiplayerInterface().quitGame();
 
             if (FragmentManager.intUIState != Constants.UI_STATE_MAIN_MENU )
-                returnToMainMenu();
+                FragmentManager.returnToMainMenu(false);
             else
                 finish();
             return true;

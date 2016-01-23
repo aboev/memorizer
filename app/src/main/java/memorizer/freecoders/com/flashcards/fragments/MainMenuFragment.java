@@ -91,7 +91,7 @@ public class MainMenuFragment extends Fragment {
         textViewSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager.showUserProfileFragment();
+                FragmentManager.showUserProfileFragment(false);
             }
         });
 

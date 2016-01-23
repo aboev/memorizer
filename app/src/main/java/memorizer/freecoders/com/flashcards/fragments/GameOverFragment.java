@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
@@ -58,6 +59,8 @@ public class GameOverFragment extends Fragment {
         this.strCardsetID = strCardsetID;
     }
 
+    public String getCardsetID () {return this.strCardsetID;}
+
     public void populateView() {
         buttonLikeCardset = (Button) view.findViewById(R.id.buttonLikeCardset);
         buttonLikeCardset.setOnClickListener(new View.OnClickListener() {
@@ -81,20 +84,38 @@ public class GameOverFragment extends Fragment {
             textViewWinner.setVisibility(View.GONE);
             imageViewWinner.setVisibility(View.GONE);
         }
+
+        showGameOverMessage();
     }
 
     public void setGameOverMessage (GameOverMessage msg) {
         gameOverMessage = msg;
-        if (msg.winner.name != null) {
-            textViewWinnerName.setText(msg.winner.name);
-            if (msg.winner.name.equals(Multicards.getPreferences().strUserName))
-                textViewWinner.setText(getResources().getString(R.string.string_winner_you));
-            else
-                textViewWinner.setText(getResources().getString(R.string.string_winner));
-        }
-        if (msg.winner.avatar != null)
-            Multicards.getAvatarLoader().get(msg.winner.avatar,
-                    new Utils.AvatarListener(imageViewWinner));
+    }
 
+    public void showGameOverMessage () {
+        if (gameOverMessage != null) {
+            if (gameOverMessage.winner.name != null) {
+                textViewWinnerName.setText(gameOverMessage.winner.name);
+                if (gameOverMessage.winner.name.equals(Multicards.getPreferences().strUserName))
+                    textViewWinner.setText(getResources().getString(R.string.string_winner_you));
+                else
+                    textViewWinner.setText(getResources().getString(R.string.string_winner));
+            }
+            if (gameOverMessage.winner.avatar != null)
+                Multicards.getAvatarLoader().get(gameOverMessage.winner.avatar,
+                        new Utils.AvatarListener(imageViewWinner));
+        }
+    }
+
+    public GameOverMessage getGameOverMessage () {
+        return this.gameOverMessage;
+    }
+
+    public static GameOverFragment cloneFragment (GameOverFragment fragment) {
+        GameOverFragment newFragment = new GameOverFragment();
+        newFragment.INT_GAME_TYPE = fragment.INT_GAME_TYPE;
+        newFragment.setCardsetID(fragment.getCardsetID());
+        newFragment.setGameOverMessage(fragment.getGameOverMessage());
+        return newFragment;
     }
 }

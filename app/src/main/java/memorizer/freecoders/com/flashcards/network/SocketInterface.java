@@ -176,7 +176,7 @@ public class SocketInterface {
     }
 
     private static void msgGameStop () {
-        GameplayManager.stopMultilayerGame();
+        GameplayManager.stopMultilayerGame(false);
     }
 
     private static void msgAnswerAccepted (int intQuestionID) {

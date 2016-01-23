@@ -35,10 +35,8 @@ public class GameplayManager {
     public static ProgressDialog progressDialog;
 
     public static final void startSingleplayerGame(Long setID, String strGID) {
-        FragmentManager.intUIState = Constants.UI_STATE_TRAIN_MODE;
         currentSetID = setID;
-        FragmentManager.hideMainMenu();
-        FragmentManager.showPlayersInfo();
+        FragmentManager.showGamePlayFragments(false, Constants.UI_STATE_TRAIN_MODE);
         newLocalQuestion(null);
         currentGID = strGID;
         intQuestionCount = 0;
@@ -48,7 +46,7 @@ public class GameplayManager {
     }
 
     public static final void quitSingleplayerGame() {
-        FragmentManager.showGameOverFragment(currentGID, null);
+        FragmentManager.showGameOverFragment(currentGID, null, false);
     }
 
     public static final void newServerQuestion(Question question, HashMap<String, Integer> scores) {
@@ -109,7 +107,7 @@ public class GameplayManager {
                 } else {
                     FragmentManager.playersInfoFragment.eventPlayer1Answer(false);
                     FragmentManager.playersInfoFragment.updateInfo();
-                    mFlashcardFragment.wrongAnswerNotify();
+                    //mFlashcardFragment.wrongAnswerNotify();
                     showAnswer(position);
                     FragmentManager.playersInfoFragment.highlightAnswer(0, false, null);
                 }
@@ -213,17 +211,17 @@ public class GameplayManager {
         FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
         Multicards.getMultiplayerInterface().setGameData(game, null);
         Multicards.getPreferences().saveRecentOpponent(Utils.extractOpponentProfile(game.profiles));
-        FragmentManager.showPlayersInfo();
+        FragmentManager.showPlayersInfo(false);
         FragmentManager.playersInfoFragment.initInfo();
     }
 
     public static final void quitMultilayerGame(GameOverMessage gameOverMessage) {
         FragmentManager.showGameOverFragment(Multicards.
-                getMultiplayerInterface().currentGame.strGID, gameOverMessage);
+                getMultiplayerInterface().currentGame.strGID, gameOverMessage, false);
     }
 
-    public static final void stopMultilayerGame() {
-        Multicards.getMainActivity().returnToMainMenu();
+    public static final void stopMultilayerGame(Boolean boolConfigurationChange) {
+        FragmentManager.returnToMainMenu(boolConfigurationChange);
         InputDialogInterface.showGameStopMessage(null);
         FragmentManager.intUIState = Constants.UI_STATE_MAIN_MENU;
     }

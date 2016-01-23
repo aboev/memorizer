@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 
+import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
@@ -229,13 +230,13 @@ public class SearchCardsetFragment extends Fragment {
                         @Override
                         public void onResponse(Object obj) {
                             Multicards.getMainActivity().getFragmentManager().beginTransaction().
-                                    detach(Multicards.getMainActivity().mainMenuFragment).commit();
+                                    detach(FragmentManager.mainMenuFragment).commit();
                             if (progressDialog != null)
                                 progressDialog.dismiss();
                             Toast.makeText(Multicards.getMainActivity(),
                                     "Failed to fetch cardset",
                                     Toast.LENGTH_LONG).show();
-                            Multicards.getMainActivity().returnToMainMenu();
+                            FragmentManager.returnToMainMenu(false);
                         }
                     });
             String strMessage = getResources().
