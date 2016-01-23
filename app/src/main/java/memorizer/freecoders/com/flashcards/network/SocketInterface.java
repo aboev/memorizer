@@ -24,6 +24,7 @@ import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.SocketMessageExtra;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 27.12.15.
@@ -126,6 +127,14 @@ public class SocketInterface {
                                     gson.fromJson(args[0].toString(), type);
                             HashMap<String, Boolean> nameMap = socketMessage.msg_body;
                             msgCheckName(nameMap);
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_CHECK_NETWORK)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<Integer>>() {}.getType();
+                            SocketMessage<Integer> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            Integer intValue = socketMessage.msg_body;
+                            msgCheckNetwork(intValue);
                         }
                     }
                 });
@@ -192,6 +201,10 @@ public class SocketInterface {
             FragmentManager.userProfileFragment.nameStatus(nameMap);
     }
 
+    private static void msgCheckNetwork (int value) {
+        GameplayManager.networkLatencyCallback(value);
+    }
+
     //====================================================================================
 
     public static void emitQuitGame () {
@@ -214,5 +227,12 @@ public class SocketInterface {
         msg.msg_body = strAnswer;
         msg.id_to = new ArrayList();
         SocketInterface.getSocketIO().emit("message", gson.toJson(msg));
+    }
+
+    public static void emitCheckNetwork (int value) {
+        SocketMessage msg = new SocketMessage();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_CHECK_NETWORK;
+        msg.msg_body = value;
+        mSocketIO.emit("message", gson.toJson(msg));
     }
 }

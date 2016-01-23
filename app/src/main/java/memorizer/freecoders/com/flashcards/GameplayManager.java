@@ -3,10 +3,12 @@ package memorizer.freecoders.com.flashcards;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.view.View;
 
 import com.android.volley.Response;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
@@ -18,6 +20,7 @@ import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
@@ -33,6 +36,8 @@ public class GameplayManager {
     public static String strOpponentName = null;
 
     public static ProgressDialog progressDialog;
+
+    private static HashMap<Integer, Long> latencyTimestamps = new HashMap<Integer, Long>();
 
     public static final void startSingleplayerGame(Long setID, String strGID) {
         currentSetID = setID;
@@ -77,6 +82,8 @@ public class GameplayManager {
             }
         });
         FragmentManager.showFragment(mFlashcardFragment, null);
+
+        //checkNetworkLatency();
 
         Multicards.getMultiplayerInterface().eventNewQuestion(question, scores);
     }
@@ -224,6 +231,21 @@ public class GameplayManager {
         FragmentManager.returnToMainMenu(boolConfigurationChange);
         InputDialogInterface.showGameStopMessage(null);
         FragmentManager.intUIState = Constants.UI_STATE_MAIN_MENU;
+    }
+
+    public static final void networkLatencyCallback (int value) {
+        Long intLatency =  System.currentTimeMillis() - latencyTimestamps.get(value);
+        if (intLatency > 200)
+            Multicards.getMainActivity().textViewNetworkState.setVisibility(View.VISIBLE);
+        else
+            Multicards.getMainActivity().textViewNetworkState.setVisibility(View.GONE);
+    }
+
+    public static final void checkNetworkLatency () {
+        Random rn = new Random();
+        Integer randomInt = rn.nextInt(100000);
+        latencyTimestamps.put(randomInt, System.currentTimeMillis());
+        SocketInterface.emitCheckNetwork(randomInt);
     }
 
 }

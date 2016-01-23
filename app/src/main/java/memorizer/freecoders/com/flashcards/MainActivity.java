@@ -42,8 +42,11 @@ import memorizer.freecoders.com.flashcards.utils.FileUtils;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
 import android.net.Uri;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    public TextView textViewNetworkState;
 
     private static String LOG_TAG = "MainActivity";
 
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        textViewNetworkState = (TextView) findViewById(R.id.textViewNetworkState);
 
         populateView(savedInstanceState);
     }

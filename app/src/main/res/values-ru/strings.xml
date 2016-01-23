@@ -51,4 +51,8 @@
     <string name="string_ok">ОК</string>
     <string name="string_cancel">Отмена</string>
 
+    <string name="string_invert_cards">Поменять местами название и описание карточки</string>
+
+    <string name="string_poor_network">Медленная скорость соединения</string>
+
 </resources>
