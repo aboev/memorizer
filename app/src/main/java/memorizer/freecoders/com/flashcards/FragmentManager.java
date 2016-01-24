@@ -32,10 +32,10 @@ public class FragmentManager {
 
     public static final void showGamePlayFragments (Boolean boolConfigurationChange, int state) {
         hideMainMenu();
+        intUIState = state;
         showPlayersInfo(boolConfigurationChange);
         if (boolConfigurationChange)
             showFragment(FlashCardFragment.cloneFragment(currentFlashCardFragment) , null);
-        intUIState = state;
     }
 
     public static final void showFragment (Fragment newFragment, Integer intTransitionType) {
