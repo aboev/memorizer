@@ -12,12 +12,14 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import au.com.bytecode.opencsv.CSVReader;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
+import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -79,6 +81,8 @@ public class FlashCardsDAO {
                         cardset.title = response.title;
                         cardset.created_by = response.created_by;
                         cardset.url = response.url;
+                        cardset.terms_count = response.terms.size();
+                        cardset.inverted = false;
                         cardset.save();
                         int cnt = 0;
                         for (int i = 0; i < response.terms.size(); i++) {
@@ -110,7 +114,7 @@ public class FlashCardsDAO {
         List<Card> cards = new Select()
                 .from(Card.class)
                 .orderBy("RANDOM()")
-                .limit(intCardsCount + 1)
+                .limit(Constants.GAMEPLAY_OPTIONS_PER_QUESTION + 1)
                 .execute();
         if (cards == null) return null;
 
@@ -132,7 +136,7 @@ public class FlashCardsDAO {
                 .from(Card.class)
                 .where("SetID = ?", setID)
                 .orderBy("RANDOM()")
-                .limit(intCardsCount + 1)
+                .limit(Constants.GAMEPLAY_OPTIONS_PER_QUESTION + 1)
                 .execute();
         if (cards == null) return null;
 
@@ -147,6 +151,18 @@ public class FlashCardsDAO {
         flashCard.options.set(intAnswerPos, cards.get(0).answer);
         flashCard.answer_id = intAnswerPos;
         return flashCard;
+    }
+
+    public ArrayList<Card> fetchRandomCards(Long setID, int count){
+        List<Card> cards = new Select()
+                .from(Card.class)
+                .where("SetID = ?", setID)
+                .orderBy("RANDOM()")
+                .limit(count)
+                .execute();
+        if (cards == null) return null;
+
+        return new ArrayList<Card>(cards);
     }
 
     public Cardset fetchCardset(String strGID){
