@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -28,7 +29,7 @@ public class GameOverFragment extends Fragment {
 
     private View view;
 
-    private Button buttonLikeCardset;
+    private LinearLayout buttonLikeCardset;
     private String strCardsetID;
     private GameOverMessage gameOverMessage;
     private TextView textViewWinnerName;
@@ -62,14 +63,16 @@ public class GameOverFragment extends Fragment {
     public String getCardsetID () {return this.strCardsetID;}
 
     public void populateView() {
-        buttonLikeCardset = (Button) view.findViewById(R.id.buttonLikeCardset);
+        buttonLikeCardset = (LinearLayout) view.findViewById(R.id.buttonLikeCardset);
         buttonLikeCardset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ServerInterface.likeCardsetRequest(strCardsetID, new Response.Listener<Boolean>() {
                     @Override
                     public void onResponse(Boolean response) {
+                        buttonLikeCardset.setClickable(false);
                         buttonLikeCardset.setEnabled(false);
+                        buttonLikeCardset.setPressed(true);
                     }
                 }, null);
             }
