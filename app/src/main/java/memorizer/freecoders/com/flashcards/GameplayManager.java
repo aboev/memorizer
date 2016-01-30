@@ -12,9 +12,11 @@ import java.util.Random;
 
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
+import memorizer.freecoders.com.flashcards.classes.GameplayData;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
@@ -34,6 +36,7 @@ public class GameplayManager {
     private static String currentGID = "";
     private static int intQuestionCount = 0;
     public static String strOpponentName = null;
+    public static GameplayData currentGameplay;
 
     public static ProgressDialog progressDialog;
 
@@ -41,8 +44,14 @@ public class GameplayManager {
 
     public static final void startSingleplayerGame(Long setID, String strGID) {
         currentSetID = setID;
+        currentGameplay = new GameplayData(strGID);
+        if (!currentGameplay.boolCardsetComplete()) {
+            InputDialogInterface.showModalDialog(Multicards.getMainActivity().
+                    getResources().getString(R.string.string_empty_cardset));
+            return;
+        }
         FragmentManager.showGamePlayFragments(false, Constants.UI_STATE_TRAIN_MODE);
-        newLocalQuestion(null);
+        newLocalQuestion(currentGameplay.getNextQuestion());
         currentGID = strGID;
         intQuestionCount = 0;
     }
@@ -88,8 +97,11 @@ public class GameplayManager {
         Multicards.getMultiplayerInterface().eventNewQuestion(question, scores);
     }
 
-    public static final void newLocalQuestion (Question question) {
-        FlashCard mFlashcard = Multicards.getFlashCardsDAO().fetchRandomCard(currentSetID);
+    public static final void newLocalQuestion (FlashCard mFlashcard) {
+        if (mFlashcard == null) {
+            quitSingleplayerGame();
+            return;
+        }
         final FlashCardFragment mFlashcardFragment = new FlashCardFragment();
         mFlashcardFragment.setFlashCard(mFlashcard);
         mFlashcardFragment.setActionType(mFlashcardFragment.INT_LOCAL_FLASHCARD);
@@ -98,10 +110,6 @@ public class GameplayManager {
             public void onResponse(Object obj) {
                 intQuestionCount++;
                 Log.d(LOG_TAG, "Question count " + intQuestionCount);
-                if (intQuestionCount >= Constants.GAMEPLAY_QUESTIONS_PER_GAME) {
-                    quitSingleplayerGame();
-                    return;
-                }
                 int position = (int) obj;
                 if (mFlashcardFragment.mFlashCard.answer_id == position) {
                     mFlashcardFragment.listViewAdapter.
@@ -109,7 +117,7 @@ public class GameplayManager {
                     mFlashcardFragment.listViewAdapter.notifyDataSetChanged();
                     FragmentManager.playersInfoFragment.eventPlayer1Answer(true);
                     FragmentManager.playersInfoFragment.updateInfo();
-                    newLocalQuestion(null);
+                    newLocalQuestion(currentGameplay.getNextQuestion());
                     FragmentManager.playersInfoFragment.highlightAnswer(0, true, null);
                 } else {
                     FragmentManager.playersInfoFragment.eventPlayer1Answer(false);
@@ -133,7 +141,7 @@ public class GameplayManager {
         newFlashCardFragment.setOnAnswerPickListener(new CallbackInterface() {
             @Override
             public void onResponse(Object obj) {
-                newLocalQuestion(null);
+                newLocalQuestion(currentGameplay.getNextQuestion());
                 newFlashCardFragment.setEmptyOnFlashcardItemClickListener();
             }
         });
