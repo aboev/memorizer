@@ -20,4 +20,8 @@ public class Cardset extends Model {
     public String created_by;
     @Column(name = "url")
     public String url;
+    @Column(name = "terms_count")
+    public Integer terms_count;
+    @Column(name = "inverted")
+    public Boolean inverted;
 }
