@@ -61,4 +61,6 @@
 
     <string name="string_poor_network">Poor network connectivity</string>
 
+    <string name="string_empty_cardset">Sorry, cardset does not have enough words</string>
+
 </resources>

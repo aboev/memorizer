@@ -55,4 +55,6 @@
 
     <string name="string_poor_network">Медленная скорость соединения</string>
 
+    <string name="string_empty_cardset">Извините, в наборе недостаточно карточек</string>
+
 </resources>
