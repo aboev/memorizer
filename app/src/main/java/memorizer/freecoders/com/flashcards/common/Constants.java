@@ -74,6 +74,7 @@ public class Constants {
     public static Integer UI_STATE_SETTINGS = 50;
 
     public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 25;
+    public static Integer GAMEPLAY_OPTIONS_PER_QUESTION = 4;
 
     public final static String QUIZLET_CARDSET_SEARCH_URL = "https://api.quizlet.com/2.0/search/sets";
     public final static String QUIZLET_CARDSET_URL = "https://api.quizlet.com/2.0/sets/";
