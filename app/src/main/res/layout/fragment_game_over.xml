@@ -26,10 +26,6 @@
         android:text="Player1"
         android:layout_marginBottom="10dp"/>
 
-    <Button
-        android:id="@+id/buttonLikeCardset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_like"
-        android:layout_gravity="center"/>
+    <include layout="@layout/button_like"/>
+
 </LinearLayout>
