@@ -1,5 +1,6 @@
 package memorizer.freecoders.com.flashcards.common;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 
@@ -186,8 +187,10 @@ public class InputDialogInterface {
         pickOpponentFragment.show(fm, Constants.TAG_PICK_OPPONENT_FRAGMENT);
     }
 
-    public static final void showModalDialog(String strMessage) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+    public static final void showModalDialog(String strMessage, Activity activity) {
+        if (activity == null)
+            activity = Multicards.getMainActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(strMessage)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
