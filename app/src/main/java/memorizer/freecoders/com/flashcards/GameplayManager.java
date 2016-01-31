@@ -47,7 +47,7 @@ public class GameplayManager {
         currentGameplay = new GameplayData(strGID);
         if (!currentGameplay.boolCardsetComplete()) {
             InputDialogInterface.showModalDialog(Multicards.getMainActivity().
-                    getResources().getString(R.string.string_empty_cardset));
+                    getResources().getString(R.string.string_empty_cardset), null);
             return;
         }
         FragmentManager.showGamePlayFragments(false, Constants.UI_STATE_TRAIN_MODE);
@@ -111,6 +111,7 @@ public class GameplayManager {
                 intQuestionCount++;
                 Log.d(LOG_TAG, "Question count " + intQuestionCount);
                 int position = (int) obj;
+                currentGameplay.setAnswer(position);
                 if (mFlashcardFragment.mFlashCard.answer_id == position) {
                     mFlashcardFragment.listViewAdapter.
                             setCorrectAnswer(mFlashcardFragment.mFlashCard.answer_id);
