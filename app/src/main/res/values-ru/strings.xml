@@ -61,4 +61,8 @@
 
     <string name="string_downloading">Идет загрузка...</string>
 
+    <string name="string_game_invitation"> пригласил(а) поиграть в Мультикардс</string>
+    <string name="string_play_now">Играть</string>
+    <string name="string_play_later">Пропустить</string>
+
 </resources>
