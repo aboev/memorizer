@@ -40,6 +40,7 @@ public final class Preferences {
     private String KEY_RECENT_OPPONENTS = "recent_opponents";
     private String KEY_USER_DETAILS_CACHE = "user_details_cache";
     private String KEY_TAG_DESCRIPTORS = "tag_descriptors";
+    private String KEY_USER_SCORE = "user_score";
 
     public String strUserID = "";
     public String strUserName = "";
@@ -50,6 +51,7 @@ public final class Preferences {
     public Integer intRegisterStatus = 0;   // 0 - not registered,
     // 1 - waiting for sms code, 2 registered
     public Integer intLastOpenedTab = 0;
+    public Integer intUserScore = 0;
     public Boolean boolFirstStart = true;
     public HashMap<String, Long> recentSets;
     public HashMap<String, QuizletCardsetDescriptor> recentSetDescriptors;
@@ -70,6 +72,7 @@ public final class Preferences {
         strSocketID = settings.getString(KEY_SOCKET_ID, "");
         strAvatar = settings.getString(KEY_AVATAR, "");
         intRegisterStatus = settings.getInt(KEY_REGISTER_STATUS, 0);
+        intUserScore = settings.getInt(KEY_USER_SCORE, 0);
 
         Type type = new TypeToken<HashMap<String, Long>>() {}.getType();
         recentSets = gson.fromJson(settings.getString(KEY_RECENT_SETS, "{}"), type);
@@ -97,6 +100,7 @@ public final class Preferences {
         editor.putString(KEY_EMAIL, strEmail);
         editor.putString(KEY_AVATAR, strAvatar);
         editor.putInt(KEY_REGISTER_STATUS, intRegisterStatus);
+        editor.putInt(KEY_USER_SCORE, intUserScore);
         editor.putBoolean(KEY_FIRST_START, boolFirstStart);
         editor.putString(KEY_RECENT_SETS, gson.toJson(recentSets));
         editor.putString(KEY_RECENT_SET_DESCRIPTORS, gson.toJson(recentSetDescriptors));
