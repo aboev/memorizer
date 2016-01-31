@@ -5,26 +5,35 @@ package memorizer.freecoders.com.flashcards.fragments;
  */
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
-import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.classes.AnswerLogAdapter;
+import memorizer.freecoders.com.flashcards.classes.AnswerLogView;
+import memorizer.freecoders.com.flashcards.classes.FlashCard;
+import memorizer.freecoders.com.flashcards.common.Animations;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
-public class GameOverFragment extends Fragment {
+public class GameOverFragment extends Fragment  {
     private static String LOG_TAG = "GameOverFragment";
 
     private View view;
@@ -35,6 +44,9 @@ public class GameOverFragment extends Fragment {
     private TextView textViewWinnerName;
     private CircleImageView imageViewWinner;
     private TextView textViewWinner;
+    private LinearLayout linearLayoutLog;
+    private AnswerLogAdapter answerLogAdapter;
+    RecyclerView recyclerViewAnswerLog;
     public static int INT_GAME_TYPE_SINGLEPLAYER = 0;
     public static int INT_GAME_TYPE_MULTIPLAYER = 1;
     public int INT_GAME_TYPE = INT_GAME_TYPE_MULTIPLAYER;
@@ -50,7 +62,15 @@ public class GameOverFragment extends Fragment {
         textViewWinnerName = (TextView) view.findViewById(R.id.textViewWinnerName);
         imageViewWinner = (CircleImageView) view.findViewById(R.id.imageViewWinner);
         textViewWinner = (TextView) view.findViewById(R.id.textViewWinner);
-
+        linearLayoutLog = (LinearLayout) view.findViewById(R.id.linearLayoutLog);
+        recyclerViewAnswerLog = (RecyclerView) view.findViewById(R.id.listViewLog);
+        answerLogAdapter = new AnswerLogAdapter(Multicards.getMainActivity(),
+                GameplayManager.currentGameplay);
+        recyclerViewAnswerLog.setAdapter(answerLogAdapter);
+        recyclerViewAnswerLog.setLayoutManager(
+                new LinearLayoutManager(Multicards.getMainActivity()));
+        recyclerViewAnswerLog.setItemAnimator(
+                new FadeInLeftAnimator(new OvershootInterpolator(1f)));
         populateView();
 
         return view;
@@ -88,7 +108,17 @@ public class GameOverFragment extends Fragment {
             imageViewWinner.setVisibility(View.GONE);
         }
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Animations.alphaAnimation(buttonLikeCardset);
+            }
+        }, 2000);
+
         showGameOverMessage();
+
+        populateGameLog();
+
     }
 
     public void setGameOverMessage (GameOverMessage msg) {
@@ -114,11 +144,36 @@ public class GameOverFragment extends Fragment {
         return this.gameOverMessage;
     }
 
+    public void populateGameLog () {
+        if (GameplayManager.currentGameplay != null) {
+          for (int i = 0; i < GameplayManager.currentGameplay.questions.size(); i++) {
+              final FlashCard question = GameplayManager.currentGameplay.questions.get(i);
+              AnswerLogView answerItem = new AnswerLogView(Multicards.getMainActivity());
+              answerItem.setText(question.question + " - " +
+                      question.options.get(GameplayManager.currentGameplay.answers.get(i)));
+              answerItem.setCorrect(GameplayManager.currentGameplay.checks.get(i));
+              answerItem.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      String strText = question.question + " - " +
+                              question.options.get(question.answer_id);
+                      InputDialogInterface.showModalDialog(strText, null);
+                  }
+              });
+              linearLayoutLog.addView(answerItem);
+          }
+        }
+    }
+
     public static GameOverFragment cloneFragment (GameOverFragment fragment) {
         GameOverFragment newFragment = new GameOverFragment();
         newFragment.INT_GAME_TYPE = fragment.INT_GAME_TYPE;
         newFragment.setCardsetID(fragment.getCardsetID());
         newFragment.setGameOverMessage(fragment.getGameOverMessage());
         return newFragment;
+    }
+
+    public void animate () {
+        Animations.alphaAnimation(buttonLikeCardset);
     }
 }

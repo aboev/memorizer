@@ -1,7 +1,10 @@
 package memorizer.freecoders.com.flashcards;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.util.Log;
+
+import com.google.gson.Gson;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
@@ -29,6 +32,8 @@ public class FragmentManager {
     public static UserProfileFragment userProfileFragment;
     public static GameOverFragment gameOverFragment;
     public Boolean boolAvatarChosen = false;
+
+    private static Gson gson = new Gson();
 
     public static final void showGamePlayFragments (Boolean boolConfigurationChange, int state) {
         hideMainMenu();
@@ -90,33 +95,27 @@ public class FragmentManager {
         hidePlayersInfo();
         hideCurrentFlashcardFragment();
 
-        if (gameOverFragment == null) {
-            gameOverFragment = new GameOverFragment();
-            gameOverFragment.setCardsetID(strCardsetID);
-        } else if (boolConfigurationChange) {
-            gameOverFragment = GameOverFragment.cloneFragment(gameOverFragment);
-        }
+        Intent intent = new Intent(Multicards.getMainActivity(), GameOverActivity.class);
+        intent.putExtra(Constants.INTENT_META_SET_ID, strCardsetID);
 
         if (intUIState == Constants.UI_STATE_MULTIPLAYER_MODE)
-            gameOverFragment.INT_GAME_TYPE = GameOverFragment.INT_GAME_TYPE_MULTIPLAYER;
+            intent.putExtra(Constants.INTENT_META_GAME_TYPE,
+                    GameOverActivity.INT_GAME_TYPE_MULTIPLAYER);
         else if (intUIState == Constants.UI_STATE_TRAIN_MODE)
-            gameOverFragment.INT_GAME_TYPE = GameOverFragment.INT_GAME_TYPE_SINGLEPLAYER;
+            intent.putExtra(Constants.INTENT_META_GAME_TYPE,
+                    GameOverActivity.INT_GAME_TYPE_SINGLEPLAYER);
 
         if (gameOverMessage != null)
-            gameOverFragment.setGameOverMessage(gameOverMessage);
+            intent.putExtra(Constants.INTENT_META_GAMEOVER_MESSAGE, gson.toJson(gameOverMessage));
 
-        if (!gameOverFragment.isAdded())
-            Multicards.getMainActivity().getFragmentManager().beginTransaction()
-                    .add(R.id.fragment_flashcard_container, gameOverFragment).commit();
+        Multicards.getMainActivity().startActivity(intent);
+
         intUIState = Constants.UI_STATE_GAME_OVER;
-
-        Multicards.getMainActivity().getFragmentManager().executePendingTransactions();
     }
 
     public static final void hideGameOverFragment () {
-        if ((gameOverFragment != null) && (gameOverFragment.isAdded()))
-            Multicards.getMainActivity().getFragmentManager().beginTransaction().
-                    remove(gameOverFragment).commit();
+        if (Multicards.getGameOverActivity() != null)
+            Multicards.getGameOverActivity().finish();
     }
 
     public static final void hideMainMenu () {

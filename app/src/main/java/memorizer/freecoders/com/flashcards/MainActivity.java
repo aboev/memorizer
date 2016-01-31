@@ -1,8 +1,6 @@
 package memorizer.freecoders.com.flashcards;
 
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,9 +14,7 @@ import android.view.MenuItem;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.Response;
-import com.soundcloud.android.crop.Crop;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,21 +23,15 @@ import java.util.Set;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
+import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
-import memorizer.freecoders.com.flashcards.fragments.GameOverFragment;
-import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
-import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
-import memorizer.freecoders.com.flashcards.fragments.SearchCardsetFragment;
-import memorizer.freecoders.com.flashcards.fragments.UserProfileFragment;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
-import memorizer.freecoders.com.flashcards.utils.FileUtils;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
-import android.net.Uri;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
