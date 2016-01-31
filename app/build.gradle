@@ -48,5 +48,6 @@ dependencies {
 
     compile 'com.soundcloud.android:android-crop:0.9.10@aar'
     compile 'com.jakewharton:disklrucache:2.0.2'
+    compile 'jp.wasabeef:recyclerview-animators:2.0.1'
     compile files('../libs/ActiveAndroid.jar')
 }
