@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:gravity="center"
+    android:padding="2dp">
+    <TextView
+        android:id="@+id/textViewQuestion"
+        android:padding="2dp"
+        android:layout_width="0dp"
+        android:layout_weight="0.8"
+        android:layout_height="wrap_content"
+        android:text="Tag"/>
+    <ImageView
+        android:id="@+id/imageViewCorrect"
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:layout_height="15dp"
+        android:src="@drawable/tick_green"
+        android:visibility="visible"
+        android:layout_gravity="center_vertical"/>
+    <ImageView
+        android:id="@+id/imageViewWrong"
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:layout_height="15dp"
+        android:src="@drawable/tick_red"
+        android:visibility="gone"
+        android:layout_gravity="center_vertical"/>
+</LinearLayout>
