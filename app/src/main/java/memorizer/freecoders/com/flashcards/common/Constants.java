@@ -24,6 +24,7 @@ public class Constants {
     public final static String SERVER_PATH_TAGS = "/tags";
     public final static String SERVER_PATH_TAG = "/tag";
     public final static String SERVER_PATH_UNTAG = "/untag";
+    public final static String SERVER_PATH_INFO = "/info";
 
     public final static String RESPONSE_RESULT = "result";
     public final static String RESPONSE_RESULT_OK = "OK";
