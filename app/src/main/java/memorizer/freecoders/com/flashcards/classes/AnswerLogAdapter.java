@@ -54,8 +54,12 @@ public class AnswerLogAdapter extends RecyclerView.Adapter<AnswerLogAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         FlashCard question = gameplayData.questions.get(position);
-        String strText = question.question + " - " +
+        String strText = "";
+        if (gameplayData.answers.get(position) != -1)
+            strText = question.question + " - " +
                 question.options.get(gameplayData.answers.get(position));
+        else
+            strText = question.question + " - X";
         holder.textViewQuestion.setText(strText);
         if (gameplayData.checks.get(position)) {
             holder.imageViewCorrect.setVisibility(View.VISIBLE);

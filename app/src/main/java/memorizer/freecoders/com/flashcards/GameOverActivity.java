@@ -147,20 +147,22 @@ public class GameOverActivity extends AppCompatActivity {
     public void populateGameLog () {
         if (GameplayManager.currentGameplay != null) {
 
-            answerLogAdapter.setAddItemCallback(new CallbackInterface() {
-                @Override
-                public void onResponse(Object obj) {
-                    int pos = (int) obj;
-                    if (GameplayManager.currentGameplay.checks.get(pos)) {
-                        intUserScore++;
-                        textViewScore.setText(String.valueOf(intUserScore));
-                        Animations.scaleAnimation(textViewScore, null);
+            if (GameplayManager.currentGameplay.intGameType == GameplayData.INT_SINGLEPLAYER) {
+                answerLogAdapter.setAddItemCallback(new CallbackInterface() {
+                    @Override
+                    public void onResponse(Object obj) {
+                        int pos = (int) obj;
+                        if (GameplayManager.currentGameplay.checks.get(pos)) {
+                            intUserScore++;
+                            textViewScore.setText(String.valueOf(intUserScore));
+                            Animations.scaleAnimation(textViewScore, null);
 
-                        Multicards.getPreferences().intUserScore = intUserScore;
-                        Multicards.getPreferences().savePreferences();
+                            Multicards.getPreferences().intUserScore = intUserScore;
+                            Multicards.getPreferences().savePreferences();
+                        }
                     }
-                }
-            });
+                });
+            }
 
             for (int i = 0; i < GameplayManager.currentGameplay.questions.size(); i++ ) {
                 delayedHandler(new CallbackInterface() {

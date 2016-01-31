@@ -10,6 +10,7 @@ import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Card;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
+import memorizer.freecoders.com.flashcards.json.Question;
 
 /**
  * Created by alex-mac on 24.01.16.
@@ -23,19 +24,26 @@ public class GameplayData {
     public ArrayList<Integer> answers;
     public ArrayList<Boolean> checks;
     public int intCurrentQuestion = 0;
+    public final static int INT_SINGLEPLAYER = 0;
+    public final static int INT_MULTIPLAYER = 1;
+    public int intGameType = INT_SINGLEPLAYER;
 
     private Random ran = new Random();
 
-    public GameplayData (String strGID) {
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
-        this.strGID = strGID;
-        ArrayList<Card> cards;
+    public GameplayData (String strGID, int intGameType) {
         ArrayList<String> terms = new ArrayList<String>();
         ArrayList<String> definitions = new ArrayList<String>();
         answers = new ArrayList<Integer>();
         checks = new ArrayList<Boolean>();
+        questions = new ArrayList<FlashCard>();
+        this.intGameType = intGameType;
 
-        cards = Multicards.getFlashCardsDAO().fetchRandomCards(cardset.getId(),
+        if (strGID == null) return;
+
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+        this.strGID = strGID;
+
+        ArrayList<Card> cards = Multicards.getFlashCardsDAO().fetchRandomCards(cardset.getId(),
                 Constants.GAMEPLAY_QUESTIONS_PER_GAME);
         if ((cards.size() <= Constants.GAMEPLAY_OPTIONS_PER_QUESTION) || cardset == null)
             return;
@@ -53,6 +61,13 @@ public class GameplayData {
         questions = makeQuestions(terms, definitions);
 
         intCurrentQuestion = 0;
+    }
+
+    public void newServerQuestion (FlashCard question) {
+        questions.add(question);
+        answers.add(-1);
+        checks.add(false);
+        intCurrentQuestion = questions.size();
     }
 
     public ArrayList<FlashCard> makeQuestions (ArrayList<String> terms,
@@ -115,6 +130,10 @@ public class GameplayData {
             nums.remove(j);
         }
         return res;
+    }
+
+    public void updateStatistic () {
+
     }
 
 

@@ -44,7 +44,7 @@ public class GameplayManager {
 
     public static final void startSingleplayerGame(Long setID, String strGID) {
         currentSetID = setID;
-        currentGameplay = new GameplayData(strGID);
+        currentGameplay = new GameplayData(strGID, GameplayData.INT_SINGLEPLAYER);
         if (!currentGameplay.boolCardsetComplete()) {
             InputDialogInterface.showModalDialog(Multicards.getMainActivity().
                     getResources().getString(R.string.string_empty_cardset), null);
@@ -76,6 +76,7 @@ public class GameplayManager {
         mFlashcard.question = question.question;
         mFlashcard.options = question.options;
         mFlashcard.answer_id = question.answer_id;
+        currentGameplay.newServerQuestion(mFlashcard);
 
         final FlashCardFragment mFlashcardFragment = new FlashCardFragment();
         mFlashcardFragment.setFlashCard(mFlashcard);
@@ -87,6 +88,7 @@ public class GameplayManager {
                 Multicards.getMultiplayerInterface().invokeEvent(
                         Multicards.getMultiplayerInterface().EVENT_USER_ANSWER,
                         String.valueOf(position));
+                currentGameplay.setAnswer(position);
                 mFlashcardFragment.setEmptyOnFlashcardItemClickListener();
             }
         });
@@ -225,6 +227,7 @@ public class GameplayManager {
 
     public static final void startMultiplayerGame(Game game) {
         FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
+        currentGameplay = new GameplayData(null, GameplayData.INT_MULTIPLAYER);
         Multicards.getMultiplayerInterface().setGameData(game, null);
         Multicards.getPreferences().saveRecentOpponent(Utils.extractOpponentProfile(game.profiles));
         FragmentManager.showPlayersInfo(false);
