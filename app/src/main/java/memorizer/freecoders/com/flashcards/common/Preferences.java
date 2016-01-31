@@ -41,6 +41,7 @@ public final class Preferences {
     private String KEY_USER_DETAILS_CACHE = "user_details_cache";
     private String KEY_TAG_DESCRIPTORS = "tag_descriptors";
     private String KEY_USER_SCORE = "user_score";
+    private String KEY_SERVER_INFO = "server_info";
 
     public String strUserID = "";
     public String strUserName = "";
@@ -50,6 +51,7 @@ public final class Preferences {
     public String strAvatar = "";
     public Integer intRegisterStatus = 0;   // 0 - not registered,
     // 1 - waiting for sms code, 2 registered
+    public String strServerInfo = "";
     public Integer intLastOpenedTab = 0;
     public Integer intUserScore = 0;
     public Boolean boolFirstStart = true;
@@ -73,6 +75,7 @@ public final class Preferences {
         strAvatar = settings.getString(KEY_AVATAR, "");
         intRegisterStatus = settings.getInt(KEY_REGISTER_STATUS, 0);
         intUserScore = settings.getInt(KEY_USER_SCORE, 0);
+        strServerInfo = settings.getString(KEY_SERVER_INFO, "{}");
 
         Type type = new TypeToken<HashMap<String, Long>>() {}.getType();
         recentSets = gson.fromJson(settings.getString(KEY_RECENT_SETS, "{}"), type);
@@ -107,6 +110,7 @@ public final class Preferences {
         editor.putString(KEY_RECENT_OPPONENTS, gson.toJson(recentOpponents));
         editor.putString(KEY_USER_DETAILS_CACHE, gson.toJson(userDetailsCache));
         editor.putString(KEY_TAG_DESCRIPTORS, gson.toJson(tagDescriptors));
+        editor.putString(KEY_SERVER_INFO, strServerInfo);
         editor.commit();
     }
 

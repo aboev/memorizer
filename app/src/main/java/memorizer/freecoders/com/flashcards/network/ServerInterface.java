@@ -649,6 +649,46 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
+    public static final void getServerInfoRequest (
+            final Response.Listener<HashMap<String, String>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Get server info request");
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_INFO, "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, response);
+                        Type type = new TypeToken<ServerResponse
+                                <HashMap<String, String>>>(){}.getType();
+                        try {
+                            ServerResponse<HashMap<String, String>> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && res.data != null
+                                    && responseListener != null)
+                                responseListener.onResponse(res.data);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if ((error != null) && (error.networkResponse != null)
+                        && (error.networkResponse.data != null))
+                    Log.d(LOG_TAG, "Error: " +
+                            new String(error.networkResponse.data));
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).addToRequestQueue(request);
+    }
+
     public static void cancelRequestByTag(final String strTag) {
         VolleySingleton.getInstance(Multicards.getMainActivity()).getRequestQueue().
                 cancelAll(new RequestQueue.RequestFilter() {

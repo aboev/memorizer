@@ -40,6 +40,9 @@ public class Constants {
     public final static String HEADER_IDS = "ids";
 
     public final static String KEY_ID = "id";
+    public final static String KEY_LATEST_APK_VER = "latest_ver";
+    public final static String KEY_LATEST_APK_URL = "latest_apk";
+    public final static String KEY_MIN_CLIENT_VERSION = "min_client";
 
     public final static String SOCKET_CHANNEL_NAME = "event";
 
@@ -95,5 +98,7 @@ public class Constants {
     public final static String DEFAULT_LOCALE = "en";
 
     public final static String TAG_PICK_OPPONENT_FRAGMENT = "pick_opponent_dialog";
+
+    public final static String APP_FOLDER = "multicards";
 
 }

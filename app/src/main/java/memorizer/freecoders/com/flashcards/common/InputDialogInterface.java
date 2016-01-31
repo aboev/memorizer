@@ -5,14 +5,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
@@ -21,6 +28,8 @@ import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.utils.FileUtils;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 05.12.15.
@@ -198,6 +207,55 @@ public class InputDialogInterface {
                     }
                 });
         AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public static final void showUpdateDialog (Boolean boolMandatory,
+                                               final HashMap<String, String> serverInfo) {
+
+        final String strURL = serverInfo.get(Constants.KEY_LATEST_APK_URL);
+
+        final String strLocalFilename = serverInfo.get(Constants.KEY_LATEST_APK_VER) + ".apk";
+        AlertDialog.Builder alert = new AlertDialog.Builder(Multicards.getMainActivity());
+        if (boolMandatory)
+            alert.setMessage(R.string.alert_update_required);
+        else
+            alert.setMessage(R.string.alert_new_version_available);
+        alert.setPositiveButton(R.string.string_ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if(strURL == null || strURL.isEmpty()){
+                            Utils.OpenPlayMarketPage();
+                            return;
+                        }
+                        String type = Environment.DIRECTORY_DOWNLOADS;
+                        File path = Environment.getExternalStoragePublicDirectory(type);
+                        path.mkdirs();
+                        final File file = new File(path, Constants.APP_FOLDER + "/" + strLocalFilename);
+                        new FileUtils.DownloadTask(strURL, file.getAbsolutePath(),
+                                new CallbackInterface() {
+                                    public void onResponse(Object obj) {
+                                        Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+                                                .setDataAndType(Uri.fromFile(file),
+                                                        "application/vnd.android.package-archive");
+                                        Multicards.getMainActivity().startActivity(promptInstall);
+                                    }
+                                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        Gson gson = new Gson();
+                        Multicards.getPreferences().strServerInfo = gson.toJson(serverInfo);
+                        Multicards.getPreferences().savePreferences();
+                    }
+                });
+        if (!boolMandatory) {
+            alert.setNegativeButton(R.string.string_cancel,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Gson gson = new Gson();
+                            Multicards.getPreferences().strServerInfo = gson.toJson(serverInfo);
+                            Multicards.getPreferences().savePreferences();
+                        }
+                    });
+        }
         alert.show();
     }
 }
