@@ -36,6 +36,11 @@
             android:label="@string/title_activity_cardset_picker"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
+        <activity
+            android:name=".GameOverActivity"
+            android:label="@string/title_activity_gameover"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
     </application>
 
