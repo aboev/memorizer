@@ -95,8 +95,9 @@ public class GameplayData {
     }
 
     public void setAnswer (int answer_id) {
-        answers.set(intCurrentQuestion, answer_id);
-        checks.add(questions.get(intCurrentQuestion).answer_id == answer_id);
+        answers.set(intCurrentQuestion - 1, answer_id);
+        checks.set(intCurrentQuestion - 1,
+                questions.get(intCurrentQuestion - 1).answer_id == answer_id);
     }
 
     public Boolean boolCardsetComplete () {
