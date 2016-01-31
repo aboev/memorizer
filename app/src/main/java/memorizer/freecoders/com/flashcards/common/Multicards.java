@@ -9,6 +9,7 @@ import com.android.volley.toolbox.ImageLoader;
 import java.io.IOException;
 
 import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
+import memorizer.freecoders.com.flashcards.GameOverActivity;
 import memorizer.freecoders.com.flashcards.MainActivity;
 import memorizer.freecoders.com.flashcards.MultiplayerInterface;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
@@ -29,6 +30,7 @@ public class Multicards extends Application {
     private static Preferences mPreferences;
     private static MultiplayerInterface mMultiplayerInterface;
     private static CardsetPickerActivity mCardsetPickerActivity;
+    private static GameOverActivity mGameOverActivity;
     private static DiskLruBitmapCache mAvatarDiskLruCache;
     private static ImageLoader mAvatarLoader;
 
@@ -102,6 +104,14 @@ public class Multicards extends Application {
 
     public final static CardsetPickerActivity getCardsetPickerActivity(){
         return mCardsetPickerActivity;
+    }
+
+    public final static void setGameOverActivity(GameOverActivity gameOverActivity) {
+        mGameOverActivity = gameOverActivity;
+    }
+
+    public final static GameOverActivity getGameOverActivity(){
+        return mGameOverActivity;
     }
 
     public final static ImageLoader getAvatarLoader() {return mAvatarLoader;}
