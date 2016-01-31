@@ -116,7 +116,7 @@ public class UserProfileFragment extends Fragment {
                                 });
                     } else {
                         String strMessage = getResources().getString(R.string.dialog_name_taken);
-                        InputDialogInterface.showModalDialog(strMessage);
+                        InputDialogInterface.showModalDialog(strMessage, null);
                     }
                 }
             }
