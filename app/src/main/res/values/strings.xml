@@ -66,4 +66,10 @@
 
     <string name="string_answers">Your answers</string>
 
+    <string name="playMarketDetailsLink" translatable="false">market://details?id=</string>
+    <string name="playMarketDetailsLinkAlt" translatable="false">https://play.google.com/store/apps/details?id=</string>
+
+    <string name="string_downloading">Downloading...</string>
+
+
 </resources>

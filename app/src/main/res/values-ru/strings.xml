@@ -59,4 +59,6 @@
 
     <string name="string_answers">Ваши ответы</string>
 
+    <string name="string_downloading">Идет загрузка...</string>
+
 </resources>
