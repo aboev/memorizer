@@ -13,6 +13,7 @@ public class UserDetails {
     public String socket_id = "";
     public Integer status;
     public String locale = "";
+    public String pushid = "";
 
     public void setNullFields(){
         if (name.isEmpty()) name = null;
@@ -20,6 +21,7 @@ public class UserDetails {
         if (email.isEmpty()) email = null;
         if (avatar.isEmpty()) avatar = null;
         if (id.isEmpty()) id = null;
+        if (pushid.isEmpty()) pushid = null;
     }
 
     public final static UserDetails cloneUser (UserDetails user) {
