@@ -80,6 +80,9 @@ public class Constants {
     public final static String QUIZLET_CARDSET_URL = "https://api.quizlet.com/2.0/sets/";
 
     public final static String INTENT_META_NEXT_FRAGMENT = "nextFragment";
+    public final static String INTENT_META_SET_ID = "setID";
+    public final static String INTENT_META_GAME_TYPE = "gameType";
+    public final static String INTENT_META_GAMEOVER_MESSAGE = "gameOverMessage";
 
     public final static int ANIMATION_SLIDE = 0;
     public final static int ANIMATION_FLIP = 1;
