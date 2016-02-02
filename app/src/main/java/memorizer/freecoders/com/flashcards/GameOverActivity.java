@@ -20,8 +20,11 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
+import memorizer.freecoders.com.flashcards.classes.AchievementLogAdapter;
 import memorizer.freecoders.com.flashcards.classes.AnswerLogAdapter;
 import memorizer.freecoders.com.flashcards.classes.AnswerLogView;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
@@ -33,6 +36,7 @@ import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.fragments.RecentCardsetsFragment;
 import memorizer.freecoders.com.flashcards.fragments.SearchCardsetFragment;
+import memorizer.freecoders.com.flashcards.json.BonusDescriptor;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
@@ -53,7 +57,9 @@ public class GameOverActivity extends AppCompatActivity {
     private TextView textViewScore;
     private LinearLayout linearLayoutLog;
     private AnswerLogAdapter answerLogAdapter;
+    private AchievementLogAdapter achievementLogAdapter;
     RecyclerView recyclerViewAnswerLog;
+    RecyclerView recyclerViewAchievementsLog;
     public static int INT_GAME_TYPE_SINGLEPLAYER = 0;
     public static int INT_GAME_TYPE_MULTIPLAYER = 1;
     public int INT_GAME_TYPE = INT_GAME_TYPE_MULTIPLAYER;
@@ -72,13 +78,21 @@ public class GameOverActivity extends AppCompatActivity {
         textViewScore = (TextView) findViewById(R.id.textViewScore);
         linearLayoutLog = (LinearLayout) findViewById(R.id.linearLayoutLog);
         recyclerViewAnswerLog = (RecyclerView) findViewById(R.id.listViewLog);
+        recyclerViewAchievementsLog = (RecyclerView) findViewById(R.id.listViewAchievements);
         answerLogAdapter = new AnswerLogAdapter(Multicards.getMainActivity(),
                 GameplayManager.currentGameplay);
+        achievementLogAdapter = new AchievementLogAdapter(Multicards.getMainActivity());
         answerLogAdapter.initStartDelay();
         recyclerViewAnswerLog.setAdapter(answerLogAdapter);
         recyclerViewAnswerLog.setLayoutManager(
                 new LinearLayoutManager(Multicards.getMainActivity()));
         recyclerViewAnswerLog.setItemAnimator(
+                new FadeInLeftAnimator(new OvershootInterpolator(1f)));
+
+        recyclerViewAchievementsLog.setAdapter(achievementLogAdapter);
+        recyclerViewAchievementsLog.setLayoutManager(
+                new LinearLayoutManager(Multicards.getMainActivity()));
+        recyclerViewAchievementsLog.setItemAnimator(
                 new FadeInLeftAnimator(new OvershootInterpolator(1f)));
 
         Intent intent = getIntent();
@@ -114,18 +128,28 @@ public class GameOverActivity extends AppCompatActivity {
             textViewWinnerName.setVisibility(View.VISIBLE);
             textViewWinner.setVisibility(View.VISIBLE);
             imageViewWinner.setVisibility(View.VISIBLE);
+            if ((gameOverMessage != null) && (gameOverMessage.scores_before.
+                    containsKey(Multicards.getPreferences().strSocketID))) {
+                intUserScore = gameOverMessage.scores_before.
+                        get(Multicards.getPreferences().strSocketID);
+                textViewScore.setText(String.valueOf(intUserScore));
+            }
         } else if (INT_GAME_TYPE == INT_GAME_TYPE_SINGLEPLAYER) {
             textViewWinnerName.setVisibility(View.GONE);
             textViewWinner.setVisibility(View.GONE);
             imageViewWinner.setVisibility(View.GONE);
+            intUserScore = Multicards.getPreferences().intUserScore;
+            textViewScore.setText(String.valueOf(intUserScore));
         }
-
-        intUserScore = Multicards.getPreferences().intUserScore;
-        textViewScore.setText(String.valueOf(intUserScore));
 
         showGameOverMessage();
 
-        populateGameLog();
+        populateGameLog(new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                populateAchievementsLog();
+            }
+        });
 
     }
 
@@ -144,7 +168,7 @@ public class GameOverActivity extends AppCompatActivity {
         }
     }
 
-    public void populateGameLog () {
+    public void populateGameLog (final CallbackInterface onComplete) {
         if (GameplayManager.currentGameplay != null) {
 
             if (GameplayManager.currentGameplay.intGameType == GameplayData.INT_SINGLEPLAYER) {
@@ -174,6 +198,16 @@ public class GameOverActivity extends AppCompatActivity {
                 }, i);
             }
 
+            if (GameplayManager.currentGameplay.questions.size() == 0)
+                onComplete.onResponse(null);
+            else
+                delayedHandler(new CallbackInterface() {
+                    @Override
+                    public void onResponse(Object obj) {
+                        onComplete.onResponse(null);
+                    }
+                }, 0);
+
             recyclerViewAnswerLog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -181,6 +215,34 @@ public class GameOverActivity extends AppCompatActivity {
                 }
             });
 
+        } else onComplete.onResponse(null);
+    }
+
+
+    public void populateAchievementsLog () {
+        if ((gameOverMessage.bonuses != null)
+                && (gameOverMessage.bonuses.containsKey(Multicards.getPreferences().strSocketID))) {
+            ArrayList<BonusDescriptor> bonuses =
+                    gameOverMessage.bonuses.get(Multicards.getPreferences().strSocketID);
+
+            achievementLogAdapter.setValues(bonuses);
+
+            for (int i = 0; i < bonuses.size(); i++ ) {
+                delayedHandler(new CallbackInterface() {
+                    @Override
+                    public void onResponse(Object obj) {
+                        int pos = (int) obj;
+                        achievementLogAdapter.addItem();
+                    }
+                }, i);
+            }
+
+            if ((gameOverMessage != null) &&
+                    (gameOverMessage.scores.containsKey(Multicards.getPreferences().strSocketID))) {
+                intUserScore = gameOverMessage.scores.get(Multicards.getPreferences().strSocketID);
+                textViewScore.setText(String.valueOf(intUserScore));
+                Animations.scaleAnimation(textViewScore, null);
+            }
         }
     }
 
