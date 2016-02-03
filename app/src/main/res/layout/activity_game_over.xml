@@ -5,9 +5,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/textViewWinner"
@@ -67,16 +68,21 @@
 
         </LinearLayout>
 
-        <TextView
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/string_achievements"/>
-
         <LinearLayout
+            android:id="@+id/layoutAchievements"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/dropshadow"
+            android:gravity="center"
+            android:padding="5dp"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/string_achievements"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/listViewAchievements"

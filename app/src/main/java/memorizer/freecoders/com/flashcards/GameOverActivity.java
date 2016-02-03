@@ -58,6 +58,7 @@ public class GameOverActivity extends AppCompatActivity {
     private LinearLayout linearLayoutLog;
     private AnswerLogAdapter answerLogAdapter;
     private AchievementLogAdapter achievementLogAdapter;
+    private LinearLayout linearLayoutAchievements;
     RecyclerView recyclerViewAnswerLog;
     RecyclerView recyclerViewAchievementsLog;
     public static int INT_GAME_TYPE_SINGLEPLAYER = 0;
@@ -103,6 +104,8 @@ public class GameOverActivity extends AppCompatActivity {
             gameOverMessage = gson.fromJson(intent.getStringExtra(
                     Constants.INTENT_META_GAMEOVER_MESSAGE), GameOverMessage.class);
 
+        linearLayoutAchievements = (LinearLayout) findViewById(R.id.layoutAchievements);
+
         populateView();
 
         Multicards.setGameOverActivity(this);
@@ -134,12 +137,16 @@ public class GameOverActivity extends AppCompatActivity {
                         get(Multicards.getPreferences().strSocketID);
                 textViewScore.setText(String.valueOf(intUserScore));
             }
+            if ((gameOverMessage != null) && (gameOverMessage.bonuses != null)
+                    && (gameOverMessage.bonuses.containsKey(Multicards.getPreferences().strSocketID)))
+                linearLayoutAchievements.setVisibility(View.VISIBLE);
         } else if (INT_GAME_TYPE == INT_GAME_TYPE_SINGLEPLAYER) {
             textViewWinnerName.setVisibility(View.GONE);
             textViewWinner.setVisibility(View.GONE);
             imageViewWinner.setVisibility(View.GONE);
             intUserScore = Multicards.getPreferences().intUserScore;
             textViewScore.setText(String.valueOf(intUserScore));
+            linearLayoutAchievements.setVisibility(View.GONE);
         }
 
         showGameOverMessage();
@@ -220,7 +227,7 @@ public class GameOverActivity extends AppCompatActivity {
 
 
     public void populateAchievementsLog () {
-        if ((gameOverMessage.bonuses != null)
+        if ((gameOverMessage != null) && (gameOverMessage.bonuses != null)
                 && (gameOverMessage.bonuses.containsKey(Multicards.getPreferences().strSocketID))) {
             ArrayList<BonusDescriptor> bonuses =
                     gameOverMessage.bonuses.get(Multicards.getPreferences().strSocketID);
