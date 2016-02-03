@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
-import memorizer.freecoders.com.flashcards.fragments.GameOverFragment;
 import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
 import memorizer.freecoders.com.flashcards.fragments.UserProfileFragment;
@@ -30,7 +29,6 @@ public class FragmentManager {
     public static FlashCardFragment currentFlashCardFragment;
     public static MainMenuFragment mainMenuFragment;
     public static UserProfileFragment userProfileFragment;
-    public static GameOverFragment gameOverFragment;
     public Boolean boolAvatarChosen = false;
 
     private static Gson gson = new Gson();

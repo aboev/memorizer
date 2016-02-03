@@ -155,9 +155,6 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager.showGamePlayFragments(true, Constants.UI_STATE_MULTIPLAYER_MODE);
         else if (FragmentManager.intUIState == Constants.UI_STATE_SETTINGS)
             FragmentManager.showUserProfileFragment(true);
-        else if (FragmentManager.intUIState == Constants.UI_STATE_GAME_OVER)
-            FragmentManager.showGameOverFragment(FragmentManager.gameOverFragment.getCardsetID(),
-                    FragmentManager.gameOverFragment.getGameOverMessage(), true);
     }
 
     @Override
