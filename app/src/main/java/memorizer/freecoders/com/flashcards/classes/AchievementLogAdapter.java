@@ -68,6 +68,9 @@ public class AchievementLogAdapter extends RecyclerView.Adapter<AchievementLogAd
             else if (bonusDescriptor.bonus_title.containsKey(Constants.DEFAULT_LOCALE))
                 strText = bonusDescriptor.bonus_title.get(Constants.DEFAULT_LOCALE);
 
+        strText = strText + " (" + bonusDescriptor.bonus + ")";
+
+
         holder.textViewAchievement.setText(strText);
 
         holder.position = position;
