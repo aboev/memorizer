@@ -16,7 +16,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,17 +31,21 @@
             android:value="Memorizer.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="11" />
+            android:value="12" />
 
         <activity
             android:name=".CardsetPickerActivity"
             android:label="@string/title_activity_cardset_picker"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity
             android:name=".GameOverActivity"
             android:label="@string/title_activity_gameover"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
     </application>
