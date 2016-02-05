@@ -84,4 +84,6 @@
     More details at www.github.com/aboev/multicards\n
     Flash cards provided by Quizlet</string>
 
+    <string name="string_user_not_found">Player not found, please check username</string>
+
 </resources>
