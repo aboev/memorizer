@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
             networkRequests();
         }
 
+        Utils.checkLatestVersion();
+
     }
 
     public void restoreApp () {
