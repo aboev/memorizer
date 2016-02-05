@@ -66,4 +66,12 @@
     <string name="string_play_now">Играть</string>
     <string name="string_play_later">Пропустить</string>
 
+    <string name="aboutText">
+    Мультикардс (c) 2016\n
+    Алексей Боев\n
+    Максим Максимов\n
+    Some components are licensed under Apache 2.0\n
+    More details at www.github.com/aboev/multicards\n
+    Flash cards provided by Quizlet</string>
+
 </resources>

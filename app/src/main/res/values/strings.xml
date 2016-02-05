@@ -76,5 +76,12 @@
     <string name="string_play_now">Play now</string>
     <string name="string_play_later">Dismiss</string>
 
+    <string name="aboutText">
+    Multicards (c) 2016\n
+    Alexey Boev\n
+    Maxim Maximov\n
+    Some components are licensed under Apache 2.0\n
+    More details at www.github.com/aboev/multicards\n
+    Flash cards provided by Quizlet</string>
 
 </resources>
