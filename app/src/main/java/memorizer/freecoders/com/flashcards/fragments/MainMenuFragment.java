@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
@@ -26,6 +27,7 @@ public class MainMenuFragment extends Fragment {
     private TextView textViewTrain;
     private TextView textViewMultiplayer;
     private TextView textViewSettings;
+    private ImageView imageViewInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,6 +39,7 @@ public class MainMenuFragment extends Fragment {
         textViewTrain = (TextView) view.findViewById(R.id.TextView_StyleButtonTrain);
         textViewMultiplayer = (TextView) view.findViewById(R.id.TextView_StyleButtonMultiplayer);
         textViewSettings = (TextView) view.findViewById(R.id.TextView_StyleButtonSettings);
+        imageViewInfo = (ImageView) view.findViewById(R.id.imageViewInfo);
 
         textViewTrain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +95,15 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager.showUserProfileFragment(false);
+            }
+        });
+
+        imageViewInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputDialogInterface.showModalDialog(Multicards.getMainActivity().
+                        getResources().getString(R.string.aboutText),
+                        Multicards.getMainActivity());
             }
         });
 

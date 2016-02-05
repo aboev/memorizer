@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -138,6 +139,9 @@ public class UserProfileFragment extends Fragment {
 
             }
         });
+
+        editTextUsername.setKeyListener(DigitsKeyListener.
+                getInstance("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-"));
 
         SocketInterface.socketCheckName(editTextUsername.getText().toString());
 
