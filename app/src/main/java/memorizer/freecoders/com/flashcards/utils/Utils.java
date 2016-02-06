@@ -107,7 +107,7 @@ public class Utils {
         return sortedHashMap;
     }
 
-    public void checkLatestVersion () {
+    public final static void checkLatestVersion () {
         ServerInterface.getServerInfoRequest(
                 new Response.Listener<HashMap<String, String>>() {
                     @Override
