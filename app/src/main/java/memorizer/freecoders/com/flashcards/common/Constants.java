@@ -30,6 +30,8 @@ public class Constants {
     public final static String RESPONSE_RESULT_OK = "OK";
     public final static String RESPONSE_DATA = "data";
     public final static String RESPONSE_CODE = "code";
+    public final static Integer ERROR_USER_NOT_FOUND = 105;
+    public final static Integer ERROR_GAME_NOT_FOUND = 106;
 
     public final static String HEADER_USERID = "id";
     public final static String HEADER_USERNAME = "name";
