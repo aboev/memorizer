@@ -21,6 +21,7 @@ import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.json.QCardset;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -32,6 +33,7 @@ public class FlashCardsDAO {
     private String LOG_TAG = "FlashCardsDAO";
     private Random ran = new Random();
     private int intCardsCount = 4;
+    private Gson gson = new Gson();
 
     public FlashCardsDAO(Context context) {
         this.context = context;
@@ -76,12 +78,13 @@ public class FlashCardsDAO {
                 new Response.Listener<QuizletCardsetDescriptor>() {
                     @Override
                     public void onResponse(QuizletCardsetDescriptor response) {
-                        Cardset cardset = new Cardset();
+                        final Cardset cardset = new Cardset();
                         cardset.gid = "quizlet_" + response.id;
                         cardset.title = response.title;
                         cardset.created_by = response.created_by;
                         cardset.url = response.url;
                         cardset.terms_count = response.terms.size();
+                        cardset.has_images = response.has_images;
                         cardset.inverted = false;
                         cardset.save();
                         int cnt = 0;
@@ -89,12 +92,16 @@ public class FlashCardsDAO {
                             Card card = new Card();
                             card.question = response.terms.get(i).term;
                             card.answer = response.terms.get(i).definition;
+
+                            if (response.terms.get(i).image != null)
+                                card.image = gson.toJson(response.terms.get(i).image);
+
                             card.setID = cardset.getId();
                             card.save();
                             cnt++;
                         }
                         if (cnt > 0) {
-                            onSuccess.onResponse(cardset.getId());
+                            fetchCardsetData(gid, cardset, onSuccess, onFail);
                         } else
                             onFail.onResponse(null);
                     }
@@ -108,6 +115,29 @@ public class FlashCardsDAO {
         } else {
             onFail.onResponse(null);
         }
+    }
+
+    private void fetchCardsetData (final String gid, final Cardset cardset,
+            final CallbackInterface onSuccess, final CallbackInterface onFail) {
+        ServerInterface.getCardsetDataRequest(gid,
+            new Response.Listener<ArrayList<QCardset>>() {
+                @Override
+                public void onResponse(ArrayList<QCardset> response) {
+                    if ((response.size() > 0) && response.get(0).flags != null
+                            && response.get(0).flags.
+                            contains(Constants.FLAG_CARDSET_INVERTED)) {
+                        cardset.inverted = true;
+                        cardset.save();
+                        Log.d(LOG_TAG, "Cardset " + gid + " is inverted");
+                    }
+                    onSuccess.onResponse(cardset.getId());
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    onFail.onResponse(null);
+                }
+            });
     }
 
     public FlashCard fetchRandomCard(){

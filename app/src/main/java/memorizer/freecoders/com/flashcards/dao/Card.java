@@ -19,6 +19,9 @@ public class Card extends Model {
     @Column(name = "SetID")
     public Long setID;
 
+    @Column(name = "Image")
+    public String image;
+
     @Column(name = "First")
     public Boolean first;
 }

@@ -7,6 +7,6 @@ public class QuizletTermDescriptor {
     public Long id;
     public String term;
     public String definition;
-    public Object image;
+    public QuizletImageDescriptor image;
     public int rank;
 }

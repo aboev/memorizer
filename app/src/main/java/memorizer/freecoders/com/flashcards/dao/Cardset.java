@@ -24,4 +24,6 @@ public class Cardset extends Model {
     public Integer terms_count;
     @Column(name = "inverted")
     public Boolean inverted;
+    @Column(name = "has_images")
+    public Boolean has_images;
 }

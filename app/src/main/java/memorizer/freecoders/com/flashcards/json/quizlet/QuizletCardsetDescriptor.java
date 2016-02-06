@@ -11,5 +11,6 @@ public class QuizletCardsetDescriptor {
     public String url;
     public String title;
     public String created_by;
+    public Boolean has_images;
     public ArrayList<QuizletTermDescriptor> terms;
 }
