@@ -8,6 +8,7 @@ import java.util.HashMap;
  */
 public class BonusDescriptor {
     public HashMap<String, String> bonus_title;
+    public HashMap<String, String> description;
     public int bonus;
     public int bonus_id;
     public String image_url;
