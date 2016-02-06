@@ -103,4 +103,6 @@ public class Constants {
 
     public final static String APP_FOLDER = "multicards";
 
+    public static Integer FLAG_CARDSET_INVERTED = 0;
+
 }
