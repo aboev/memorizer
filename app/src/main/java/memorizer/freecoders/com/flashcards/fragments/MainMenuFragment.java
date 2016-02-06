@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+
 import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
@@ -17,6 +19,8 @@ import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 
@@ -77,12 +81,18 @@ public class MainMenuFragment extends Fragment {
                             InputDialogInterface.showEnterOpponentNameDialog(new CallbackInterface() {
                                 @Override
                                 public void onResponse(Object obj) {
-                                    if (obj != null) {
-                                        String strOpponentName = (String) obj;
-                                        GameplayManager.strOpponentName = strOpponentName;
-                                        ServerInterface.newGameRequest("", strOpponentName,
-                                                null, null);
-                                    }
+                                if (obj != null) {
+                                    String strOpponentName = (String) obj;
+                                    GameplayManager.strOpponentName = strOpponentName;
+                                    ServerInterface.newGameRequest("", strOpponentName,
+                                        new Response.Listener<ServerResponse<Game>>() {
+                                            @Override
+                                            public void onResponse(ServerResponse<Game> response) {
+                                                if (!response.isSuccess())
+                                                    InputDialogInterface.deliverError(response);
+                                            }
+                                        }, null);
+                                }
                                 }
                             });
                         }

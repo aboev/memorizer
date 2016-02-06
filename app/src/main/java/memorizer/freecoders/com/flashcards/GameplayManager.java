@@ -21,6 +21,7 @@ import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.Question;
+import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
@@ -162,10 +163,48 @@ public class GameplayManager {
                 @Override
                 public void onResponse(Object obj) {
                 ServerInterface.newGameRequest(strGID, strOpponentName,
-                    new Response.Listener<Game>() {
+                    new Response.Listener<ServerResponse<Game>>() {
                         @Override
-                        public void onResponse(Game response) {
-                            if (response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) {
+                        public void onResponse(ServerResponse<Game> res) {
+                            if (res.isSuccess()) {
+                                Game response = res.data;
+                                if (response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) {
+                                    Multicards.getMultiplayerInterface().setGameData(null, strGID);
+                                    String strMessage = Multicards.getMainActivity().
+                                            getResources().getString(
+                                            R.string.waiting_opponent_dialog_message);
+                                    if ((GameplayManager.strOpponentName != null) &&
+                                            (GameplayManager.strOpponentName.equals("-1")))
+                                        strMessage = strMessage + ".\n" + Multicards.getMainActivity().
+                                                getResources().getString(
+                                                R.string.string_your_id) +
+                                                Multicards.getPreferences().strUserName;
+                                    progressDialog = ProgressDialog.show(
+                                            Multicards.getMainActivity(), "", strMessage, true);
+                                    progressDialog.setOnCancelListener(
+                                            new DialogInterface.OnCancelListener() {
+                                                @Override
+                                                public void onCancel(DialogInterface dialog) {
+                                                    Multicards.getMultiplayerInterface().quitGame();
+                                                }
+                                            });
+                                    progressDialog.setCancelable(true);
+                                }
+                            } else
+                                InputDialogInterface.deliverError(res);
+                        }
+                    }, null);
+                }
+            });
+        else
+            ServerInterface.newGameRequest(strGID, strOpponentName,
+                new Response.Listener<ServerResponse<Game>>() {
+                    @Override
+                    public void onResponse(ServerResponse<Game> res) {
+                        if (res.isSuccess()) {
+                            Game response = res.data;
+                            if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                    (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
                                 Multicards.getMultiplayerInterface().setGameData(null, strGID);
                                 String strMessage = Multicards.getMainActivity().
                                         getResources().getString(
@@ -177,50 +216,20 @@ public class GameplayManager {
                                             R.string.string_your_id) +
                                             Multicards.getPreferences().strUserName;
                                 progressDialog = ProgressDialog.show(
-                                        Multicards.getMainActivity(), "", strMessage, true);
+                                        Multicards.getMainActivity(),
+                                        "",
+                                        strMessage, true);
+                                progressDialog.setCancelable(true);
                                 progressDialog.setOnCancelListener(
                                         new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        Multicards.getMultiplayerInterface().quitGame();
-                                    }
-                                });
+                                            @Override
+                                            public void onCancel(DialogInterface dialog) {
+                                                Multicards.getMultiplayerInterface().quitGame();
+                                            }
+                                        });
                             }
-                            progressDialog.setCancelable(true);
-                        }
-                    }, null);
-                }
-            });
-        else
-            ServerInterface.newGameRequest(strGID, strOpponentName,
-                new Response.Listener<Game>() {
-                    @Override
-                    public void onResponse(Game response) {
-                        if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
-                                (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
-                            Multicards.getMultiplayerInterface().setGameData(null, strGID);
-                            String strMessage = Multicards.getMainActivity().
-                                    getResources().getString(
-                                    R.string.waiting_opponent_dialog_message);
-                            if ((GameplayManager.strOpponentName != null) &&
-                                    (GameplayManager.strOpponentName.equals("-1")))
-                                strMessage = strMessage + ".\n" + Multicards.getMainActivity().
-                                        getResources().getString(
-                                        R.string.string_your_id) +
-                                        Multicards.getPreferences().strUserName;
-                            progressDialog = ProgressDialog.show(
-                                    Multicards.getMainActivity(),
-                                    "",
-                                    strMessage, true);
-                            progressDialog.setCancelable(true);
-                            progressDialog.setOnCancelListener(
-                                    new DialogInterface.OnCancelListener() {
-                                        @Override
-                                        public void onCancel(DialogInterface dialog) {
-                                            Multicards.getMultiplayerInterface().quitGame();
-                                        }
-                                    });
-                        }
+                        } else
+                            InputDialogInterface.deliverError(res);
                     }
                 }, null);
     }
