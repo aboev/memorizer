@@ -25,7 +25,8 @@
         <item>Присоединиться к игре</item>
     </string-array>
 
-    <string name="button_like">Набор понравился!</string>
+    <string name="button_like">Лайкнуть набор</string>
+    <string name="button_comment">Комментировать</string>
     <string name="string_popular_cardsets">Популярные наборы</string>
     <string name="string_game_stopped">Игра прервана. Проверьте соединение с интернетом</string>
 

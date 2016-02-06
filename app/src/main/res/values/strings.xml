@@ -28,6 +28,7 @@
     </string-array>
 
     <string name="button_like">Like cardset!</string>
+    <string name="button_comment">Leave comment!</string>
     <string name="string_popular_cardsets">Popular cardsets</string>
     <string name="string_game_stopped">Game interrupted. Check network connectivity</string>
 
