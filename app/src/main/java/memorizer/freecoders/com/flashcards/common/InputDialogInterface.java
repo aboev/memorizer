@@ -26,6 +26,7 @@ import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
+import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.utils.FileUtils;
@@ -224,7 +225,7 @@ public class InputDialogInterface {
         alert.setPositiveButton(R.string.string_ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        if(strURL == null || strURL.isEmpty()){
+                        if (strURL == null || strURL.isEmpty()) {
                             Utils.OpenPlayMarketPage();
                             return;
                         }
@@ -257,5 +258,11 @@ public class InputDialogInterface {
                     });
         }
         alert.show();
+    }
+
+    public static final void deliverError (ServerResponse response) {
+        if (response.code == Constants.ERROR_USER_NOT_FOUND)
+            showModalDialog(Multicards.getMainActivity().getResources().
+                            getString(R.string.string_user_not_found), Multicards.getMainActivity());
     }
 }
