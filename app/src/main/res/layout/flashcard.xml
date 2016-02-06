@@ -19,7 +19,7 @@
             android:gravity="center"
             android:textColor="#838383"
             android:textSize="40sp"
-            android:maxLines="1"
+            android:maxLines="4"
             android:ellipsize="none"
             android:fontFamily="sans-serif"
             android:text="Agree"
