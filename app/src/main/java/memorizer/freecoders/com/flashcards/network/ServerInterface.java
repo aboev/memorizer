@@ -12,13 +12,13 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.ConstantsPrivate;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.QCardset;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.TagDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
@@ -116,7 +116,7 @@ public class ServerInterface {
     public static final void newGameRequest(
             String strSetID,
             String strOpponentName,
-            final Response.Listener<Game> responseListener,
+            final Response.Listener<ServerResponse<Game>> responseListener,
             final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
         headers.put(Constants.HEADER_OPPONENTNAME, strOpponentName);
@@ -135,9 +135,8 @@ public class ServerInterface {
                         try {
                             ServerResponse<Game> res =
                                     gson.fromJson(response, type);
-                            if ( res != null && res.isSuccess() && res.data != null
-                                    && responseListener != null)
-                                responseListener.onResponse(res.data);
+                            if ( res != null && responseListener != null)
+                                responseListener.onResponse(res);
                             else if (errorListener != null)
                                 errorListener.onErrorResponse(new VolleyError());
                         } catch (Exception e) {
@@ -188,22 +187,24 @@ public class ServerInterface {
                 getMainActivity()).addToRequestQueue(uploadRequest);
     }
 
-    public static final void getCardsetsRequest(
-            final Response.Listener<ArrayList<CardSet>> responseListener,
+    public static final void getCardsetDataRequest(
+            String strGID,
+            final Response.Listener<ArrayList<QCardset>> responseListener,
             final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
-        Log.d(LOG_TAG, "Get cardsets request");
+        headers.put(Constants.HEADER_SETID, strGID);
+        Log.d(LOG_TAG, "Get cardset data request");
         StringRequest request = new StringRequest(Request.Method.GET,
-                Constants.SERVER_URL + Constants.SERVER_PATH_CARDSETS ,
+                Constants.SERVER_URL + Constants.SERVER_PATH_CARDSETS,
                 "", headers,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d(LOG_TAG, "Response: " + response);
                         Type type = new TypeToken<ServerResponse
-                                <ArrayList<CardSet>>>(){}.getType();
+                                <ArrayList<QCardset>>>(){}.getType();
                         try {
-                            ServerResponse<ArrayList<CardSet>> res =
+                            ServerResponse<ArrayList<QCardset>> res =
                                     gson.fromJson(response, type);
                             if ( res != null && res.isSuccess() && (responseListener != null) &&
                                     res.data != null)
