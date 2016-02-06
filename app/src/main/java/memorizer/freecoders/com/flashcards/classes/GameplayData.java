@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -58,7 +60,7 @@ public class GameplayData {
             }
         }
 
-        questions = makeQuestions(terms, definitions);
+        questions = makeQuestions(new QuestionData(terms, definitions));
 
         intCurrentQuestion = 0;
     }
@@ -70,25 +72,31 @@ public class GameplayData {
         intCurrentQuestion = questions.size();
     }
 
-    public ArrayList<FlashCard> makeQuestions (ArrayList<String> terms,
-            ArrayList<String> definitions) {
+    public ArrayList<FlashCard> makeQuestions (QuestionData questionData) {
+        ArrayList<String> terms = questionData.terms;
+        ArrayList<String> definitions = questionData.udefinitions;
         ArrayList<FlashCard> res = new ArrayList<FlashCard>();
         ArrayList<Integer> termIdList = getRandomNumbers(terms.size(), terms.size(), -1);
+
+        int optionCount = Math.min(Constants.GAMEPLAY_OPTIONS_PER_QUESTION, definitions.size());
+
         int i = 0;
         while ((i < terms.size()) && (i < Constants.GAMEPLAY_QUESTIONS_PER_GAME)) {
             int termID = termIdList.get(i);
-            int answerID = ran.nextInt(Constants.GAMEPLAY_OPTIONS_PER_QUESTION);
+            int answerID = ran.nextInt(optionCount);
 
             FlashCard question = new FlashCard();
+            int except = questionData.termDefinitionMap.get(termID);
             ArrayList<Integer> optionIdList = getRandomNumbers(
-                    Constants.GAMEPLAY_OPTIONS_PER_QUESTION - 1, definitions.size(), termID);
+                    optionCount - 1, definitions.size(), except);
 
             for (int j = 0; j < optionIdList.size(); j++) {
-                if (j == answerID) question.options.add(definitions.get(termID));
+                if (j == answerID) question.options.add(questionData.getDefinition(termID));
                 question.options.add(definitions.get(optionIdList.get(j)));
             }
+
             if (answerID == optionIdList.size())
-                question.options.add(definitions.get(termID));
+                question.options.add(questionData.getDefinition(termID));
 
             question.question = terms.get(termID);
             question.answer_id = answerID;
@@ -124,7 +132,8 @@ public class GameplayData {
         ArrayList<Integer> nums = new ArrayList<Integer>();
         for (int i = 0; i < range; i++)
             if (i != exceptID) nums.add(i);
-        for (int i = 0; i < count; i++) {
+        int count_min = Math.min(count, nums.size());
+        for (int i = 0; i < count_min; i++) {
             int j = ran.nextInt(nums.size());
             res.add(nums.get(j));
             nums.remove(j);
@@ -134,6 +143,37 @@ public class GameplayData {
 
     public void updateStatistic () {
 
+    }
+
+    public static class QuestionData {
+        public ArrayList<String> terms;
+        public ArrayList<String> definitions;
+        public ArrayList<String> udefinitions;
+        public HashMap<Integer, Integer> termDefinitionMap = new HashMap<Integer, Integer>();
+
+        public QuestionData (ArrayList<String> terms, ArrayList<String> definitions) {
+            this.terms = terms;
+            this.definitions = definitions;
+            this.udefinitions = new ArrayList<String>();
+            filterUnique();
+        }
+
+        private void filterUnique () {
+            HashSet<String> set = new HashSet<String>();
+            HashMap<String, Integer> map = new HashMap<String, Integer>();
+            for (int i = 0; i < terms.size(); i++) {
+                if (!set.contains(definitions.get(i))) {
+                    udefinitions.add(definitions.get(i));
+                    map.put(definitions.get(i), udefinitions.size() - 1);
+                    set.add(definitions.get(i));
+                }
+                termDefinitionMap.put(i, map.get(definitions.get(i)));
+            }
+        }
+
+        public String getDefinition(int i) {
+            return udefinitions.get(termDefinitionMap.get(i));
+        }
     }
 
 
