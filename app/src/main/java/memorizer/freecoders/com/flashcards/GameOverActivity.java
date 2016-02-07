@@ -100,6 +100,7 @@ public class GameOverActivity extends AppCompatActivity {
         strCardsetID = intent.getStringExtra(Constants.INTENT_META_SET_ID);
         INT_GAME_TYPE = intent.getIntExtra(Constants.INTENT_META_GAME_TYPE,
                 INT_GAME_TYPE_SINGLEPLAYER);
+        Log.d(LOG_TAG, "GameOverActivity type " + INT_GAME_TYPE);
         if (intent.hasExtra(Constants.INTENT_META_GAMEOVER_MESSAGE))
             gameOverMessage = gson.fromJson(intent.getStringExtra(
                     Constants.INTENT_META_GAMEOVER_MESSAGE), GameOverMessage.class);
@@ -182,15 +183,7 @@ public class GameOverActivity extends AppCompatActivity {
                 answerLogAdapter.setAddItemCallback(new CallbackInterface() {
                     @Override
                     public void onResponse(Object obj) {
-                        int pos = (int) obj;
-                        if (GameplayManager.currentGameplay.checks.get(pos)) {
-                            intUserScore++;
-                            textViewScore.setText(String.valueOf(intUserScore));
-                            Animations.scaleAnimation(textViewScore, null);
 
-                            Multicards.getPreferences().intUserScore = intUserScore;
-                            Multicards.getPreferences().savePreferences();
-                        }
                     }
                 });
             }
@@ -201,6 +194,16 @@ public class GameOverActivity extends AppCompatActivity {
                     public void onResponse(Object obj) {
                         int pos = (int) obj;
                         answerLogAdapter.addItem();
+                        if (GameplayManager.currentGameplay.checks.get(pos)) {
+                            intUserScore++;
+                            Log.d(LOG_TAG, "Increasing score to " + intUserScore + " for "+
+                                    GameplayManager.currentGameplay.questions.get(pos));
+                            textViewScore.setText(String.valueOf(intUserScore));
+                            Animations.scaleAnimation(textViewScore, null);
+
+                            Multicards.getPreferences().intUserScore = intUserScore;
+                            Multicards.getPreferences().savePreferences();
+                        }
                     }
                 }, i);
             }
