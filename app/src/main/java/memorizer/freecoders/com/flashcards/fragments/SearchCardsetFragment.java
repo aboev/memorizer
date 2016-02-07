@@ -282,7 +282,10 @@ public class SearchCardsetFragment extends Fragment {
         Collections.sort(tags, new Comparator<TagDescriptor>() {
             @Override
             public int compare(TagDescriptor lhs, TagDescriptor rhs) {
-                return lhs.getName().compareTo(rhs.getName());
+                int rank_left = lhs.rank != null ? lhs.rank : 0;
+                int rank_right = rhs.rank != null ? rhs.rank : 0;
+                if ( rank_left == rank_right ) return lhs.getName().compareTo(rhs.getName());
+                else return rank_left > rank_right ? -1 : 1;
             }
         });
         linearLayoutTags.removeAllViews();
