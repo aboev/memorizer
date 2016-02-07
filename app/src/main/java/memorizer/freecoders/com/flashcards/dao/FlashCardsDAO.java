@@ -123,7 +123,7 @@ public class FlashCardsDAO {
             new Response.Listener<ArrayList<QCardset>>() {
                 @Override
                 public void onResponse(ArrayList<QCardset> response) {
-                    if ((response.size() > 0) && response.get(0).flags != null
+                    if  ((response.size() > 0) && response.get(0).flags != null
                             && response.get(0).flags.
                             contains(Constants.FLAG_CARDSET_INVERTED)) {
                         cardset.inverted = true;
@@ -135,7 +135,7 @@ public class FlashCardsDAO {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    onFail.onResponse(null);
+                    onSuccess.onResponse(cardset.getId());
                 }
             });
     }
