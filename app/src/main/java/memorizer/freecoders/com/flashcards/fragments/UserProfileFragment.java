@@ -140,9 +140,6 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
-        editTextUsername.setKeyListener(DigitsKeyListener.
-                getInstance("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-"));
-
         SocketInterface.socketCheckName(editTextUsername.getText().toString());
 
     }
