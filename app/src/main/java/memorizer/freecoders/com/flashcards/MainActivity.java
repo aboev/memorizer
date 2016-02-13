@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOG_TAG = "MainActivity";
 
+    public Boolean boolIsForeground = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,6 +215,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, null);
         }
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        boolIsForeground = false;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        boolIsForeground = true;
     }
 
 }
