@@ -1,6 +1,7 @@
 package memorizer.freecoders.com.flashcards;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.Response;
+import com.google.gson.Gson;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -23,10 +25,14 @@ import java.util.Set;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
+import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
+import memorizer.freecoders.com.flashcards.json.GameOverMessage;
+import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
@@ -59,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textViewNetworkState = (TextView) findViewById(R.id.textViewNetworkState);
-
+        Log.d(LOG_TAG, "OnCreate " + (savedInstanceState == null ? "savedInstanceState == null" :
+                "savedInstanceState != null"));
         populateView(savedInstanceState);
     }
 
@@ -86,12 +93,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void populateView(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "populateView");
         if (findViewById(R.id.fragment_flashcard_container) != null) {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            Log.d(LOG_TAG, "Populating view " + savedInstanceState != null ? "restoring" : "");
+            Log.d(LOG_TAG, "Populating view " + (savedInstanceState != null ? "restoring" : ""));
             if ( savedInstanceState == null) {
                 ActiveAndroid.initialize(this);
                 initApp(false);
@@ -164,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy");
         if (isFinishing()) {
             SocketInterface.getSocketIO().disconnect();
             SocketInterface.getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
@@ -181,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
             if (FragmentManager.intUIState != Constants.UI_STATE_MAIN_MENU )
                 FragmentManager.returnToMainMenu(false);
             else
-                finish();
+                this.moveTaskToBack(true);
+                //finish();
             return true;
         }
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -221,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
     public void onPause()
     {
         super.onPause();
+        Log.d(LOG_TAG, "onPause");
         boolIsForeground = false;
     }
 
@@ -228,7 +238,28 @@ public class MainActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
+        Log.d(LOG_TAG, "onResume");
         boolIsForeground = true;
+    }
+
+    @Override
+    public void onNewIntent(Intent newIntent) {
+        this.setIntent(newIntent);
+
+        if (newIntent.hasExtra(Constants.INTENT_META_EVENT_TYPE)) {
+            int intEventType = newIntent.getIntExtra(Constants.INTENT_META_EVENT_TYPE, 0);
+            Log.d(LOG_TAG, "Handling event " + intEventType);
+            if (intEventType == Constants.INTENT_INVITATION) {
+                restoreApp();
+                if (newIntent.hasExtra(Constants.INTENT_META_EVENT_BODY)) {
+                    Gson gson = new Gson();
+                    String strInvitation = newIntent.getStringExtra(Constants.INTENT_META_EVENT_BODY);
+                    InvitationDescriptor invitationDescriptor = gson.fromJson(strInvitation,
+                            InvitationDescriptor.class);
+                    GameplayManager.gameInvitation(invitationDescriptor);
+                }
+            }
+        }
     }
 
 }
