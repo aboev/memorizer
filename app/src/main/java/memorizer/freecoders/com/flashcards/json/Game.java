@@ -10,4 +10,5 @@ public class Game {
     public HashMap<String, String> players;
     public Integer status;
     public HashMap<String, UserDetails> profiles;
+    public CardSet cardset;
 }
