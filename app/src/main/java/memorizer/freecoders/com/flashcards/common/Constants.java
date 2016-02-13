@@ -110,6 +110,7 @@ public class Constants {
     public final static String DEFAULT_LOCALE = "en";
 
     public final static String TAG_PICK_OPPONENT_FRAGMENT = "pick_opponent_dialog";
+    public final static String TAG_PICK_GAME_FRAGMENT = "pick_game_dialog";
     public final static String TAG_INVITATION_FRAGMENT = "invitation_dialog";
 
     public final static String APP_FOLDER = "multicards";
