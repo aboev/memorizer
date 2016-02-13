@@ -21,11 +21,24 @@
     <string name="string_enter_opponent_nickname">Enter opponent nickname</string>
 
     <string name="string_choose_opponent">Choose opponent</string>
+    <string name="string_choose_game">Choose game</string>
+    <string name="string_random_opponent">Random opponent</string>
     <string-array name="dialog_items_multiplayer">
         <item>Random opponent</item>
         <item>Host game</item>
         <item>Join game</item>
     </string-array>
+
+    <string-array name="dialog_multiplayer">
+        <item>Host game</item>
+        <item>Join game</item>
+    </string-array>
+
+    <string name="string_invitation">invites you to play</string>
+    <string name="button_play">Play now</string>
+
+    <string name="string_ready_question">Are you ready?</string>
+    <string name="string_ready">ready</string>
 
     <string name="button_like">Like cardset!</string>
     <string name="button_comment">Leave comment!</string>
