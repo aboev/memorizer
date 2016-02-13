@@ -99,12 +99,15 @@ public class Constants {
     public final static String INTENT_META_SET_ID = "setID";
     public final static String INTENT_META_GAME_TYPE = "gameType";
     public final static String INTENT_META_GAMEOVER_MESSAGE = "gameOverMessage";
+    public final static String INTENT_META_EVENT_TYPE = "eventType";
+    public final static String INTENT_META_EVENT_BODY = "eventBody";
 
     public final static int ANIMATION_SLIDE = 0;
     public final static int ANIMATION_FLIP = 1;
 
     public final static int INTENT_PICK_IMAGE = 111;
     public final static int INTENT_PICK_IMAGE_KITKAT = 112;
+    public final static int INTENT_INVITATION = 1;
     public final static String FILENAME_AVATAR = "avatar.jpg";
 
     public final static String DEFAULT_LOCALE = "en";
