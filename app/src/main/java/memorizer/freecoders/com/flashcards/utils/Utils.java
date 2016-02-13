@@ -157,12 +157,12 @@ public class Utils {
     public final static void vibrateLong() {
         Vibrator v = (Vibrator) Multicards.getMainActivity().
                 getSystemService(Multicards.getMainActivity().VIBRATOR_SERVICE);
-        v.vibrate(2000);
+        v.vibrate(300);
     }
 
     public final static void vibrateShort() {
         Vibrator v = (Vibrator) Multicards.getMainActivity().
                 getSystemService(Multicards.getMainActivity().VIBRATOR_SERVICE);
-        v.vibrate(500);
+        v.vibrate(50);
     }
 }
