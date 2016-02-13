@@ -43,7 +43,6 @@ public class CardsetPickerActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private SearchCardsetFragment cardsetPickerFragment;
     private RecentCardsetsFragment cardsetRecentsFragment;
-    private int intNextFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,15 +106,9 @@ public class CardsetPickerActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        intNextFragment = intent.getIntExtra(Constants.INTENT_META_NEXT_FRAGMENT,
-                Constants.UI_STATE_MAIN_MENU);
-
         cardsetPickerFragment = new SearchCardsetFragment();
-        cardsetPickerFragment.intNextFragment = intNextFragment;
 
         cardsetRecentsFragment = new RecentCardsetsFragment();
-        cardsetRecentsFragment.intNextFragment = intNextFragment;
 
         memorizer.freecoders.com.flashcards.FragmentManager.intUIState = Constants.UI_STATE_CARD_PICK;
 
