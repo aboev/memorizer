@@ -20,6 +20,7 @@ import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.QCardset;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
+import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.TagDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
@@ -137,6 +138,89 @@ public class ServerInterface {
                                     gson.fromJson(response, type);
                             if ( res != null && responseListener != null)
                                 responseListener.onResponse(res);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void startGameRequest(
+            Boolean boolNewGame,
+            String strGID,
+            String strOpponentName,
+            final Response.Listener<ServerResponse<Game>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        headers.put(Constants.HEADER_OPPONENTNAME, strOpponentName);
+        headers.put(Constants.HEADER_MULTIPLAYER_TYPE, boolNewGame ? "1" : "0");
+        headers.put(Constants.HEADER_SETID, strGID);
+        Log.d(LOG_TAG, "Start game request");
+        StringRequest request = new StringRequest(Request.Method.POST,
+                Constants.SERVER_URL + Constants.SERVER_PATH_GAME_NEW ,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <Game>>(){}.getType();
+                        try {
+                            ServerResponse<Game> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && responseListener != null)
+                                responseListener.onResponse(res);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void getPendingGamesRequest(
+            final Response.Listener<ArrayList<Game>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Get pending games request");
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_GAME,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <ArrayList<Game>>>(){}.getType();
+                        try {
+                            ServerResponse<ArrayList<Game>> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && (responseListener != null) &&
+                                    res.data != null)
+                                responseListener.onResponse(res.data);
                             else if (errorListener != null)
                                 errorListener.onErrorResponse(new VolleyError());
                         } catch (Exception e) {
