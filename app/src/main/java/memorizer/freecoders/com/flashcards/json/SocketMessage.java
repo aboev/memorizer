@@ -9,4 +9,5 @@ public class SocketMessage<T> {
     public ArrayList<String> id_to = new ArrayList<>();
     public String msg_type = "";
     public T msg_body;
+    public Integer msg_id;
 }
