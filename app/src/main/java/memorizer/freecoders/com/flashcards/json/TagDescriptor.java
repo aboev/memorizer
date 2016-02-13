@@ -12,6 +12,8 @@ public class TagDescriptor {
     public String tag_id;
     public HashMap<String, String> tag_name;
     public String color;
+    public Integer rank;
+    public String parent_tag;
 
     public String getName () {
         String strRes = "";
