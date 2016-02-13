@@ -12,6 +12,7 @@ import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
 import memorizer.freecoders.com.flashcards.GameOverActivity;
 import memorizer.freecoders.com.flashcards.MainActivity;
 import memorizer.freecoders.com.flashcards.MultiplayerInterface;
+import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.VolleySingleton;
@@ -33,6 +34,7 @@ public class Multicards extends Application {
     private static GameOverActivity mGameOverActivity;
     private static DiskLruBitmapCache mAvatarDiskLruCache;
     private static ImageLoader mAvatarLoader;
+    public static CallbackInterface onPickCardsetCallback;
 
     @Override
     public void onCreate() {
