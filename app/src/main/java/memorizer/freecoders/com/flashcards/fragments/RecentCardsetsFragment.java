@@ -28,6 +28,7 @@ import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.CardsetListAdapter;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
@@ -40,9 +41,6 @@ public class RecentCardsetsFragment extends Fragment{
 
     ListView cardSetListView;
     CardsetListAdapter cardSetListAdapter;
-    public int intNextFragment;
-
-    public ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,21 +64,13 @@ public class RecentCardsetsFragment extends Fragment{
                     strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
                 else
                     strGID = String.valueOf(cardSetListAdapter.qvalues.get(position).gid);
-                if (intNextFragment == Constants.UI_STATE_TRAIN_MODE) {
-                    startSinglePlayer(strGID);
-                } else if (intNextFragment == Constants.UI_STATE_MULTIPLAYER_MODE) {
-                    Multicards.getFlashCardsDAO().setRecentCardset(strGID);
-                    GameplayManager.requestMultiplayerGame(strGID);
-                    Multicards.getCardsetPickerActivity().finish();
-                }
+
+                if (Multicards.onPickCardsetCallback != null)
+                    Multicards.onPickCardsetCallback.onResponse(strGID);
             }
         });
 
         return view;
-    }
-
-    public void setNextFragment (int intNextFragment) {
-        this.intNextFragment = intNextFragment;
     }
 
     public ArrayList<QuizletCardsetDescriptor> fetchRecentFlashcards () {
@@ -129,41 +119,5 @@ public class RecentCardsetsFragment extends Fragment{
             sortedHashMap.put(entry.getKey(), entry.getValue());
         }
         return sortedHashMap;
-    }
-
-    private void startSinglePlayer (final String strGID) {
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
-        if (cardset == null) {
-            Multicards.getFlashCardsDAO().importFromWeb(strGID,
-                    new CallbackInterface() {
-                        @Override
-                        public void onResponse(Object obj) {
-                            if (progressDialog != null)
-                                progressDialog.dismiss();
-                            Long setID = (Long) obj;
-                            GameplayManager.startSingleplayerGame(setID, strGID);
-                            Multicards.getCardsetPickerActivity().finish();
-                            Multicards.getFlashCardsDAO().setRecentCardset(strGID);
-                        }
-                    }, new CallbackInterface() {
-                        @Override
-                        public void onResponse(Object obj) {
-                            if (progressDialog != null)
-                                progressDialog.dismiss();
-                            Toast.makeText(Multicards.getMainActivity(),
-                                    "Failed to fetch cardset",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-            String strMessage = getResources().
-                    getString(R.string.download_cardset_dialog_message);
-            progressDialog = ProgressDialog.show(
-                    Multicards.getCardsetPickerActivity(), "", strMessage, true);
-            progressDialog.setCancelable(true);
-        } else {
-            GameplayManager.startSingleplayerGame(cardset.getId(), strGID);
-            Multicards.getCardsetPickerActivity().finish();
-            Multicards.getFlashCardsDAO().setRecentCardset(strGID);
-        }
     }
 }
