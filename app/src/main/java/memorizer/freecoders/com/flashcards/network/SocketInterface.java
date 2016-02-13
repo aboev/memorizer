@@ -16,10 +16,12 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
+import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
+import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.SocketMessageExtra;
@@ -36,6 +38,11 @@ public class SocketInterface {
 
     private static Socket mSocketIO;
     private static String mSocketID;
+
+    private static int msg_id_counter = 0;
+
+    private static HashMap<Integer, CallbackInterface> syncCallbacks = new
+            HashMap<Integer, CallbackInterface>();
 
     public final static void setSocketIO (Socket socket){
         mSocketIO = socket;
@@ -56,7 +63,6 @@ public class SocketInterface {
     public final static Emitter.Listener onNewSocketMessage = new Emitter.Listener() {
         @Override
         public void call(final Object[] args) {
-            Log.d(LOG_TAG, "Received message " + args[0].toString());
             Multicards.getMainActivity().
                 runOnUiThread(new Runnable() {
                     @Override
@@ -68,7 +74,6 @@ public class SocketInterface {
                         } catch (JSONException e) {
                             Log.d(LOG_TAG, "Json exception while processing " + args[0].toString());
                         }
-                        Log.d(LOG_TAG, "Received socket message " + args[0]);
                         if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
                             Type type = new TypeToken<SocketMessageExtra<Question,
@@ -134,6 +139,31 @@ public class SocketInterface {
                                     gson.fromJson(args[0].toString(), type);
                             Integer intValue = socketMessage.msg_body;
                             msgCheckNetwork(intValue);
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_GAME_INVITE)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<InvitationDescriptor>>() {}.getType();
+                            SocketMessage<InvitationDescriptor> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            msgGameInvitation(socketMessage.msg_body);
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_INVITE_ACCEPTED)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<Integer>>() {}.getType();
+                            SocketMessage<Integer> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            msgInvitationAccepted(socketMessage.msg_body);
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_CONFIRM)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<Integer>>() {}.getType();
+                            SocketMessage<Integer> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            Integer msg_id = socketMessage.msg_body;
+                            if (syncCallbacks.containsKey(msg_id)) {
+                                syncCallbacks.get(msg_id).onResponse(null);
+                                syncCallbacks.remove(msg_id);
+                            }
                         }
                     }
                 });
@@ -204,9 +234,18 @@ public class SocketInterface {
         GameplayManager.networkLatencyCallback(value);
     }
 
+    private static void msgGameInvitation (InvitationDescriptor invitation) {
+        GameplayManager.gameInvitation(invitation);
+    }
+
+    private static void msgInvitationAccepted (Integer intGameID) {
+        GameplayManager.invitationAccepted(intGameID);
+    }
+
     //====================================================================================
 
     public static void emitQuitGame () {
+        Log.d(LOG_TAG, "emitQuitGame");
         SocketMessage msg = new SocketMessage();
         msg.msg_type = Constants.SOCK_MSG_TYPE_QUIT_GAME;
         msg.msg_body = "";
@@ -214,6 +253,7 @@ public class SocketInterface {
     }
 
     public static void emitStatusUpdate (String strStatus) {
+        Log.d(LOG_TAG, "emitStatusUpdate " + strStatus);
         SocketMessage msg = new SocketMessage();
         msg.msg_type = Constants.SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE;
         msg.msg_body = strStatus;
@@ -233,5 +273,24 @@ public class SocketInterface {
         msg.msg_type = Constants.SOCK_MSG_TYPE_CHECK_NETWORK;
         msg.msg_body = value;
         mSocketIO.emit("message", gson.toJson(msg));
+    }
+
+    public static void emitInviteOpponent (String strOpponentName, String strGameID) {
+        SocketMessageExtra msg = new SocketMessageExtra();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_GAME_INVITE;
+        msg.msg_body = strOpponentName;
+        msg.msg_extra = strGameID;
+        mSocketIO.emit("message", gson.toJson(msg));
+    }
+
+    public static void emitInvitationAccepted (int game_id, CallbackInterface callback) {
+        Log.d(LOG_TAG, "emitInvitationAccepted " + game_id);
+        SocketMessage msg = new SocketMessage();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_INVITE_ACCEPTED;
+        msg.msg_body = game_id;
+        msg.msg_id = msg_id_counter;
+        mSocketIO.emit("message", gson.toJson(msg));
+        syncCallbacks.put(msg_id_counter, callback);
+        msg_id_counter++;
     }
 }
