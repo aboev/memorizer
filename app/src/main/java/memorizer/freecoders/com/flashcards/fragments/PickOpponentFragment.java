@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Response;
+import com.google.gson.Gson;
 import com.jakewharton.disklrucache.Util;
 
 import java.util.ArrayList;
@@ -64,7 +65,13 @@ public class PickOpponentFragment extends DialogFragment {
         buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
 
         opponentListAdapter = new OpponentListAdapter(Multicards.getMainActivity());
-        opponentListAdapter.setValues(getRecentOpponents());
+        ArrayList<UserDetails> values = getRecentOpponents();
+        UserDetails randomOpponent = new UserDetails();
+        randomOpponent.name = Multicards.getMainActivity().getResources().getString(
+                R.string.string_random_opponent);
+        values.add(randomOpponent);
+        opponentListAdapter.setValues(values);
+
         Log.d(LOG_TAG, "Set recent opponents count " + getRecentOpponents().size());
 
         recentOpponentsList.setAdapter(opponentListAdapter);
@@ -72,9 +79,12 @@ public class PickOpponentFragment extends DialogFragment {
         recentOpponentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String strOpponentName = opponentListAdapter.values.get(position).name;
+                String strOpponentName = null;
+                if (position < (opponentListAdapter.getCount() - 1)) {
+                    strOpponentName = opponentListAdapter.values.get(position).name;
+                    updateUserDetailsCache(strOpponentName);
+                }
                 onClickOK.onResponse(strOpponentName);
-                updateUserDetailsCache(strOpponentName);
                 dismissFragment();
             }
         });
