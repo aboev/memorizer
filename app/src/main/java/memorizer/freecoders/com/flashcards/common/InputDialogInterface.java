@@ -2,6 +2,7 @@ package memorizer.freecoders.com.flashcards.common;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import android.content.DialogInterface;
@@ -9,8 +10,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
 
 import com.android.volley.Response;
@@ -18,14 +17,15 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
+import memorizer.freecoders.com.flashcards.fragments.InvitationFragment;
 import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
+import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -36,6 +36,9 @@ import memorizer.freecoders.com.flashcards.utils.Utils;
  * Created by alex-mac on 05.12.15.
  */
 public class InputDialogInterface {
+
+    public static InvitationFragment gameInvitationFragment;
+    public static ProgressDialog progressDialog;
 
     public static final void askUserName (final CallbackInterface onReply) {
 
@@ -189,12 +192,37 @@ public class InputDialogInterface {
         builder.show();
     }
 
+    public static final void showMultiplayerDialog (final CallbackInterface onClick) {
+        String[] mItems = Multicards.getMainActivity().
+                getResources().getStringArray(R.array.dialog_multiplayer);
+        CharSequence colors[] = new CharSequence[] {mItems[0], mItems[1]};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+        builder.setItems(colors, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (onClick != null) onClick.onResponse(which);
+            }
+        });
+        builder.show();
+    }
+
     public static final void showEnterOpponentNameDialog (final CallbackInterface onEnter) {
         android.app.FragmentManager fm =
                 Multicards.getMainActivity().getFragmentManager();
         PickOpponentFragment pickOpponentFragment = new PickOpponentFragment();
         pickOpponentFragment.setOnClickOKListener(onEnter);
         pickOpponentFragment.show(fm, Constants.TAG_PICK_OPPONENT_FRAGMENT);
+    }
+
+    public static final void showInvitationDialog (final CallbackInterface onEnter,
+            InvitationDescriptor invitation) {
+        android.app.FragmentManager fm =
+                Multicards.getMainActivity().getFragmentManager();
+        gameInvitationFragment = new InvitationFragment();
+        gameInvitationFragment.setInvitationDetails(invitation);
+        gameInvitationFragment.setOnClickOKListener(onEnter);
+        gameInvitationFragment.show(fm, Constants.TAG_INVITATION_FRAGMENT);
     }
 
     public static final void showModalDialog(String strMessage, Activity activity) {
@@ -209,6 +237,18 @@ public class InputDialogInterface {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public static final void showProgressBar (String strMessage, final CallbackInterface onCancel) {
+        progressDialog = ProgressDialog.show(Multicards.getMainActivity(), "", strMessage, true);
+        progressDialog.setOnCancelListener(
+                new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        onCancel.onResponse(null);
+                    }
+                });
+        progressDialog.setCancelable(true);
     }
 
     public static final void showUpdateDialog (Boolean boolMandatory,
