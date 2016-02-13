@@ -19,6 +19,7 @@ import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 21.11.15.
@@ -80,8 +81,10 @@ public class MultiplayerInterface {
             if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                     == currentAnswer) {
                 FragmentManager.playersInfoFragment.highlightAnswer(0, true, onAnimationEnd);
+                Utils.vibrateShort();
             } else {
                 FragmentManager.playersInfoFragment.highlightAnswer(0, false, onAnimationEnd);
+                Utils.vibrateLong();
             }
             currentGame.strUserStatus = Constants.PLAYER_STATUS_ANSWERED;
         }
