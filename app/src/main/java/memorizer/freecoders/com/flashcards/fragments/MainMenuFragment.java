@@ -27,6 +27,7 @@ import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.network.SocketInterface;
 
 /**
  * Created by alex-mac on 22.11.15.
@@ -72,7 +73,7 @@ public class MainMenuFragment extends Fragment {
                 @Override
                 public void onResponse(Object obj) {
                 Integer index = (Integer) obj;
-                if (index == 0) {
+                if (index == 0) {   // Start new game
                     Multicards.onPickCardsetCallback = new CallbackInterface() {
                         @Override
                         public void onResponse(Object obj) {
@@ -84,19 +85,26 @@ public class MainMenuFragment extends Fragment {
                     Intent intent = new Intent(Multicards.getMainActivity(),
                             CardsetPickerActivity.class);
                     startActivity(intent);
-                } else if (index == 1) {
-                    InputDialogInterface.showEnterOpponentNameDialog(new CallbackInterface() {
+                } else if (index == 1) {    // Join existing game
+                    InputDialogInterface.showChooseGameDialog(new CallbackInterface() {
                         @Override
                         public void onResponse(Object obj) {
                             if (obj != null) {
                                 String strOpponentName = (String) obj;
                                 GameplayManager.strOpponentName = strOpponentName;
-                                ServerInterface.newGameRequest("", strOpponentName,
+                                String strMessage = getResources().
+                                        getString(R.string.waiting_opponent_dialog_message);
+                                InputDialogInterface.showProgressBar(strMessage, null);
+                                ServerInterface.startGameRequest(false, "", strOpponentName,
                                     new Response.Listener<ServerResponse<Game>>() {
                                         @Override
                                         public void onResponse(ServerResponse<Game> response) {
                                             if (!response.isSuccess())
                                                 InputDialogInterface.deliverError(response);
+                                            SocketInterface.emitStatusUpdate(
+                                                    Constants.PLAYER_STATUS_WAITING);
+                                            if (InputDialogInterface.progressDialog != null)
+                                                InputDialogInterface.progressDialog.dismiss();
                                         }
                                     }, null);
                             }
