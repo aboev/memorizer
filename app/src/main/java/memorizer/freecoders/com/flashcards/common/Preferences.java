@@ -122,4 +122,22 @@ public final class Preferences {
         savePreferences();
     }
 
+    public void setRecentCardset(CardSet cardset) {
+        Log.d(LOG_TAG, "Setting recent cardset " + cardset.gid);
+        QuizletCardsetDescriptor qcardset = new QuizletCardsetDescriptor();
+        qcardset.title = cardset.title;
+        qcardset.gid = cardset.gid;
+        recentSets.put(qcardset.gid, System.currentTimeMillis());
+        recentSetDescriptors.put(qcardset.gid, qcardset);
+        savePreferences();
+    }
+
+    public void setRecentCardset(QuizletCardsetDescriptor cardset, String strGID) {
+        Log.d(LOG_TAG, "Setting recent qcardset " + strGID);
+        cardset.gid = strGID;
+        Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
+        Multicards.getPreferences().recentSetDescriptors.put(strGID, cardset);
+        Multicards.getPreferences().savePreferences();
+    }
+
 }
