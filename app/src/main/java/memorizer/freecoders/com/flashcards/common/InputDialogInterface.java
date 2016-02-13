@@ -2,14 +2,20 @@ package memorizer.freecoders.com.flashcards.common;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
 import android.widget.EditText;
 
 import com.android.volley.Response;
@@ -40,6 +46,8 @@ public class InputDialogInterface {
 
     public static InvitationFragment gameInvitationFragment;
     public static ProgressDialog progressDialog;
+
+    private static int intNotificationID = 0;
 
     public static final void askUserName (final CallbackInterface onReply) {
 
@@ -314,5 +322,38 @@ public class InputDialogInterface {
         if (response.code == Constants.ERROR_USER_NOT_FOUND)
             showModalDialog(Multicards.getMainActivity().getResources().
                             getString(R.string.string_user_not_found), Multicards.getMainActivity());
+    }
+
+    public static final void showInvitationNotification(
+            InvitationDescriptor invitation,
+            PendingIntent intent) {
+        String strContext = "";
+        if ((invitation.user != null) && (invitation.user.name != null) &&
+                (invitation.cardset != null) && (invitation.cardset.title != null))
+            strContext = invitation.user.name + " " + Multicards.getMainActivity().getResources().
+                    getString(R.string.string_invitation) + " " + invitation.cardset.title;
+        Uri soundUri = RingtoneManager
+                .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Bitmap bitmap = BitmapFactory.decodeResource(Multicards.getMainActivity().getResources(),
+                R.mipmap.ic_launcher);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.
+                Builder(Multicards.getMainActivity())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(Multicards.getMainActivity().getResources().
+                        getString(R.string.string_game_invitation))
+                .setSound(soundUri)
+                .setLargeIcon(bitmap)
+                .setVibrate(new long[] {1000})
+                .setContentText(strContext);
+
+        mBuilder.setContentIntent(intent);
+        mBuilder.setAutoCancel(true);
+        mBuilder.setOnlyAlertOnce(true);
+
+        NotificationManager notifyMgr = (NotificationManager)
+                Multicards.getMainActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Builds the notification and issues it.
+        notifyMgr.notify(intNotificationID, mBuilder.build());
     }
 }
