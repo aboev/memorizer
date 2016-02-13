@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 
 import com.android.volley.Response;
@@ -151,5 +152,17 @@ public class Utils {
                             R.string.playMarketDetailsLinkAlt) + appPackageName)));
         }
 
+    }
+
+    public final static void vibrateLong() {
+        Vibrator v = (Vibrator) Multicards.getMainActivity().
+                getSystemService(Multicards.getMainActivity().VIBRATOR_SERVICE);
+        v.vibrate(2000);
+    }
+
+    public final static void vibrateShort() {
+        Vibrator v = (Vibrator) Multicards.getMainActivity().
+                getSystemService(Multicards.getMainActivity().VIBRATOR_SERVICE);
+        v.vibrate(500);
     }
 }
