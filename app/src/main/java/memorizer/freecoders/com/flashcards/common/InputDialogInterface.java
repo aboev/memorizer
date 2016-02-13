@@ -24,6 +24,7 @@ import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.fragments.InvitationFragment;
+import memorizer.freecoders.com.flashcards.fragments.PickGameFragment;
 import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
@@ -197,10 +198,11 @@ public class InputDialogInterface {
                 getResources().getStringArray(R.array.dialog_multiplayer);
         CharSequence colors[] = new CharSequence[] {mItems[0], mItems[1]};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
         builder.setItems(colors, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
                 if (onClick != null) onClick.onResponse(which);
             }
         });
@@ -213,6 +215,14 @@ public class InputDialogInterface {
         PickOpponentFragment pickOpponentFragment = new PickOpponentFragment();
         pickOpponentFragment.setOnClickOKListener(onEnter);
         pickOpponentFragment.show(fm, Constants.TAG_PICK_OPPONENT_FRAGMENT);
+    }
+
+    public static final void showChooseGameDialog (final CallbackInterface onEnter) {
+        android.app.FragmentManager fm =
+                Multicards.getMainActivity().getFragmentManager();
+        PickGameFragment pickGameFragment = new PickGameFragment();
+        pickGameFragment.setOnClickOKListener(onEnter);
+        pickGameFragment.show(fm, Constants.TAG_PICK_GAME_FRAGMENT);
     }
 
     public static final void showInvitationDialog (final CallbackInterface onEnter,
