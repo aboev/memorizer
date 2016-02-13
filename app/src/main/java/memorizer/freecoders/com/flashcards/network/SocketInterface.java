@@ -164,6 +164,14 @@ public class SocketInterface {
                                 syncCallbacks.get(msg_id).onResponse(null);
                                 syncCallbacks.remove(msg_id);
                             }
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_PLAYER_STATUS_UPDATE)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<String>>() {}.getType();
+                            SocketMessage<String> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            String status = socketMessage.msg_body;
+                            msgStatusUpdate(status);
                         }
                     }
                 });
@@ -240,6 +248,10 @@ public class SocketInterface {
 
     private static void msgInvitationAccepted (Integer intGameID) {
         GameplayManager.invitationAccepted(intGameID);
+    }
+
+    private static void msgStatusUpdate (String status) {
+        GameplayManager.statusUpdated(status);
     }
 
     //====================================================================================
