@@ -6,6 +6,9 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
@@ -23,6 +26,7 @@ public class FragmentManager {
     private static String LOG_TAG = "FragmentManager";
 
     public static int intUIState = Constants.UI_STATE_MAIN_MENU;
+    public static Set<Integer> setUIStates = new HashSet<Integer>();
 
     public static PlayersInfoFragment playersInfoFragment = new PlayersInfoFragment();
     private static Fragment currentFragment;
