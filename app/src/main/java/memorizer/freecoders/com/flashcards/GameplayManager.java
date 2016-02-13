@@ -131,12 +131,14 @@ public class GameplayManager {
                     FragmentManager.playersInfoFragment.updateInfo();
                     newLocalQuestion(currentGameplay.getNextQuestion());
                     FragmentManager.playersInfoFragment.highlightAnswer(0, true, null);
+                    Utils.vibrateShort();
                 } else {
                     FragmentManager.playersInfoFragment.eventPlayer1Answer(false);
                     FragmentManager.playersInfoFragment.updateInfo();
                     //mFlashcardFragment.wrongAnswerNotify();
                     showAnswer(position);
                     FragmentManager.playersInfoFragment.highlightAnswer(0, false, null);
+                    Utils.vibrateLong();
                 }
                 mFlashcardFragment.setEmptyOnFlashcardItemClickListener();
             }
@@ -249,33 +251,33 @@ public class GameplayManager {
             return;
 
         ServerInterface.startGameRequest(boolNewGame, strGID, strOpponentName,
-                new Response.Listener<ServerResponse<Game>>() {
-                    @Override
-                    public void onResponse(ServerResponse<Game> res) {
-                        if (res.isSuccess()) {
-                            Game response = res.data;
-                            if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
-                                    (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
-                                Multicards.getMultiplayerInterface().setGameData(null, strGID);
-                                String strMessage = Multicards.getMainActivity().
-                                        getResources().getString(
-                                        R.string.waiting_opponent_dialog_message);
+            new Response.Listener<ServerResponse<Game>>() {
+                @Override
+                public void onResponse(ServerResponse<Game> res) {
+                    if (res.isSuccess()) {
+                        Game response = res.data;
+                        if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
+                            Multicards.getMultiplayerInterface().setGameData(null, strGID);
+                            String strMessage = Multicards.getMainActivity().
+                                    getResources().getString(
+                                    R.string.waiting_opponent_dialog_message);
 
-                                InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
-                                    @Override
-                                    public void onResponse(Object obj) {
-                                        Multicards.getMultiplayerInterface().quitGame();
-                                        FragmentManager.setUIStates.
-                                                remove(Constants.UI_DIALOG_WAITING_OPPONENT);
-                                    }
-                                });
+                            InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
+                                @Override
+                                public void onResponse(Object obj) {
+                                    Multicards.getMultiplayerInterface().quitGame();
+                                    FragmentManager.setUIStates.
+                                            remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                                }
+                            });
 
-                                FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
-                            }
-                        } else
-                            InputDialogInterface.deliverError(res);
-                    }
-                }, null);
+                            FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
+                        }
+                    } else
+                        InputDialogInterface.deliverError(res);
+                }
+            }, null);
     }
 
     public static final void startMultiplayerGame(Game game) {
@@ -336,6 +338,14 @@ public class GameplayManager {
     }
 
     public static final void invitationAccepted(Integer intGameID) {
+        if ((FragmentManager.setUIStates.contains(Constants.UI_DIALOG_WAITING_OPPONENT))
+                && Multicards.getMainActivity().boolIsForeground) {
+            InputDialogInterface.progressDialog.dismiss();
+            SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
+        }
+    }
+
+    public static final void statusUpdated(String status) {
         if ((FragmentManager.setUIStates.contains(Constants.UI_DIALOG_WAITING_OPPONENT))
                 && Multicards.getMainActivity().boolIsForeground) {
             InputDialogInterface.progressDialog.dismiss();
