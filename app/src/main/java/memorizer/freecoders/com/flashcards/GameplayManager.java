@@ -1,7 +1,9 @@
 package memorizer.freecoders.com.flashcards;
 
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
@@ -251,33 +253,33 @@ public class GameplayManager {
             return;
 
         ServerInterface.startGameRequest(boolNewGame, strGID, strOpponentName,
-            new Response.Listener<ServerResponse<Game>>() {
-                @Override
-                public void onResponse(ServerResponse<Game> res) {
-                    if (res.isSuccess()) {
-                        Game response = res.data;
-                        if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
-                                (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
-                            Multicards.getMultiplayerInterface().setGameData(null, strGID);
-                            String strMessage = Multicards.getMainActivity().
-                                    getResources().getString(
-                                    R.string.waiting_opponent_dialog_message);
+                new Response.Listener<ServerResponse<Game>>() {
+                    @Override
+                    public void onResponse(ServerResponse<Game> res) {
+                        if (res.isSuccess()) {
+                            Game response = res.data;
+                            if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                    (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
+                                Multicards.getMultiplayerInterface().setGameData(null, strGID);
+                                String strMessage = Multicards.getMainActivity().
+                                        getResources().getString(
+                                        R.string.waiting_opponent_dialog_message);
 
-                            InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
-                                @Override
-                                public void onResponse(Object obj) {
-                                    Multicards.getMultiplayerInterface().quitGame();
-                                    FragmentManager.setUIStates.
-                                            remove(Constants.UI_DIALOG_WAITING_OPPONENT);
-                                }
-                            });
+                                InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
+                                    @Override
+                                    public void onResponse(Object obj) {
+                                        Multicards.getMultiplayerInterface().quitGame();
+                                        FragmentManager.setUIStates.
+                                                remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                                    }
+                                });
 
-                            FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
-                        }
-                    } else
-                        InputDialogInterface.deliverError(res);
-                }
-            }, null);
+                                FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
+                            }
+                        } else
+                            InputDialogInterface.deliverError(res);
+                    }
+                }, null);
     }
 
     public static final void startMultiplayerGame(Game game) {
@@ -309,6 +311,14 @@ public class GameplayManager {
     }
 
     public static final void gameInvitation (final InvitationDescriptor invitation) {
+
+        if (!Multicards.getMainActivity().boolIsForeground) {
+            Intent intent = new Intent(Multicards.getMainActivity(),
+                    MainActivity.class);
+            PendingIntent pi = PendingIntent.getActivity(Multicards.getMainActivity(), 0, intent, 0);
+            InputDialogInterface.showInvitationNotification(invitation, pi);
+        }
+
         InputDialogInterface.showInvitationDialog(new CallbackInterface() {
             @Override
             public void onResponse(Object obj) {
