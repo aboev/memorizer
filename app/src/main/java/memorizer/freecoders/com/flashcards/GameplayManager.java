@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -20,8 +22,10 @@ import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
+import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
+import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
@@ -72,6 +76,10 @@ public class GameplayManager {
         }
         if ((progressDialog != null) && (progressDialog.isShowing()))
             progressDialog.dismiss();
+
+        if ((InputDialogInterface.progressDialog != null)
+                && (InputDialogInterface.progressDialog.isShowing()))
+            InputDialogInterface.progressDialog.dismiss();
 
         FlashCard mFlashcard = new FlashCard();
         mFlashcard.question = question.question;
@@ -234,6 +242,42 @@ public class GameplayManager {
                 }, null);
     }
 
+    public static final void requestMultiplayerGameNew(Boolean boolNewGame,
+            final String strOpponentName, final String strGID) {
+        if ((Multicards.getPreferences().strUserID == null) ||
+                Multicards.getPreferences().strUserID.isEmpty())
+            return;
+
+        ServerInterface.startGameRequest(boolNewGame, strGID, strOpponentName,
+                new Response.Listener<ServerResponse<Game>>() {
+                    @Override
+                    public void onResponse(ServerResponse<Game> res) {
+                        if (res.isSuccess()) {
+                            Game response = res.data;
+                            if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                    (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
+                                Multicards.getMultiplayerInterface().setGameData(null, strGID);
+                                String strMessage = Multicards.getMainActivity().
+                                        getResources().getString(
+                                        R.string.waiting_opponent_dialog_message);
+
+                                InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
+                                    @Override
+                                    public void onResponse(Object obj) {
+                                        Multicards.getMultiplayerInterface().quitGame();
+                                        FragmentManager.setUIStates.
+                                                remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                                    }
+                                });
+
+                                FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
+                            }
+                        } else
+                            InputDialogInterface.deliverError(res);
+                    }
+                }, null);
+    }
+
     public static final void startMultiplayerGame(Game game) {
         FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
         currentGameplay = new GameplayData(null, GameplayData.INT_MULTIPLAYER);
@@ -260,6 +304,43 @@ public class GameplayManager {
             Multicards.getMainActivity().textViewNetworkState.setVisibility(View.VISIBLE);
         else
             Multicards.getMainActivity().textViewNetworkState.setVisibility(View.GONE);
+    }
+
+    public static final void gameInvitation (final InvitationDescriptor invitation) {
+        InputDialogInterface.showInvitationDialog(new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                if ((invitation != null) && (invitation.game != null) &&
+                        (invitation.game.game_id != null)) {
+                    Integer game_id = Integer.valueOf(invitation.game.game_id);
+                    SocketInterface.emitInvitationAccepted(game_id,
+                            new CallbackInterface() {
+                                @Override
+                                public void onResponse(Object obj) {
+                                    if (Multicards.getMainActivity().boolIsForeground)
+                                        SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
+                                }
+                            });
+                }
+
+                InputDialogInterface.showProgressBar(Multicards.getMainActivity().
+                        getResources().getString(R.string.waiting_opponent_dialog_message),
+                        new CallbackInterface() {
+                            @Override
+                            public void onResponse(Object obj) {
+                                Multicards.getMultiplayerInterface().quitGame();
+                            }
+                });
+            }
+        }, invitation);
+    }
+
+    public static final void invitationAccepted(Integer intGameID) {
+        if ((FragmentManager.setUIStates.contains(Constants.UI_DIALOG_WAITING_OPPONENT))
+                && Multicards.getMainActivity().boolIsForeground) {
+            InputDialogInterface.progressDialog.dismiss();
+            SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
+        }
     }
 
     public static final void checkNetworkLatency () {
