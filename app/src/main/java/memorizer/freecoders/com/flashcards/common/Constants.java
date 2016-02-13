@@ -16,6 +16,7 @@ public class Constants {
     public final static String SERVER_PATH_USER = "/user";
     public final static String SERVER_PATH_USERS = "/users";
     public final static String SERVER_PATH_GAME = "/game";
+    public final static String SERVER_PATH_GAME_NEW = "/game/new";
     public final static String SERVER_PATH_UPLOAD = "/image";
     public final static String SERVER_PATH_CARDSETS = "/cardsets";
     public final static String SERVER_PATH_POPULAR = "/popular";
@@ -40,6 +41,8 @@ public class Constants {
     public final static String HEADER_OPPONENTNAME = "opponentname";
     public final static String HEADER_TAGID = "tagid";
     public final static String HEADER_IDS = "ids";
+    public final static String HEADER_MULTIPLAYER_TYPE = "multiplayerType";
+    public final static String HEADER_GAMEID = "gameid";
 
     public final static String KEY_ID = "id";
     public final static String KEY_LATEST_APK_VER = "latest_ver";
@@ -62,6 +65,9 @@ public class Constants {
     public static String SOCK_MSG_TYPE_ANSWER_REJECTED = "answer_rejected";
     public static String SOCK_MSG_TYPE_CHECK_NAME = "check_name";
     public static String SOCK_MSG_TYPE_CHECK_NETWORK = "check_network";
+    public static String SOCK_MSG_TYPE_GAME_INVITE = "game_invite";
+    public static String SOCK_MSG_TYPE_INVITE_ACCEPTED = "invite_accepted";
+    public static String SOCK_MSG_TYPE_CONFIRM = "receive_confirm";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_WAITING_OPPONENT = 1;
@@ -78,6 +84,10 @@ public class Constants {
     public static Integer UI_STATE_CARD_PICK = 30;
     public static Integer UI_STATE_GAME_OVER = 40;
     public static Integer UI_STATE_SETTINGS = 50;
+
+    public static Integer UI_DIALOG_WAITING_OPPONENT = 60;
+    public static Integer UI_DIALOG_PICK_OPPONENT = 70;
+    public static Integer UI_DIALOG_INCOMING_INVITATION = 80;
 
     public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 25;
     public static Integer GAMEPLAY_OPTIONS_PER_QUESTION = 4;
@@ -100,6 +110,7 @@ public class Constants {
     public final static String DEFAULT_LOCALE = "en";
 
     public final static String TAG_PICK_OPPONENT_FRAGMENT = "pick_opponent_dialog";
+    public final static String TAG_INVITATION_FRAGMENT = "invitation_dialog";
 
     public final static String APP_FOLDER = "multicards";
 
