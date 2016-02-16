@@ -15,6 +15,8 @@ import android.view.MenuItem;
 
 import com.activeandroid.ActiveAndroid;
 import com.android.volley.Response;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
 
 import java.net.URISyntaxException;
@@ -25,13 +27,10 @@ import java.util.Set;
 
 import io.socket.client.Socket;
 import io.socket.client.IO;
-import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
-import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
-import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
-import memorizer.freecoders.com.flashcards.json.GameOverMessage;
+import memorizer.freecoders.com.flashcards.gcm.RegistrationIntentService;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -68,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "OnCreate " + (savedInstanceState == null ? "savedInstanceState == null" :
                 "savedInstanceState != null"));
         populateView(savedInstanceState);
+
+        if (checkPlayServices()) {
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+
+        Intent intent = getIntent();
+        onNewIntent(intent);
     }
 
     @Override
@@ -135,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
         if ((Multicards.getPreferences().strUserID == null) ||
                 Multicards.getPreferences().strUserID.isEmpty()) {
-            UserDetails userDetails = new UserDetails();
+            final UserDetails userDetails = new UserDetails();
             userDetails.locale = Utils.getLocale();
             ServerInterface.registerUserRequest(
                     new UserDetails(),
@@ -146,15 +153,16 @@ public class MainActivity extends AppCompatActivity {
                             Multicards.getPreferences().strUserName = response.name;
                             Multicards.getPreferences().strAvatar = response.avatar;
                             Multicards.getPreferences().savePreferences();
+                            Utils.refreshPushID();
                         }
                     }, null);
         } else {
             SocketInterface.socketAnnounceUserID(Multicards.getPreferences().strUserID);
             networkRequests();
+            Utils.refreshPushID();
         }
 
         Utils.checkLatestVersion();
-
     }
 
     public void restoreApp () {
@@ -190,8 +198,7 @@ public class MainActivity extends AppCompatActivity {
             if (FragmentManager.intUIState != Constants.UI_STATE_MAIN_MENU )
                 FragmentManager.returnToMainMenu(false);
             else
-                this.moveTaskToBack(true);
-                //finish();
+                finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -254,12 +261,24 @@ public class MainActivity extends AppCompatActivity {
                 if (newIntent.hasExtra(Constants.INTENT_META_EVENT_BODY)) {
                     Gson gson = new Gson();
                     String strInvitation = newIntent.getStringExtra(Constants.INTENT_META_EVENT_BODY);
+                    Log.d(LOG_TAG, "Received intent " + strInvitation);
                     InvitationDescriptor invitationDescriptor = gson.fromJson(strInvitation,
                             InvitationDescriptor.class);
                     GameplayManager.gameInvitation(invitationDescriptor);
                 }
             }
         }
+    }
+
+    private boolean checkPlayServices() {
+        Log.d(LOG_TAG, "checkPlayServices");
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            Log.d(LOG_TAG, "checkPlayServices failed");
+            return false;
+        }
+        return true;
     }
 
 }
