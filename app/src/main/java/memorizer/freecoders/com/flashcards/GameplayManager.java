@@ -316,7 +316,8 @@ public class GameplayManager {
             Intent intent = new Intent(Multicards.getMainActivity(),
                     MainActivity.class);
             PendingIntent pi = PendingIntent.getActivity(Multicards.getMainActivity(), 0, intent, 0);
-            InputDialogInterface.showInvitationNotification(invitation, pi);
+            InputDialogInterface.showInvitationNotification(invitation, pi,
+                    Multicards.getMainActivity());
         }
 
         InputDialogInterface.showInvitationDialog(new CallbackInterface() {
