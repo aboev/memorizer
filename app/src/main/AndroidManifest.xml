@@ -9,6 +9,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <permission android:name="memorizer.freecoders.com.flashcards.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="memorizer.freecoders.com.flashcards.permission.C2D_MESSAGE" />
+
     <application
         android:name=".common.Multicards"
         android:allowBackup="true"
@@ -52,6 +56,38 @@
             android:configChanges="keyboardHidden|orientation|screenSize"></activity>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="memorizer.freecoders.com.memo_test" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="memorizer.freecoders.com.flashcards.gcm.GCMListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="memorizer.freecoders.com.flashcards.gcm.IDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="memorizer.freecoders.com.flashcards.gcm.RegistrationIntentService"
+            android:exported="false">
+        </service>
+
     </application>
 
 </manifest>
