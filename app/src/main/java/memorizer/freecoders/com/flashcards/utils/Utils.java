@@ -165,4 +165,22 @@ public class Utils {
                 getSystemService(Multicards.getMainActivity().VIBRATOR_SERVICE);
         v.vibrate(50);
     }
+
+    public final static void refreshPushID(){
+        if ((Multicards.getPreferences().strUserID != null) &&
+                !Multicards.getPreferences().strUserID.isEmpty() &&
+                !Multicards.getPreferences().strPushID.isEmpty() &&
+                !Multicards.getPreferences().boolPushIDsent) {
+            UserDetails userDetails = new UserDetails();
+            userDetails.setNullFields();
+            userDetails.pushid = Multicards.getPreferences().strPushID;
+            ServerInterface.updateUserDetailsRequest(userDetails, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Multicards.getPreferences().boolPushIDsent = true;
+                    Multicards.getPreferences().savePreferences();
+                }
+            }, null);
+        }
+    }
 }
