@@ -326,24 +326,24 @@ public class InputDialogInterface {
 
     public static final void showInvitationNotification(
             InvitationDescriptor invitation,
-            PendingIntent intent) {
+            PendingIntent intent, Context context) {
         String strContext = "";
         if ((invitation.user != null) && (invitation.user.name != null) &&
                 (invitation.cardset != null) && (invitation.cardset.title != null))
-            strContext = invitation.user.name + " " + Multicards.getMainActivity().getResources().
+            strContext = invitation.user.name + " " + context.getResources().
                     getString(R.string.string_invitation) + " " + invitation.cardset.title;
         Uri soundUri = RingtoneManager
                 .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Bitmap bitmap = BitmapFactory.decodeResource(Multicards.getMainActivity().getResources(),
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
                 R.mipmap.ic_launcher);
         NotificationCompat.Builder mBuilder = new NotificationCompat.
-                Builder(Multicards.getMainActivity())
+                Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(Multicards.getMainActivity().getResources().
+                .setContentTitle(context.getResources().
                         getString(R.string.string_game_invitation))
                 .setSound(soundUri)
                 .setLargeIcon(bitmap)
-                .setVibrate(new long[] {1000})
+                .setVibrate(new long[] {0, 1000})
                 .setContentText(strContext);
 
         mBuilder.setContentIntent(intent);
@@ -351,7 +351,7 @@ public class InputDialogInterface {
         mBuilder.setOnlyAlertOnce(true);
 
         NotificationManager notifyMgr = (NotificationManager)
-                Multicards.getMainActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Builds the notification and issues it.
         notifyMgr.notify(intNotificationID, mBuilder.build());
