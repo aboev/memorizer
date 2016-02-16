@@ -45,9 +45,12 @@ dependencies {
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
     compile 'org.apache.httpcomponents:httpcore:4.3.1'
     compile 'org.apache.httpcomponents:httpmime:4.3.1'
+    compile 'com.google.android.gms:play-services-gcm:8.1.0'
 
     compile 'com.soundcloud.android:android-crop:0.9.10@aar'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'jp.wasabeef:recyclerview-animators:2.0.1'
     compile files('../libs/ActiveAndroid.jar')
 }
+
+apply plugin: 'com.google.gms.google-services'
