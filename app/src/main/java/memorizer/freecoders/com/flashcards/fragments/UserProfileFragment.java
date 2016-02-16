@@ -11,6 +11,8 @@ import android.app.Fragment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
@@ -139,6 +141,21 @@ public class UserProfileFragment extends Fragment {
 
             }
         });
+
+        InputFilter filter = new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                for (int i = start; i < end; i++) {
+                    if ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-".
+                            indexOf(source.charAt(i)) == -1) {
+                        return "";
+                    }
+                }
+                return null;
+            }
+        };
+        editTextUsername.setFilters(new InputFilter[]{filter});
+
 
         SocketInterface.socketCheckName(editTextUsername.getText().toString());
 
