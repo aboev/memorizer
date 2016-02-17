@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Random;
 
 import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
@@ -46,8 +47,6 @@ public class InputDialogInterface {
 
     public static InvitationFragment gameInvitationFragment;
     public static ProgressDialog progressDialog;
-
-    private static int intNotificationID = 0;
 
     public static final void askUserName (final CallbackInterface onReply) {
 
@@ -354,6 +353,6 @@ public class InputDialogInterface {
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Builds the notification and issues it.
-        notifyMgr.notify(intNotificationID, mBuilder.build());
+        notifyMgr.notify(0, mBuilder.build());
     }
 }

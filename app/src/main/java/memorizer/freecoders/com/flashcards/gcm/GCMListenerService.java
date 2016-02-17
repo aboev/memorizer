@@ -12,6 +12,8 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
 
+import java.util.Random;
+
 import memorizer.freecoders.com.flashcards.MainActivity;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
@@ -27,6 +29,7 @@ public class GCMListenerService extends GcmListenerService {
     private static final String LOG_TAG = "GCMListenerService";
 
     private Gson gson = new Gson();
+    private static Random ran = new Random();
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
@@ -48,7 +51,7 @@ public class GCMListenerService extends GcmListenerService {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.INTENT_META_EVENT_TYPE, Constants.INTENT_INVITATION);
         intent.putExtra(Constants.INTENT_META_EVENT_BODY, gson.toJson(invitation));
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent pi = PendingIntent.getActivity(this, ran.nextInt(1000000), intent, 0);
         InputDialogInterface.showInvitationNotification(invitation, pi, this);
     }
 }
