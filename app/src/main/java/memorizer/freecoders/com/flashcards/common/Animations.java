@@ -4,12 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.graphics.Color;
+import android.animation.ValueAnimator;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.widget.TextView;
 
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 
@@ -148,7 +150,30 @@ public class Animations {
         });
 
         view.startAnimation(scaleAnimation);
+    }
 
+    public final static void customAnimation (final View view, int intAnimationID,
+            long duration, long startOffset, final CallbackInterface onAnimationEnd) {
 
+        Animation customAnimation = AnimationUtils.loadAnimation(
+                Multicards.getMainActivity().getApplicationContext(), intAnimationID);
+        customAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (onAnimationEnd != null)
+                    onAnimationEnd.onResponse(null);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        customAnimation.setDuration(duration);
+        customAnimation.setStartOffset(startOffset);
+        view.startAnimation(customAnimation);
     }
 }
