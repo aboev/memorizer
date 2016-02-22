@@ -19,6 +19,7 @@ public class AnswerLogManager {
     LinearLayout parentView;
     Context context;
     CallbackInterface onPopulateCorrectAnswer;
+    CallbackInterface onFinalAnimation;
 
     public AnswerLogManager(Context context, GameplayData gameplayData, LinearLayout parentView) {
         this.context = context;
@@ -28,6 +29,10 @@ public class AnswerLogManager {
 
     public void setAnimationCallback (CallbackInterface callback) {
         this.onPopulateCorrectAnswer = callback;
+    }
+
+    public void setFinalAnimationCallback (CallbackInterface callback) {
+        this.onFinalAnimation = callback;
     }
 
     public void populateView (Boolean enableAnimation) {
@@ -56,9 +61,12 @@ public class AnswerLogManager {
 
             parentView.addView(answer);
 
-            if (enableAnimation)
+            if ((enableAnimation) && (gameplayData.checks.get(i)))
                 Animations.customAnimation(answer, R.anim.slide_in_left_fade_in,
                     animDuration, animOffset * i , onPopulateCorrectAnswer);
+
+            if ((enableAnimation) && (i == gameplayData.questions.size() - 1))
+                onFinalAnimation.onResponse(null);
         }
     }
 
