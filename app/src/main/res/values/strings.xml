@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Multicards</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_cardset_picker">CardsetPickerActivity</string>
-    <string name="title_activity_gameover">GameOverActivity</string>
+    <string name="title_activity_cardset_picker" translatable="false">CardsetPickerActivity</string>
+    <string name="title_activity_gameover" translatable="false">GameOverActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <string-array name="tab_items_cardsetpicker">
@@ -61,8 +61,8 @@
 
     <string name="string_choose_tags">Pick tags</string>
 
-    <string name="string_powered_by_quizlet">Powered by Quizlet</string>
-    <string name="string_powered_by_quizlet_link">https://quizlet.com</string>
+    <string name="string_powered_by_quizlet" translatable="false">Powered by Quizlet</string>
+    <string name="string_powered_by_quizlet_link" translatable="false">https://quizlet.com</string>
 
     <string name="string_score">Score</string>
 

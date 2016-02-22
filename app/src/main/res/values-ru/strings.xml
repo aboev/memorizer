@@ -90,5 +90,7 @@
     Flash cards provided by Quizlet</string>
 
     <string name="string_user_not_found">Игрок не найден, пожалуйста уточните имя</string>
+    <string name="action_settings">Настройки</string>
+    <string name="string_winner_you">Вы победили!</string>
 
 </resources>
