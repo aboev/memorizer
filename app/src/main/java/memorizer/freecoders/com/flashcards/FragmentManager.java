@@ -40,6 +40,7 @@ public class FragmentManager {
     public static final void showGamePlayFragments (Boolean boolConfigurationChange, int state) {
         hideMainMenu();
         intUIState = state;
+        setUIStates.add(state);
         showPlayersInfo(boolConfigurationChange);
         if (boolConfigurationChange)
             showFragment(FlashCardFragment.cloneFragment(currentFlashCardFragment) , null);
@@ -113,6 +114,7 @@ public class FragmentManager {
         Multicards.getMainActivity().startActivity(intent);
 
         intUIState = Constants.UI_STATE_GAME_OVER;
+        setUIStates.add(Constants.UI_STATE_GAME_OVER);
     }
 
     public static final void hideGameOverFragment () {
@@ -138,6 +140,9 @@ public class FragmentManager {
         hideUserProfileFragment();
         hideGameOverFragment();
         intUIState = Constants.UI_STATE_MAIN_MENU;
+        setUIStates.remove(Constants.UI_STATE_MULTIPLAYER_MODE);
+        setUIStates.remove(Constants.UI_STATE_TRAIN_MODE);
+        setUIStates.remove(Constants.UI_STATE_GAME_OVER);
     }
 
     public static final void showMainMenu (Boolean boolConfigurationChange) {
