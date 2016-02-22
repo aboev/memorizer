@@ -39,14 +39,15 @@ public class AchievementLogManager {
         this.bonusList = bonusList;
     }
 
-    public void populateView (CallbackInterface onAnimationFinish) {
+    public void populateView (final CallbackInterface onAnimationFinish,
+                              final CallbackInterface onFinalAnimation) {
         int animOffset = 500;
         int animDuration = 1000;
         for (int i = 0; i < bonusList.size(); i++) {
-            AchievementLogView achievement = new AchievementLogView(context);
+            final AchievementLogView achievement = new AchievementLogView(context);
 
             String strText = "";
-            BonusDescriptor bonusDescriptor = bonusList.get(i);
+            final BonusDescriptor bonusDescriptor = bonusList.get(i);
             if (bonusDescriptor.bonus_title != null)
                 if (bonusDescriptor.bonus_title.containsKey(Utils.getLocale()))
                     strText = bonusDescriptor.bonus_title.get(Utils.getLocale());
@@ -78,12 +79,18 @@ public class AchievementLogManager {
                 achievement.setImageURL(bonusDescriptor.image_url);
 
             parentView.addView(achievement);
-            if (i == bonusList.size() - 1)
-                Animations.customAnimation(achievement, R.anim.slide_down_fade_in,
-                        animDuration, animOffset * i , onAnimationFinish);
-            else
-                Animations.customAnimation(achievement, R.anim.slide_down_fade_in,
-                        animDuration, animOffset * i , null);
+
+            final Boolean boolFinalItem = (i == (bonusList.size() - 1));
+            Animations.customAnimation(achievement, R.anim.slide_down_fade_in,
+                    animDuration, animOffset * i, new CallbackInterface() {
+                        @Override
+                        public void onResponse(Object obj) {
+                            if (onAnimationFinish != null) {
+                                onAnimationFinish.onResponse(bonusDescriptor.bonus);
+                            }
+                            if (boolFinalItem) onFinalAnimation.onResponse(null);
+                        }
+                    });
         }
     }
 
