@@ -89,7 +89,7 @@ public class TagView extends FrameLayout {
             }
         } else {
             int colorDeselected =
-                    ContextCompat.getColor(Multicards.getMainActivity(), R.color.colorDeselected);
+                    ContextCompat.getColor(Multicards.getMainActivity(), R.color.colorButton);
             if (background instanceof ShapeDrawable) {
                 ShapeDrawable shapeDrawable = (ShapeDrawable)background;
                 shapeDrawable.getPaint().setColor(colorDeselected);
