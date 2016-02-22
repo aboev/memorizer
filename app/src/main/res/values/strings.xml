@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_cardset_picker" translatable="false">CardsetPickerActivity</string>
     <string name="title_activity_gameover" translatable="false">GameOverActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="section_format" translatable="false">Hello World from section: %1$d</string>
 
     <string-array name="tab_items_cardsetpicker">
         <item>Search</item>
