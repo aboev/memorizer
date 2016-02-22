@@ -8,4 +8,6 @@
     <color name="colorBlack">#434343</color>
     <color name="colorDeselected">#c9c9c9</color>
     <color name="colorSelected">#b2fc92</color>
+    <color name="colorMain">#fffef0</color>
+    <color name="colorButton">#fffbcd</color>
 </resources>
