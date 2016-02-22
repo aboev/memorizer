@@ -7,12 +7,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,13 +25,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.FragmentManager;
+import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
+import memorizer.freecoders.com.flashcards.classes.GameplayData;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.dao.Cardset;
+import memorizer.freecoders.com.flashcards.json.BonusDescriptor;
+import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.StringRequest;
@@ -37,6 +47,8 @@ import memorizer.freecoders.com.flashcards.network.StringRequest;
  * Created by alex-mac on 06.01.16.
  */
 public class Utils {
+    private static String LOG_TAG = "Utils";
+
     public static final UserDetails extractOpponentProfile(HashMap<String, UserDetails> map) {
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
@@ -65,9 +77,9 @@ public class Utils {
     }
 
     public final static class AvatarListener implements ImageLoader.ImageListener {
-        CircleImageView imageView;
+        ImageView imageView;
 
-        public AvatarListener(CircleImageView imgView) {
+        public AvatarListener(ImageView imgView) {
             this.imageView = imgView;
         }
 
@@ -183,4 +195,71 @@ public class Utils {
             }, null);
         }
     }
+
+    public final static void generateRandomGameplayData(int intGameType){
+        String strGID = "quizlet_415";
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+        if (cardset == null) {
+            Log.d(LOG_TAG, "Cardset is empty");
+            Multicards.getFlashCardsDAO().importFromWeb(strGID, null, null);
+        }
+        GameplayData gameplayData = new GameplayData(strGID, intGameType);
+        Random random = new Random();
+        for (int i = 0; i < gameplayData.questions.size(); i++)
+            gameplayData.setAnswer(random.nextInt(4));
+        GameplayManager.currentGameplay = gameplayData;
+    }
+
+    public final static void showRandomGameoverActivity(final int intGameType){
+        final String strGID = "quizlet_415";
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+
+        final CallbackInterface callbackInterface = new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                GameplayData gameplayData = new GameplayData(strGID, intGameType);
+                Random random = new Random();
+                for (int i = 0; i < gameplayData.questions.size(); i++) {
+                    gameplayData.getNextQuestion();
+                    gameplayData.setAnswer(random.nextInt(4));
+                }
+                GameplayManager.currentGameplay = gameplayData;
+
+                GameOverMessage gameOverMessage = new GameOverMessage();
+                gameOverMessage.bonuses = new HashMap<String, ArrayList<BonusDescriptor>>();
+
+                BonusDescriptor bonus = new BonusDescriptor();
+                bonus.bonus = 100;
+                bonus.bonus_title = new HashMap<String, String>();
+                bonus.bonus_title.put("en", "Super bonus");
+                bonus.description = new HashMap<String, String>();
+                bonus.description.put("en", "Bonus for playing game");
+                ArrayList<BonusDescriptor> bList = new ArrayList<BonusDescriptor>();
+                bList.add(bonus);
+                bList.add(bonus);
+                gameOverMessage.bonuses.put(Multicards.getPreferences().strSocketID, bList);
+
+                gameOverMessage.scores_before = new HashMap<String, Integer>();
+                gameOverMessage.scores = new HashMap<String, Integer>();
+                UserDetails winner = new UserDetails();
+                winner.name = "Name";
+                winner.socket_id = Multicards.getPreferences().strSocketID;
+                gameOverMessage.winner = winner;
+
+                FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
+                FragmentManager.showGameOverFragment(strGID, gameOverMessage, false);
+            }
+        };
+
+        if (cardset == null) {
+            Log.d(LOG_TAG, "Cardset is empty");
+            Multicards.getFlashCardsDAO().importFromWeb(strGID, new CallbackInterface() {
+                @Override
+                public void onResponse(Object obj) {
+                    callbackInterface.onResponse(null);
+                }
+            }, null);
+        } else callbackInterface.onResponse(null);
+    }
+
 }
