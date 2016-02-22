@@ -88,6 +88,7 @@ public class MultiplayerInterface {
             }
             currentGame.strUserStatus = Constants.PLAYER_STATUS_ANSWERED;
         }
+        GameplayManager.currentGameplay.setAnswer(currentAnswer);
         currentGame.boolAnswerConfirmed = true;
     }
 
