@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:background="#1e99d7">
+    android:gravity="center">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,79 +12,13 @@
             android:layout_width="200dp"
             android:layout_height="80dp"
             android:src="@drawable/logo_title"/>
-        <Button
-            android:id="@+id/buttonTrain"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Train"
-            android:visibility="gone"/>
-        <Button
-            android:id="@+id/buttonMultiplayer"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Multiplayer"
-            android:visibility="gone"/>
-        <Button
-            android:id="@+id/buttonSettings"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Settings"
-            android:visibility="gone"/>
 
-        <TextView
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:id="@+id/TextView_StyleButtonTrain"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/string_main_menu_train"
-            android:textSize="20dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="10dp"
-            android:fontFamily="sans-serif"
-            android:textColor="#383838"
-            android:background="@drawable/stylebutton"/>
+        <include layout="@layout/button_train"/>
 
+        <include layout="@layout/button_multiplayer"/>
 
-        <TextView
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:id="@+id/TextView_StyleButtonMultiplayer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/string_main_menu_multiplayer"
-            android:textSize="20dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="10dp"
-            android:fontFamily="sans-serif"
-            android:textColor="#383838"
-            android:background="@drawable/stylebutton"/>
+        <include layout="@layout/button_settings"/>
 
-        <TextView
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:id="@+id/TextView_StyleButtonSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/string_main_menu_settings"
-            android:textSize="20dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="10dp"
-            android:fontFamily="sans-serif"
-            android:textColor="#383838"
-            android:background="@drawable/stylebutton"/>
     </LinearLayout>
 
     <LinearLayout

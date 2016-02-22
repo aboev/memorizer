@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.android.volley.Response;
 
 import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
 import memorizer.freecoders.com.flashcards.FragmentManager;
+import memorizer.freecoders.com.flashcards.GameOverActivity;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
@@ -28,14 +30,17 @@ import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 22.11.15.
  */
 public class MainMenuFragment extends Fragment {
-    private TextView textViewTrain;
-    private TextView textViewMultiplayer;
-    private TextView textViewSettings;
+
+    private FrameLayout btnTrain;
+    private FrameLayout btnMultiplayer;
+    private FrameLayout btnSettings;
+
     private ImageView imageViewInfo;
 
     @Override
@@ -45,12 +50,13 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
-        textViewTrain = (TextView) view.findViewById(R.id.TextView_StyleButtonTrain);
-        textViewMultiplayer = (TextView) view.findViewById(R.id.TextView_StyleButtonMultiplayer);
-        textViewSettings = (TextView) view.findViewById(R.id.TextView_StyleButtonSettings);
+        btnTrain = (FrameLayout) view.findViewById(R.id.btnTrain);
+        btnMultiplayer = (FrameLayout) view.findViewById(R.id.btnMultiplayer);
+        btnSettings = (FrameLayout) view.findViewById(R.id.btnSettings);
+
         imageViewInfo = (ImageView) view.findViewById(R.id.imageViewInfo);
 
-        textViewTrain.setOnClickListener(new View.OnClickListener() {
+        btnTrain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Multicards.onPickCardsetCallback = new CallbackInterface() {
@@ -66,57 +72,57 @@ public class MainMenuFragment extends Fragment {
             }
         });
 
-        textViewMultiplayer.setOnClickListener(new View.OnClickListener() {
+        btnMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            InputDialogInterface.showMultiplayerDialog(new CallbackInterface() {
-                @Override
-                public void onResponse(Object obj) {
-                Integer index = (Integer) obj;
-                if (index == 0) {   // Start new game
-                    Multicards.onPickCardsetCallback = new CallbackInterface() {
-                        @Override
-                        public void onResponse(Object obj) {
-                            String strGID = (String) obj;
-                            requestMultiplayerGame(true, strGID);
-                        }
-                    };
+                InputDialogInterface.showMultiplayerDialog(new CallbackInterface() {
+                    @Override
+                    public void onResponse(Object obj) {
+                        Integer index = (Integer) obj;
+                        if (index == 0) {   // Start new game
+                            Multicards.onPickCardsetCallback = new CallbackInterface() {
+                                @Override
+                                public void onResponse(Object obj) {
+                                    String strGID = (String) obj;
+                                    requestMultiplayerGame(true, strGID);
+                                }
+                            };
 
-                    Intent intent = new Intent(Multicards.getMainActivity(),
-                            CardsetPickerActivity.class);
-                    startActivity(intent);
-                } else if (index == 1) {    // Join existing game
-                    InputDialogInterface.showChooseGameDialog(new CallbackInterface() {
-                        @Override
-                        public void onResponse(Object obj) {
-                            if (obj != null) {
-                                String strOpponentName = (String) obj;
-                                GameplayManager.strOpponentName = strOpponentName;
-                                String strMessage = getResources().
-                                        getString(R.string.waiting_opponent_dialog_message);
-                                InputDialogInterface.showProgressBar(strMessage, null);
-                                ServerInterface.startGameRequest(false, "", strOpponentName,
-                                    new Response.Listener<ServerResponse<Game>>() {
-                                        @Override
-                                        public void onResponse(ServerResponse<Game> response) {
-                                            if (!response.isSuccess())
-                                                InputDialogInterface.deliverError(response);
-                                            SocketInterface.emitStatusUpdate(
-                                                    Constants.PLAYER_STATUS_WAITING);
-                                            if (InputDialogInterface.progressDialog != null)
-                                                InputDialogInterface.progressDialog.dismiss();
-                                        }
-                                    }, null);
-                            }
+                            Intent intent = new Intent(Multicards.getMainActivity(),
+                                    CardsetPickerActivity.class);
+                            startActivity(intent);
+                        } else if (index == 1) {    // Join existing game
+                            InputDialogInterface.showChooseGameDialog(new CallbackInterface() {
+                                @Override
+                                public void onResponse(Object obj) {
+                                    if (obj != null) {
+                                        String strOpponentName = (String) obj;
+                                        GameplayManager.strOpponentName = strOpponentName;
+                                        String strMessage = getResources().
+                                                getString(R.string.waiting_opponent_dialog_message);
+                                        InputDialogInterface.showProgressBar(strMessage, null);
+                                        ServerInterface.startGameRequest(false, "", strOpponentName,
+                                                new Response.Listener<ServerResponse<Game>>() {
+                                                    @Override
+                                                    public void onResponse(ServerResponse<Game> response) {
+                                                        if (!response.isSuccess())
+                                                            InputDialogInterface.deliverError(response);
+                                                        SocketInterface.emitStatusUpdate(
+                                                                Constants.PLAYER_STATUS_WAITING);
+                                                        if (InputDialogInterface.progressDialog != null)
+                                                            InputDialogInterface.progressDialog.dismiss();
+                                                    }
+                                                }, null);
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-                }
-            });
+                    }
+                });
             }
         });
 
-        textViewSettings.setOnClickListener(new View.OnClickListener() {
+        btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager.showUserProfileFragment(false);
