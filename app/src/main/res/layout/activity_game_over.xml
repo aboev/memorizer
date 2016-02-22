@@ -51,6 +51,7 @@
             android:orientation="horizontal"
             android:gravity="center">
             <TextView
+                android:id="@+id/textViewScore"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textSize="20sp"
@@ -58,7 +59,7 @@
                 android:gravity="center_vertical"/>
 
             <TextView
-                android:id="@+id/textViewScore"
+                android:id="@+id/textViewScoreValue"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:textSize="30sp"
