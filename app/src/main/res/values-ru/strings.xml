@@ -72,11 +72,12 @@
     <string name="string_empty_cardset">Извините, в наборе недостаточно карточек</string>
 
     <string name="string_answers">Ваши ответы</string>
-    <string name="string_achievements">Ваши награды</string>
+    <string name="string_new_words">Пройдено новых слов</string>
+    <string name="string_achievements">Достижения</string>
 
     <string name="string_downloading">Идет загрузка...</string>
 
-    <string name="string_game_invitation"> пригласил(а) поиграть в Мультикардс</string>
+    <string name="string_game_invitation">Приглашение в игру</string>
     <string name="string_play_now">Играть</string>
     <string name="string_play_later">Пропустить</string>
 

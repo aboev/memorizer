@@ -30,7 +30,7 @@
     </string-array>
 
     <string-array name="dialog_multiplayer">
-        <item>Host game</item>
+        <item>New game</item>
         <item>Join game</item>
     </string-array>
 
@@ -79,14 +79,15 @@
     <string name="string_empty_cardset">Sorry, cardset does not have enough words</string>
 
     <string name="string_answers">Your answers</string>
-    <string name="string_achievements">Your achievements</string>
+    <string name="string_new_words">New words learned</string>
+    <string name="string_achievements">Аchievements</string>
 
     <string name="playMarketDetailsLink" translatable="false">market://details?id=</string>
     <string name="playMarketDetailsLinkAlt" translatable="false">https://play.google.com/store/apps/details?id=</string>
 
     <string name="string_downloading">Downloading...</string>
 
-    <string name="string_game_invitation">invites you to play Multicards</string>
+    <string name="string_game_invitation">Game invitation</string>
     <string name="string_play_now">Play now</string>
     <string name="string_play_later">Dismiss</string>
 
