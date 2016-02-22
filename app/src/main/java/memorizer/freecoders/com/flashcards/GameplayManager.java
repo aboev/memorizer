@@ -99,12 +99,11 @@ public class GameplayManager {
                 Multicards.getMultiplayerInterface().invokeEvent(
                         Multicards.getMultiplayerInterface().EVENT_USER_ANSWER,
                         String.valueOf(position));
-                currentGameplay.setAnswer(position);
                 mFlashcardFragment.setEmptyOnFlashcardItemClickListener();
             }
         });
         FragmentManager.showFragment(mFlashcardFragment, null);
-
+        currentGameplay.setAnswer(-1);
         //checkNetworkLatency();
 
         Multicards.getMultiplayerInterface().eventNewQuestion(question, scores);
@@ -283,6 +282,7 @@ public class GameplayManager {
     }
 
     public static final void startMultiplayerGame(Game game) {
+        FragmentManager.setUIStates.add(Constants.UI_STATE_MULTIPLAYER_MODE);
         FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
         currentGameplay = new GameplayData(null, GameplayData.INT_MULTIPLAYER);
         Multicards.getMultiplayerInterface().setGameData(game, null);
