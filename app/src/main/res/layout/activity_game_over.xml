@@ -1,114 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/linearLayoutMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_gravity="center">
-
-        <TextView
-            android:id="@+id/textViewWinner"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/string_winner"
-            android:textSize="25sp"/>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageViewWinner"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/avatar"
-            android:layout_margin="10dp"/>
-
-        <TextView
-            android:id="@+id/textViewWinnerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="Player1"
-            android:layout_marginBottom="10dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="@string/string_score"/>
-
-        <TextView
-            android:id="@+id/textViewScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textColor="@color/colorGreen"
-            android:text="0"/>
-
-        <TextView
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/string_answers"/>
-
+        android:layout_gravity="center"
+        android:layout_above="@+id/linearLayoutBottomBar">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/listViewLog"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutAchievements"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="vertical"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:padding="5dp"
-            android:layout_margin="5dp">
+            android:layout_margin="10dp">
+            <TextView
+                android:id="@+id/textViewWinner"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/string_winner"
+                android:textSize="25sp"
+                android:gravity="center_vertical"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageViewWinner"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/avatar"
+                android:layout_margin="5dp"/>
 
             <TextView
-                android:textStyle="bold"
+                android:id="@+id/textViewWinnerName"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/string_achievements"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/listViewAchievements"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:textSize="25sp"
+                android:text="Player1"
+                android:gravity="center_vertical"/>
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.08"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="20sp"
+                android:text="@string/string_score"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/textViewScore"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:textSize="30sp"
+                android:textColor="#7efd29"
+                android:text="10"
+                android:textAlignment="center"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="20sp"
+                android:text="@string/string_score"
+                android:visibility="invisible"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_weight="0.05"
+            android:layout_height="0dp"
+            android:text="@string/string_answers"
+            android:gravity="center_vertical"/>
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:visibility="gone">
+            android:layout_weight="0.3"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:padding="10dp">
             <LinearLayout
-                android:id="@+id/linearLayoutLog"
+                android:id="@+id/linearLayoutAnswers"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center" />
+                android:orientation="vertical">
+            </LinearLayout>
         </ScrollView>
 
-        <include layout="@layout/button_like"/>
+        <TextView
+            android:id="@+id/textViewAchievements"
+            android:textStyle="bold"
+            android:layout_weight="0.05"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="@string/string_achievements"
+            android:gravity="center_vertical"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_weight="0.15"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <LinearLayout
+                android:id="@+id/linearLayoutAchievements"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 
-</ScrollView>
+    <LinearLayout
+        android:id="@+id/linearLayoutBottomBar"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#e1e1e1"
+        android:gravity="center"
+        android:padding="4dp">
+        <include layout="@layout/button_like"/>
+    </LinearLayout>
+
+</RelativeLayout>
