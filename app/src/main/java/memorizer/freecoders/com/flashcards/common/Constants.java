@@ -89,7 +89,7 @@ public class Constants {
     public static Integer UI_DIALOG_PICK_OPPONENT = 70;
     public static Integer UI_DIALOG_INCOMING_INVITATION = 80;
 
-    public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 25;
+    public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 20;
     public static Integer GAMEPLAY_OPTIONS_PER_QUESTION = 4;
 
     public final static String QUIZLET_CARDSET_SEARCH_URL = "https://api.quizlet.com/2.0/search/sets";
