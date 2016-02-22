@@ -8,6 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import memorizer.freecoders.com.flashcards.R;
+import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 16.01.16.
@@ -34,7 +36,7 @@ public class AchievementLogView extends LinearLayout {
     }
 
     private void initView() {
-        view = inflate(getContext(), R.layout.answer_log_view, null);
+        view = inflate(getContext(), R.layout.achievement_log_view, null);
         textViewAchievement = (TextView) view.findViewById(R.id.textViewAchievement);
         imageViewAchievement = (ImageView) view.findViewById(R.id.imageViewAchievement);
         addView(view);
@@ -42,6 +44,12 @@ public class AchievementLogView extends LinearLayout {
 
     public void setText (String strText) {
         textViewAchievement.setText(strText);
+        invalidate();
+    }
+
+    public void setImageURL (String strURL) {
+        Multicards.getAvatarLoader().get(strURL,
+                new Utils.AvatarListener(imageViewAchievement));
         invalidate();
     }
 
