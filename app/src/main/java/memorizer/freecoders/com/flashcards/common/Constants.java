@@ -67,6 +67,7 @@ public class Constants {
     public static String SOCK_MSG_TYPE_CHECK_NETWORK = "check_network";
     public static String SOCK_MSG_TYPE_GAME_INVITE = "game_invite";
     public static String SOCK_MSG_TYPE_INVITE_ACCEPTED = "invite_accepted";
+    public static String SOCK_MSG_TYPE_INVITE_REJECTED = "invite_rejected";
     public static String SOCK_MSG_TYPE_CONFIRM = "receive_confirm";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
