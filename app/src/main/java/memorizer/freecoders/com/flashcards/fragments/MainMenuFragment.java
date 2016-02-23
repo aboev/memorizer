@@ -1,7 +1,6 @@
 package memorizer.freecoders.com.flashcards.fragments;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,14 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 
 import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
 import memorizer.freecoders.com.flashcards.FragmentManager;
-import memorizer.freecoders.com.flashcards.GameOverActivity;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
@@ -24,13 +21,10 @@ import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
-import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
-import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
-import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 22.11.15.
@@ -154,7 +148,7 @@ public class MainMenuFragment extends Fragment {
             public void onResponse(Object obj) {
                 String strOpponentName = (obj != null) ? (String) obj : null;
                 GameplayManager.strOpponentName = strOpponentName;
-                GameplayManager.requestMultiplayerGameNew(true, strOpponentName, strGID);
+                GameplayManager.requestMultiplayerGame(true, strOpponentName, strGID);
             }
         });
         Multicards.getCardsetPickerActivity().finish();
