@@ -84,7 +84,7 @@ public class MainMenuFragment extends Fragment {
                                 @Override
                                 public void onResponse(Object obj) {
                                     String strGID = (String) obj;
-                                    requestMultiplayerGame(true, strGID);
+                                    requestMultiplayerGame(strGID);
                                 }
                             };
 
@@ -148,21 +148,16 @@ public class MainMenuFragment extends Fragment {
 
     }
 
-    private void requestMultiplayerGame(final Boolean boolNewGame, final String strGID) {
-        if (boolNewGame) {
-            InputDialogInterface.showEnterOpponentNameDialog(new CallbackInterface() {
-                @Override
-                public void onResponse(Object obj) {
-                    String strOpponentName = (obj != null) ? (String) obj : null;
-                    GameplayManager.strOpponentName = strOpponentName;
-                    GameplayManager.requestMultiplayerGameNew(boolNewGame, strOpponentName, strGID);
-                }
-            });
-            Multicards.getCardsetPickerActivity().finish();
-        } else {
-            GameplayManager.requestMultiplayerGame(strGID);
-            Multicards.getCardsetPickerActivity().finish();
-        }
+    private void requestMultiplayerGame(final String strGID) {
+        InputDialogInterface.showEnterOpponentNameDialog(new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                String strOpponentName = (obj != null) ? (String) obj : null;
+                GameplayManager.strOpponentName = strOpponentName;
+                GameplayManager.requestMultiplayerGameNew(true, strOpponentName, strGID);
+            }
+        });
+        Multicards.getCardsetPickerActivity().finish();
     }
 
     private void startSinglePlayer (final String strGID) {

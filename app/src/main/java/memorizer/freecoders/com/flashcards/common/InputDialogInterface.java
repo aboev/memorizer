@@ -120,40 +120,6 @@ public class InputDialogInterface {
                 .show();
     }
 
-    public static final void showGameOverMessage (final CallbackInterface onReply) {
-
-        String strMessage = "Game over. ";
-
-        if (FragmentManager.playersInfoFragment.player1Score >
-                FragmentManager.playersInfoFragment.player2Score )
-            strMessage = strMessage + "You win!";
-        else
-            strMessage = strMessage +
-                    FragmentManager.playersInfoFragment.player2Name + " win";
-
-        Context context = Multicards.getMainActivity();
-
-        new AlertDialog.Builder(context)
-                .setTitle("Game")
-                .setMessage(strMessage)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                })
-                .setNegativeButton("Play again", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if (Multicards.getMultiplayerInterface().currentGame != null) {
-                            GameplayManager.requestMultiplayerGame(
-                                    Multicards.getMultiplayerInterface().currentGame.strGID);
-                            FragmentManager.intUIState =
-                                    Constants.UI_STATE_MULTIPLAYER_MODE;
-                        }
-                    }
-                })
-                .show();
-    }
-
     public static final void showGameStopMessage (final CallbackInterface onReply) {
 
         String strMessage = Multicards.getMainActivity().getResources().
@@ -167,16 +133,6 @@ public class InputDialogInterface {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                    }
-                })
-                .setNegativeButton("Play again", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if (Multicards.getMultiplayerInterface().currentGame != null) {
-                            GameplayManager.requestMultiplayerGame(
-                                    Multicards.getMultiplayerInterface().currentGame.strGID);
-                            FragmentManager.intUIState =
-                                    Constants.UI_STATE_MULTIPLAYER_MODE;
-                        }
                     }
                 })
                 .show();
