@@ -78,7 +78,7 @@ public class MainMenuFragment extends Fragment {
                                 @Override
                                 public void onResponse(Object obj) {
                                     String strGID = (String) obj;
-                                    requestMultiplayerGame(strGID);
+                                    requestMultiplayerGameStart(strGID);
                                 }
                             };
 
@@ -86,30 +86,7 @@ public class MainMenuFragment extends Fragment {
                                     CardsetPickerActivity.class);
                             startActivity(intent);
                         } else if (index == 1) {    // Join existing game
-                            InputDialogInterface.showChooseGameDialog(new CallbackInterface() {
-                                @Override
-                                public void onResponse(Object obj) {
-                                    if (obj != null) {
-                                        String strOpponentName = (String) obj;
-                                        GameplayManager.strOpponentName = strOpponentName;
-                                        String strMessage = getResources().
-                                                getString(R.string.waiting_opponent_dialog_message);
-                                        InputDialogInterface.showProgressBar(strMessage, null);
-                                        ServerInterface.startGameRequest(false, "", strOpponentName,
-                                                new Response.Listener<ServerResponse<Game>>() {
-                                                    @Override
-                                                    public void onResponse(ServerResponse<Game> response) {
-                                                        if (!response.isSuccess())
-                                                            InputDialogInterface.deliverError(response);
-                                                        SocketInterface.emitStatusUpdate(
-                                                                Constants.PLAYER_STATUS_WAITING);
-                                                        if (InputDialogInterface.progressDialog != null)
-                                                            InputDialogInterface.progressDialog.dismiss();
-                                                    }
-                                                }, null);
-                                    }
-                                }
-                            });
+                            requestMultiplayerGameJoin();
                         }
                     }
                 });
@@ -142,16 +119,43 @@ public class MainMenuFragment extends Fragment {
 
     }
 
-    private void requestMultiplayerGame(final String strGID) {
+    private void requestMultiplayerGameStart(final String strGID) {
         InputDialogInterface.showEnterOpponentNameDialog(new CallbackInterface() {
             @Override
             public void onResponse(Object obj) {
                 String strOpponentName = (obj != null) ? (String) obj : null;
                 GameplayManager.strOpponentName = strOpponentName;
-                GameplayManager.requestMultiplayerGame(true, strOpponentName, strGID);
+                GameplayManager.requestMultiplayerGameStart(strOpponentName, strGID);
             }
         });
         Multicards.getCardsetPickerActivity().finish();
+    }
+
+    private void requestMultiplayerGameJoin(){
+        InputDialogInterface.showChooseGameDialog(new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                if (obj != null) {
+                    String strOpponentName = (String) obj;
+                    GameplayManager.strOpponentName = strOpponentName;
+                    String strMessage = getResources().
+                            getString(R.string.waiting_opponent_dialog_message);
+                    InputDialogInterface.showProgressBar(strMessage, null);
+                    ServerInterface.startGameRequest(false, "", strOpponentName,
+                            new Response.Listener<ServerResponse<Game>>() {
+                                @Override
+                                public void onResponse(ServerResponse<Game> response) {
+                                    if (!response.isSuccess())
+                                        InputDialogInterface.deliverError(response);
+                                    SocketInterface.emitStatusUpdate(
+                                            Constants.PLAYER_STATUS_WAITING);
+                                    if (InputDialogInterface.progressDialog != null)
+                                        InputDialogInterface.progressDialog.dismiss();
+                                }
+                            }, null);
+                }
+            }
+        });
     }
 
     private void startSinglePlayer (final String strGID) {
