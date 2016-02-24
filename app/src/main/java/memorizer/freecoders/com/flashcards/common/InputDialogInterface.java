@@ -218,10 +218,16 @@ public class InputDialogInterface {
                 new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        onCancel.onResponse(null);
+                        if (onCancel != null)
+                            onCancel.onResponse(null);
                     }
                 });
         progressDialog.setCancelable(true);
+    }
+
+    public static final void hideProgressBar () {
+        if ((progressDialog != null) && (progressDialog.isShowing()))
+            progressDialog.dismiss();
     }
 
     public static final void showUpdateDialog (Boolean boolMandatory,
