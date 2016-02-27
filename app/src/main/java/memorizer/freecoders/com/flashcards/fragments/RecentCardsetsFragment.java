@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,6 +79,7 @@ public class RecentCardsetsFragment extends Fragment{
         ArrayList<QuizletCardsetDescriptor> cardsetDescriptors =
                 new ArrayList<QuizletCardsetDescriptor>();
 
+        Gson gson = new Gson();
         Map<Integer, Long> map = sortByValues(Multicards.getPreferences().recentSets);
         Set set = map.entrySet();
         Iterator iterator = set.iterator();

@@ -12,6 +12,8 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 import memorizer.freecoders.com.flashcards.json.CardSet;
+import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.TagDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
@@ -146,6 +148,18 @@ public final class Preferences {
         Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
         Multicards.getPreferences().recentSetDescriptors.put(strGID, cardset);
         Multicards.getPreferences().savePreferences();
+    }
+
+    public void setRecentCardset (InvitationDescriptor invitation) {
+        Log.d(LOG_TAG, "Setting recent cardset " + invitation.game.game_gid);
+        if ((invitation.game == null) || (invitation.cardset == null) ||
+                (invitation.cardset.title == null) || (invitation.game.game_gid == null)) return;
+        QuizletCardsetDescriptor qcardset = new QuizletCardsetDescriptor();
+        qcardset.title = invitation.cardset.title;
+        qcardset.gid = invitation.game.game_gid;
+        recentSets.put(qcardset.gid, System.currentTimeMillis());
+        recentSetDescriptors.put(qcardset.gid, qcardset);
+        savePreferences();
     }
 
 }
