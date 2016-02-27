@@ -285,6 +285,8 @@ public class GameplayManager {
                                 Multicards.getMultiplayerInterface().quitGame();
                             }
                         });
+
+                Multicards.getPreferences().setRecentCardset(invitation);
             }
         }, new CallbackInterface() {
             @Override
