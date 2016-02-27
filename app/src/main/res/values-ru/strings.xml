@@ -13,6 +13,8 @@
     <string name="cardset_search_message">Введите название карточек</string>
     <string name="string_starting_game">Запускаем игру</string>
     <string name="string_inviting_opponent">Приглашаем соперников</string>
+    <string name="string_waiting_opponent">Ожидаем соперника</string>
+    <string name="string_opponent_busy">Противник недоступен</string>
     <string name="waiting_opponent_dialog_message">Поиск соперников</string>
 
     <string name="string_your_id">Ваш id:</string>
