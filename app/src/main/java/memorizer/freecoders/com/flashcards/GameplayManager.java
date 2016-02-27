@@ -173,50 +173,50 @@ public class GameplayManager {
         InputDialogInterface.showProgressBar(strMessage, null);
 
         ServerInterface.startGameRequest(true, strGID, strOpponentName,
-            new Response.Listener<ServerResponse<Game>>() {
-                @Override
-                public void onResponse(ServerResponse<Game> res) {
-                    Gson gson = new Gson();
+                new Response.Listener<ServerResponse<Game>>() {
+                    @Override
+                    public void onResponse(ServerResponse<Game> res) {
+                        Gson gson = new Gson();
 
-                    if (res.isSuccess()) {
-                        Game response = res.data;
-                        if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
-                                (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
-                            Multicards.getMultiplayerInterface().setGameData(null, strGID);
+                        if (res.isSuccess()) {
+                            Game response = res.data;
+                            if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                    (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
+                                Multicards.getMultiplayerInterface().setGameData(null, strGID);
 
+                                InputDialogInterface.hideProgressBar();
+                                String strMessage = "";
+                                if ((strOpponentName == null) || strOpponentName.isEmpty())
+                                    strMessage = Multicards.getMainActivity().getResources().getString(
+                                            R.string.waiting_opponent_dialog_message);
+                                else
+                                    strMessage = Multicards.getMainActivity().getResources().getString(
+                                            R.string.string_inviting_opponent);
+
+                                InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
+                                    @Override
+                                    public void onResponse(Object obj) {
+                                        Multicards.getMultiplayerInterface().quitGame();
+                                        FragmentManager.setUIStates.
+                                                remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                                    }
+                                });
+
+                                FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
+                            }
+                        } else {
                             InputDialogInterface.hideProgressBar();
-                            String strMessage = "";
-                            if ((strOpponentName == null) || strOpponentName.isEmpty())
-                                strMessage = Multicards.getMainActivity().getResources().getString(
-                                    R.string.waiting_opponent_dialog_message);
-                            else
-                                strMessage = Multicards.getMainActivity().getResources().getString(
-                                    R.string.string_inviting_opponent);
-
-                            InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
-                                @Override
-                                public void onResponse(Object obj) {
-                                    Multicards.getMultiplayerInterface().quitGame();
-                                    FragmentManager.setUIStates.
-                                            remove(Constants.UI_DIALOG_WAITING_OPPONENT);
-                                }
-                            });
-
-                            FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
+                            InputDialogInterface.deliverError(res);
+                            FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
                         }
-                    } else {
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
                         InputDialogInterface.hideProgressBar();
-                        InputDialogInterface.deliverError(res);
                         FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    InputDialogInterface.hideProgressBar();
-                    FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
-                }
-            });
+                });
     }
 
     public static final void startMultiplayerGame(Game game) {
@@ -258,12 +258,16 @@ public class GameplayManager {
                     Multicards.getMainActivity());
         }
 
+        final Integer game_id;
+        if ((invitation != null) && (invitation.game != null) &&
+                (invitation.game.game_id != null))
+            game_id = Integer.valueOf(invitation.game.game_id);
+        else
+            game_id = -1;
         InputDialogInterface.showInvitationDialog(new CallbackInterface() {
             @Override
             public void onResponse(Object obj) {
-                if ((invitation != null) && (invitation.game != null) &&
-                        (invitation.game.game_id != null)) {
-                    Integer game_id = Integer.valueOf(invitation.game.game_id);
+                if (game_id != -1)
                     SocketInterface.emitInvitationAccepted(game_id,
                             new CallbackInterface() {
                                 @Override
@@ -272,16 +276,21 @@ public class GameplayManager {
                                         SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
                                 }
                             });
-                }
 
                 InputDialogInterface.showProgressBar(Multicards.getMainActivity().
-                        getResources().getString(R.string.waiting_opponent_dialog_message),
+                                getResources().getString(R.string.string_waiting_opponent),
                         new CallbackInterface() {
                             @Override
                             public void onResponse(Object obj) {
                                 Multicards.getMultiplayerInterface().quitGame();
                             }
-                });
+                        });
+            }
+        }, new CallbackInterface() {
+            @Override
+            public void onResponse(Object obj) {
+                if (game_id != -1)
+                    SocketInterface.emitInvitationRejected(game_id);
             }
         }, invitation);
     }
@@ -289,8 +298,20 @@ public class GameplayManager {
     public static final void invitationAccepted(Integer intGameID) {
         if ((FragmentManager.setUIStates.contains(Constants.UI_DIALOG_WAITING_OPPONENT))
                 && Multicards.getMainActivity().boolIsForeground) {
-            InputDialogInterface.progressDialog.dismiss();
+            InputDialogInterface.hideProgressBar();
             SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
+            FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+        }
+    }
+
+    public static final void invitationRejected(Integer intGameID) {
+        if ((FragmentManager.setUIStates.contains(Constants.UI_DIALOG_WAITING_OPPONENT))
+                && Multicards.getMainActivity().boolIsForeground) {
+            InputDialogInterface.hideProgressBar();
+            FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+            String strMessage = Multicards.getMainActivity().
+                    getResources().getString(R.string.string_opponent_busy);
+            InputDialogInterface.showModalDialog(strMessage, null);
         }
     }
 
