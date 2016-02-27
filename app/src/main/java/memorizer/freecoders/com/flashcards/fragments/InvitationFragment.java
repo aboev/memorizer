@@ -33,6 +33,7 @@ public class InvitationFragment extends DialogFragment {
     Button buttonOK;
     Button buttonCancel;
     CallbackInterface onClickOK;
+    CallbackInterface onClickCancel;
     InvitationDescriptor invitation;
 
     public InvitationFragment() {
@@ -58,7 +59,8 @@ public class InvitationFragment extends DialogFragment {
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickOK.onResponse(null);
+                if (onClickOK != null)
+                    onClickOK.onResponse(null);
                 dismissFragment();
             }
         });
@@ -66,6 +68,8 @@ public class InvitationFragment extends DialogFragment {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (onClickCancel != null)
+                    onClickCancel.onResponse(null);
                 dismissFragment();
             }
         });
@@ -92,6 +96,10 @@ public class InvitationFragment extends DialogFragment {
 
     public void setOnClickOKListener (CallbackInterface callback) {
         this.onClickOK = callback;
+    }
+
+    public void setOnClickCancelListener (CallbackInterface callback) {
+        this.onClickCancel = callback;
     }
 
     public void dismissFragment () {
