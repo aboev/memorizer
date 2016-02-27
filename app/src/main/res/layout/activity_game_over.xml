@@ -62,9 +62,9 @@
                 android:id="@+id/textViewScoreValue"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:textColor="#7efd29"
-                android:text="10"
+                android:text="100"
                 android:textAlignment="center"
                 android:gravity="center"/>
 
@@ -80,11 +80,12 @@
 
         <TextView
             android:textStyle="bold"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_weight="0.05"
             android:layout_height="0dp"
             android:text="@string/string_answers"
-            android:gravity="center_vertical"/>
+            android:background="@color/colorMain"
+            android:gravity="center_vertical|center_horizontal"/>
 
         <ScrollView
             android:layout_width="match_parent"
