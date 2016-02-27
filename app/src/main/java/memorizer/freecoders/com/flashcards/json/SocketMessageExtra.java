@@ -10,4 +10,5 @@ public class SocketMessageExtra<T, K> {
     public String msg_type = "";
     public T msg_body;
     public K msg_extra;
+    public Integer msg_id;
 }
