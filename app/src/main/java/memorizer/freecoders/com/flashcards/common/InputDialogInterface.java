@@ -189,12 +189,13 @@ public class InputDialogInterface {
     }
 
     public static final void showInvitationDialog (final CallbackInterface onEnter,
-            InvitationDescriptor invitation) {
+            final CallbackInterface onCancel, InvitationDescriptor invitation) {
         android.app.FragmentManager fm =
                 Multicards.getMainActivity().getFragmentManager();
         gameInvitationFragment = new InvitationFragment();
         gameInvitationFragment.setInvitationDetails(invitation);
         gameInvitationFragment.setOnClickOKListener(onEnter);
+        gameInvitationFragment.setOnClickCancelListener(onCancel);
         gameInvitationFragment.show(fm, Constants.TAG_INVITATION_FRAGMENT);
     }
 
