@@ -315,8 +315,8 @@ public class InputDialogInterface {
         NotificationManager notifyMgr = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Builds the notification and issues it.
-        notifyMgr.notify(0, mBuilder.build());
+        Integer notificationID = 0;
+        notifyMgr.notify(notificationID, mBuilder.build());
     }
 
     public static void clearNotification (Integer notificationID, Context context) {
