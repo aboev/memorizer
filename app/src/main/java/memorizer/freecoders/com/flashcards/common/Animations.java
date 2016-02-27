@@ -25,7 +25,6 @@ public class Animations {
     public final static void highlightColor (View view,
             int colorStart, int colorEnd, final CallbackInterface onAnimationEnd) {
 
-
         int duration = 1000;
         AnimatorSet mAnimationSet = new AnimatorSet();
         ObjectAnimator fadeIn = ObjectAnimator.ofObject(view, "backgroundColor",
@@ -104,11 +103,15 @@ public class Animations {
     }
 
     public final static void scaleAnimation (final View view, final CallbackInterface onAnimationEnd){
+        scaleAnimation(view, onAnimationEnd, 500);
+    }
+
+    public final static void scaleAnimation (final View view, final CallbackInterface onAnimationEnd,
+            int duration){
         float scale = 1.2f;
 
         ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, scale, 1.0f, scale,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        int duration = 500;
 
         final ScaleAnimation reverse_animation = new ScaleAnimation(scale, 1.0f, scale, 1.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
