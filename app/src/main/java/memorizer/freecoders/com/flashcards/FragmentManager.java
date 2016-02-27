@@ -111,6 +111,8 @@ public class FragmentManager {
         if (gameOverMessage != null)
             intent.putExtra(Constants.INTENT_META_GAMEOVER_MESSAGE, gson.toJson(gameOverMessage));
 
+        hideGameOverFragment();
+
         Multicards.getMainActivity().startActivity(intent);
 
         intUIState = Constants.UI_STATE_GAME_OVER;
