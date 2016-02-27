@@ -13,6 +13,8 @@ public class Constants {
 
     public final static String SERVER_URL = "http://multicards.snufan.com:80";
     public final static String SOCKET_SERVER_URL = "http://multicards.snufan.com:5001";
+    //public final static String SERVER_URL = "http://multicards.snufan.com:8081";
+    //public final static String SOCKET_SERVER_URL = "http://multicards.snufan.com:5003";
     public final static String SERVER_PATH_USER = "/user";
     public final static String SERVER_PATH_USERS = "/users";
     public final static String SERVER_PATH_GAME = "/game";
@@ -52,6 +54,7 @@ public class Constants {
     public final static String SOCKET_CHANNEL_NAME = "event";
 
     public static String JSON_SOCK_MSG_TYPE = "msg_type";
+    public static String JSON_SOCK_MSG_EXTRA = "msg_extra";
     public static String SOCK_MSG_TYPE_ANNOUNCE_SOCKETID = "socket_id_announce";
     public static String SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION = "new_question";
     public static String SOCK_MSG_TYPE_PLAYER_ANSWERED = "player_answered";
@@ -69,6 +72,8 @@ public class Constants {
     public static String SOCK_MSG_TYPE_INVITE_ACCEPTED = "invite_accepted";
     public static String SOCK_MSG_TYPE_INVITE_REJECTED = "invite_rejected";
     public static String SOCK_MSG_TYPE_CONFIRM = "receive_confirm";
+    public static String SOCK_MSG_TYPE_CUSTOM = "custom";
+    public static String SOCK_MSG_TYPE_SEND_EMOTICON = "send_emoticon";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_WAITING_OPPONENT = 1;
