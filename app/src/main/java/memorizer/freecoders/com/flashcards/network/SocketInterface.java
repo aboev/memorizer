@@ -306,11 +306,14 @@ public class SocketInterface {
         mSocketIO.emit("message", gson.toJson(msg));
     }
 
-    public static void emitInvitationAccepted (int game_id, CallbackInterface callback) {
-        Log.d(LOG_TAG, "emitInvitationAccepted " + game_id);
-        SocketMessage msg = new SocketMessage();
+    public static void emitInvitationAccepted (int game_id, CallbackInterface callback,
+            InvitationDescriptor invitation) {
+        Log.d(LOG_TAG, "emitInvitationAccepted " + gson.toJson(invitation));
+        SocketMessageExtra msg = new SocketMessageExtra();
         msg.msg_type = Constants.SOCK_MSG_TYPE_INVITE_ACCEPTED;
         msg.msg_body = game_id;
+        if (invitation != null)
+            msg.msg_extra = gson.toJson(invitation);
         msg.msg_id = msg_id_counter;
         mSocketIO.emit("message", gson.toJson(msg));
         syncCallbacks.put(msg_id_counter, callback);
