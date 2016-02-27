@@ -305,4 +305,12 @@ public class SocketInterface {
         syncCallbacks.put(msg_id_counter, callback);
         msg_id_counter++;
     }
+
+    public static void emitInvitationRejected (int game_id) {
+        Log.d(LOG_TAG, "emitInvitationRejected " + game_id);
+        SocketMessage msg = new SocketMessage();
+        msg.msg_type = Constants.SOCK_MSG_TYPE_INVITE_REJECTED;
+        msg.msg_body = game_id;
+        mSocketIO.emit("message", gson.toJson(msg));
+    }
 }
