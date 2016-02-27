@@ -317,4 +317,15 @@ public class InputDialogInterface {
         // Builds the notification and issues it.
         notifyMgr.notify(0, mBuilder.build());
     }
+
+    public static void clearNotification (Integer notificationID, Context context) {
+        if (context == null)
+            context = Multicards.getMainActivity();
+        NotificationManager notifyMgr = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationID == null)
+            notifyMgr.cancelAll();
+        else
+            notifyMgr.cancel(notificationID);
+    }
 }
