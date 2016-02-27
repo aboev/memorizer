@@ -28,6 +28,7 @@ import java.util.Set;
 import io.socket.client.Socket;
 import io.socket.client.IO;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.gcm.RegistrationIntentService;
@@ -265,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                     InvitationDescriptor invitationDescriptor = gson.fromJson(strInvitation,
                             InvitationDescriptor.class);
                     GameplayManager.gameInvitation(invitationDescriptor);
+                    InputDialogInterface.clearNotification(0, this);
                 }
             }
         }
