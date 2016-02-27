@@ -173,50 +173,50 @@ public class GameplayManager {
         InputDialogInterface.showProgressBar(strMessage, null);
 
         ServerInterface.startGameRequest(true, strGID, strOpponentName,
-                new Response.Listener<ServerResponse<Game>>() {
-                    @Override
-                    public void onResponse(ServerResponse<Game> res) {
-                        Gson gson = new Gson();
+            new Response.Listener<ServerResponse<Game>>() {
+                @Override
+                public void onResponse(ServerResponse<Game> res) {
+                    Gson gson = new Gson();
 
-                        if (res.isSuccess()) {
-                            Game response = res.data;
-                            if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
-                                    (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
-                                Multicards.getMultiplayerInterface().setGameData(null, strGID);
+                    if (res.isSuccess()) {
+                        Game response = res.data;
+                        if ((response.status == Constants.GAME_STATUS_SEARCHING_PLAYERS) ||
+                                (response.status == Constants.GAME_STATUS_WAITING_OPPONENT)) {
+                            Multicards.getMultiplayerInterface().setGameData(null, strGID);
 
-                                InputDialogInterface.hideProgressBar();
-                                String strMessage = "";
-                                if ((strOpponentName == null) || strOpponentName.isEmpty())
-                                    strMessage = Multicards.getMainActivity().getResources().getString(
-                                            R.string.waiting_opponent_dialog_message);
-                                else
-                                    strMessage = Multicards.getMainActivity().getResources().getString(
-                                            R.string.string_inviting_opponent);
-
-                                InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
-                                    @Override
-                                    public void onResponse(Object obj) {
-                                        Multicards.getMultiplayerInterface().quitGame();
-                                        FragmentManager.setUIStates.
-                                                remove(Constants.UI_DIALOG_WAITING_OPPONENT);
-                                    }
-                                });
-
-                                FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
-                            }
-                        } else {
                             InputDialogInterface.hideProgressBar();
-                            InputDialogInterface.deliverError(res);
-                            FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                            String strMessage = "";
+                            if ((strOpponentName == null) || strOpponentName.isEmpty())
+                                strMessage = Multicards.getMainActivity().getResources().getString(
+                                        R.string.waiting_opponent_dialog_message);
+                            else
+                                strMessage = Multicards.getMainActivity().getResources().getString(
+                                        R.string.string_inviting_opponent);
+
+                            InputDialogInterface.showProgressBar(strMessage, new CallbackInterface() {
+                                @Override
+                                public void onResponse(Object obj) {
+                                    Multicards.getMultiplayerInterface().quitGame();
+                                    FragmentManager.setUIStates.
+                                            remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                                }
+                            });
+
+                            FragmentManager.setUIStates.add(Constants.UI_DIALOG_WAITING_OPPONENT);
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    } else {
                         InputDialogInterface.hideProgressBar();
+                        InputDialogInterface.deliverError(res);
                         FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
                     }
-                });
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    InputDialogInterface.hideProgressBar();
+                    FragmentManager.setUIStates.remove(Constants.UI_DIALOG_WAITING_OPPONENT);
+                }
+            });
     }
 
     public static final void startMultiplayerGame(Game game) {
