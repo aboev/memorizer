@@ -153,6 +153,13 @@ public class SocketInterface {
                             SocketMessage<Integer> socketMessage =
                                     gson.fromJson(args[0].toString(), type);
                             msgInvitationAccepted(socketMessage.msg_body);
+                        }  else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_INVITE_REJECTED)) {
+                            Type type = new TypeToken<
+                                    SocketMessage<Integer>>() {}.getType();
+                            SocketMessage<Integer> socketMessage =
+                                    gson.fromJson(args[0].toString(), type);
+                            msgInvitationRejected(socketMessage.msg_body);
                         } else if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_CONFIRM)) {
                             Type type = new TypeToken<
@@ -248,6 +255,10 @@ public class SocketInterface {
 
     private static void msgInvitationAccepted (Integer intGameID) {
         GameplayManager.invitationAccepted(intGameID);
+    }
+
+    private static void msgInvitationRejected (Integer intGameID) {
+        GameplayManager.invitationRejected(intGameID);
     }
 
     private static void msgStatusUpdate (String status) {
