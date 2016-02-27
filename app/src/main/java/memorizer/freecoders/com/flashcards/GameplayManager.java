@@ -227,6 +227,8 @@ public class GameplayManager {
         Multicards.getPreferences().saveRecentOpponent(Utils.extractOpponentProfile(game.profiles));
         FragmentManager.showPlayersInfo(false);
         FragmentManager.playersInfoFragment.initInfo();
+        Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.VISIBLE);
+        FragmentManager.initEmoticons();
     }
 
     public static final void quitMultilayerGame(GameOverMessage gameOverMessage) {

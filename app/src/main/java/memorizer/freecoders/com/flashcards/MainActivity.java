@@ -38,11 +38,20 @@ import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     public TextView textViewNetworkState;
+    public LinearLayout linearLayoutEmoticons;
+    public ImageView imageViewEmoticon1;
+    public ImageView imageViewEmoticon2;
+    public ImageView imageViewEmoticon3;
+    public ImageView imageViewEmoticon4;
+    public ImageView imageViewEmoticon5;
+    public ImageView imageViewEmoticon6;
 
     private static String LOG_TAG = "MainActivity";
 
@@ -65,6 +74,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textViewNetworkState = (TextView) findViewById(R.id.textViewNetworkState);
+
+        linearLayoutEmoticons = (LinearLayout) findViewById(R.id.linearLayoutEmoticons);
+
+        imageViewEmoticon1 = (ImageView) findViewById(R.id.imageViewEmoticon1);
+        imageViewEmoticon2 = (ImageView) findViewById(R.id.imageViewEmoticon2);
+        imageViewEmoticon3 = (ImageView) findViewById(R.id.imageViewEmoticon3);
+        imageViewEmoticon4 = (ImageView) findViewById(R.id.imageViewEmoticon4);
+        imageViewEmoticon5 = (ImageView) findViewById(R.id.imageViewEmoticon5);
+        imageViewEmoticon6 = (ImageView) findViewById(R.id.imageViewEmoticon6);
+
         Log.d(LOG_TAG, "OnCreate " + (savedInstanceState == null ? "savedInstanceState == null" :
                 "savedInstanceState != null"));
         populateView(savedInstanceState);

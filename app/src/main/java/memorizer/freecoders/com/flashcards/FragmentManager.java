@@ -2,7 +2,9 @@ package memorizer.freecoders.com.flashcards;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
 
 import com.google.gson.Gson;
 
@@ -16,6 +18,8 @@ import memorizer.freecoders.com.flashcards.fragments.MainMenuFragment;
 import memorizer.freecoders.com.flashcards.fragments.PlayersInfoFragment;
 import memorizer.freecoders.com.flashcards.fragments.UserProfileFragment;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
+import memorizer.freecoders.com.flashcards.network.SocketInterface;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 27.12.15.
@@ -44,6 +48,7 @@ public class FragmentManager {
         showPlayersInfo(boolConfigurationChange);
         if (boolConfigurationChange)
             showFragment(FlashCardFragment.cloneFragment(currentFlashCardFragment) , null);
+        Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.GONE);
     }
 
     public static final void showFragment (Fragment newFragment, Integer intTransitionType) {
@@ -141,6 +146,7 @@ public class FragmentManager {
         hideCurrentFlashcardFragment();
         hideUserProfileFragment();
         hideGameOverFragment();
+        Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.GONE);
         intUIState = Constants.UI_STATE_MAIN_MENU;
         setUIStates.remove(Constants.UI_STATE_MULTIPLAYER_MODE);
         setUIStates.remove(Constants.UI_STATE_TRAIN_MODE);
@@ -174,6 +180,67 @@ public class FragmentManager {
         if ((userProfileFragment != null) && (userProfileFragment.isAdded()))
             Multicards.getMainActivity().getFragmentManager().beginTransaction().
                     remove(userProfileFragment).commit();
+    }
+
+    public static final void initEmoticons() {
+        if ((Multicards.getMultiplayerInterface().currentGame == null) ||
+                (Multicards.getMultiplayerInterface().currentGame.game == null) ||
+                (Multicards.getMultiplayerInterface().currentGame.game.profiles == null))
+            return;
+        final String strOpponentSocketID = Utils.extractOpponentSocketID
+                (Multicards.getMultiplayerInterface().currentGame.game.profiles);
+        Multicards.getMainActivity().imageViewEmoticon1.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SocketInterface.emitSendEmoticon(strOpponentSocketID, 1);
+                        playersInfoFragment.showEmoticon(false, 1);
+                    }
+                });
+        Multicards.getMainActivity().imageViewEmoticon2.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SocketInterface.emitSendEmoticon(strOpponentSocketID, 2);
+                        playersInfoFragment.showEmoticon(false, 2);
+                    }
+                });
+        Multicards.getMainActivity().imageViewEmoticon3.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SocketInterface.emitSendEmoticon(strOpponentSocketID, 3);
+                        playersInfoFragment.showEmoticon(false, 3);
+                    }
+                });
+        Multicards.getMainActivity().imageViewEmoticon4.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SocketInterface.emitSendEmoticon(strOpponentSocketID, 4);
+                        playersInfoFragment.showEmoticon(false, 4);
+                    }
+                });
+        Multicards.getMainActivity().imageViewEmoticon5.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SocketInterface.emitSendEmoticon(strOpponentSocketID, 5);
+                        playersInfoFragment.showEmoticon(false, 5);
+                    }
+                });
+        Multicards.getMainActivity().imageViewEmoticon6.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SocketInterface.emitSendEmoticon(strOpponentSocketID, 6);
+                        playersInfoFragment.showEmoticon(false, 6);
+                    }
+                });
+    }
+
+    public static final void showOpponentEmoticon (Integer intEmoticonID) {
+        playersInfoFragment.showEmoticon(true, intEmoticonID);
     }
 
 }

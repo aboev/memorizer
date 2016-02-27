@@ -3,6 +3,7 @@ package memorizer.freecoders.com.flashcards.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -179,6 +180,51 @@ public class PlayersInfoFragment extends Fragment{
             else
                 Animations.scaleAnimation(imageViewPlayer2Avatar, onAnimationEnd);
         }
+    }
+
+    public void showEmoticon(Boolean boolIncoming, Integer intEmoticonID) {
+        Drawable emoticon = null;
+        if (intEmoticonID == 1)
+            emoticon = Multicards.getMainActivity().imageViewEmoticon1.getDrawable();
+        else if (intEmoticonID == 2)
+            emoticon = Multicards.getMainActivity().imageViewEmoticon2.getDrawable();
+        else if (intEmoticonID == 3)
+            emoticon = Multicards.getMainActivity().imageViewEmoticon3.getDrawable();
+        else if (intEmoticonID == 4)
+            emoticon = Multicards.getMainActivity().imageViewEmoticon4.getDrawable();
+        else if (intEmoticonID == 5)
+            emoticon = Multicards.getMainActivity().imageViewEmoticon5.getDrawable();
+        else if (intEmoticonID == 6)
+            emoticon = Multicards.getMainActivity().imageViewEmoticon6.getDrawable();
+
+        if (boolIncoming) {
+            imageViewPlayer2Avatar.setImageDrawable(emoticon);
+            Utils.vibrateLong();
+            Animations.scaleAnimation(imageViewPlayer2Avatar, new CallbackInterface() {
+                @Override
+                public void onResponse(Object obj) {
+                    if ((player2AvatarURL != null) && (!player2AvatarURL.isEmpty()))
+                        Multicards.getAvatarLoader().get(player2AvatarURL,
+                            new Utils.AvatarListener(imageViewPlayer2Avatar));
+                    else
+                        imageViewPlayer2Avatar.setImageResource(R.drawable.avatar);
+                }
+            }, 1000);
+        } else {
+            imageViewPlayer1Avatar.setImageDrawable(emoticon);
+            Utils.vibrateLong();
+            Animations.scaleAnimation(imageViewPlayer1Avatar, new CallbackInterface() {
+                @Override
+                public void onResponse(Object obj) {
+                    if ((player1AvatarURL != null) && (!player1AvatarURL.isEmpty()))
+                        Multicards.getAvatarLoader().get(player1AvatarURL,
+                            new Utils.AvatarListener(imageViewPlayer1Avatar));
+                    else
+                        imageViewPlayer1Avatar.setImageResource(R.drawable.avatar);
+                }
+            }, 1000);
+        }
+
     }
 
 }

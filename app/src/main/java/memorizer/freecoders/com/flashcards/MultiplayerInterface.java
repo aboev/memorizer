@@ -71,19 +71,20 @@ public class MultiplayerInterface {
     public void eventAnswerAccepted (int questionID) {
         if ((currentGame.currentQuestion != null) &&
                 (currentGame.currentQuestion.question_id == questionID)) {
-            FragmentManager.currentFlashCardFragment.answerHighlight(currentAnswer, false, null);
             CallbackInterface onAnimationEnd = new CallbackInterface() {
                 @Override
                 public void onResponse(Object obj) {
                     invokeEvent(EVENT_USER_WAIT, "");
                 }
             };
+            FragmentManager.currentFlashCardFragment.answerHighlight(currentAnswer, false,
+                    onAnimationEnd);
             if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                     == currentAnswer) {
-                FragmentManager.playersInfoFragment.highlightAnswer(0, true, onAnimationEnd);
+                FragmentManager.playersInfoFragment.highlightAnswer(0, true, null);
                 Utils.vibrateShort();
             } else {
-                FragmentManager.playersInfoFragment.highlightAnswer(0, false, onAnimationEnd);
+                FragmentManager.playersInfoFragment.highlightAnswer(0, false, null);
                 Utils.vibrateLong();
             }
             currentGame.strUserStatus = Constants.PLAYER_STATUS_ANSWERED;
@@ -100,7 +101,6 @@ public class MultiplayerInterface {
     public void eventOpponentAnswer(String strAnswerID) {
         Integer intAnswerID = Integer.valueOf(strAnswerID);
 
-        FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true, null);
         if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                 == intAnswerID) {
             CallbackInterface onAnimationEnd = null;
@@ -114,9 +114,13 @@ public class MultiplayerInterface {
                 };
                 FragmentManager.currentFlashCardFragment.setEmptyOnFlashcardItemClickListener();
             }
-            FragmentManager.playersInfoFragment.highlightAnswer(1, true, onAnimationEnd);
-        } else
+            FragmentManager.playersInfoFragment.highlightAnswer(1, true, null);
+            FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true,
+                    onAnimationEnd);
+        } else {
             FragmentManager.playersInfoFragment.highlightAnswer(1, false, null);
+            FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true, null);
+        }
     }
 
     public void eventNewQuestion (Question question, HashMap<String, Integer> scores) {

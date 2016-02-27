@@ -74,6 +74,7 @@ public class SocketInterface {
                         } catch (JSONException e) {
                             Log.d(LOG_TAG, "Json exception while processing " + args[0].toString());
                         }
+                        Log.d(LOG_TAG, "Received socket message " + args[0].toString());
                         if (strMessageType.
                                 equals(Constants.SOCK_MSG_TYPE_ANNOUNCE_NEW_QUESTION)) {
                             Type type = new TypeToken<SocketMessageExtra<Question,
@@ -179,11 +180,33 @@ public class SocketInterface {
                                     gson.fromJson(args[0].toString(), type);
                             String status = socketMessage.msg_body;
                             msgStatusUpdate(status);
+                        } else if (strMessageType.
+                                equals(Constants.SOCK_MSG_TYPE_CUSTOM)) {
+                            msgCustom(args[0].toString());
                         }
                     }
                 });
         }
     };
+
+    private static void msgCustom (String message) {
+        String strMessageExtra = "";
+        try {
+            strMessageExtra = new JSONObject(message).
+                    getString(Constants.JSON_SOCK_MSG_EXTRA);
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, "Json exception while processing " + message);
+        }
+
+        if (strMessageExtra.equals(Constants.SOCK_MSG_TYPE_SEND_EMOTICON)) {
+            Type type = new TypeToken<
+                    SocketMessage<Integer>>() {}.getType();
+            SocketMessage<Integer> socketMessage =
+                    gson.fromJson(message, type);
+            Integer intEmoticonID = socketMessage.msg_body;
+            msgSendEmoticon(intEmoticonID);
+        }
+    }
 
     public final static Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
@@ -265,6 +288,10 @@ public class SocketInterface {
         GameplayManager.statusUpdated(status);
     }
 
+    private static void msgSendEmoticon (Integer intEmoticonID) {
+        FragmentManager.showOpponentEmoticon(intEmoticonID);
+    }
+
     //====================================================================================
 
     public static void emitQuitGame () {
@@ -325,6 +352,18 @@ public class SocketInterface {
         SocketMessage msg = new SocketMessage();
         msg.msg_type = Constants.SOCK_MSG_TYPE_INVITE_REJECTED;
         msg.msg_body = game_id;
+        mSocketIO.emit("message", gson.toJson(msg));
+    }
+
+    public static void emitSendEmoticon (String strSocketID, Integer intEmoticonID) {
+        Log.d(LOG_TAG, "emitSendEmoticon " + intEmoticonID);
+        SocketMessageExtra msg = new SocketMessageExtra();
+        ArrayList<String> idTo = new ArrayList<String>();
+        idTo.add(strSocketID);
+        msg.id_to = idTo;
+        msg.msg_type = Constants.SOCK_MSG_TYPE_CUSTOM;
+        msg.msg_body = intEmoticonID;
+        msg.msg_extra = Constants.SOCK_MSG_TYPE_SEND_EMOTICON;
         mSocketIO.emit("message", gson.toJson(msg));
     }
 }

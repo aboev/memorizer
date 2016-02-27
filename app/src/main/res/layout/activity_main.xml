@@ -18,24 +18,72 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <com.desarrollodroide.libraryfragmenttransactionextended.SlidingRelativeLayout
+            android:id="@+id/fragment_players_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:id="@+id/fragment_players_info_container">
+            android:layout_gravity="center">
         </com.desarrollodroide.libraryfragmenttransactionextended.SlidingRelativeLayout>
 
         <com.desarrollodroide.libraryfragmenttransactionextended.SlidingRelativeLayout
+            android:id="@+id/fragment_flashcard_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:id="@+id/fragment_flashcard_container">
+            android:layout_below="@+id/fragment_players_info_container">
         </com.desarrollodroide.libraryfragmenttransactionextended.SlidingRelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutEmoticons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            android:background="@color/colorMain">
+            <ImageView
+                android:id="@+id/imageViewEmoticon1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/emoticon1"/>
+            <ImageView
+                android:id="@+id/imageViewEmoticon2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/emoticon2"/>
+            <ImageView
+                android:id="@+id/imageViewEmoticon3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/emoticon3"/>
+            <ImageView
+                android:id="@+id/imageViewEmoticon4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/emoticon4"/>
+            <ImageView
+                android:id="@+id/imageViewEmoticon5"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/emoticon5"/>
+            <ImageView
+                android:id="@+id/imageViewEmoticon6"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/emoticon6"/>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewNetworkState"
@@ -45,7 +93,7 @@
             android:gravity="center_horizontal"
             android:text="@string/string_poor_network"
             android:visibility="gone"/>
-    </LinearLayout>
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
