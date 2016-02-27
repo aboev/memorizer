@@ -162,7 +162,7 @@ public class GameplayManager {
         });
     }
 
-    public static final void requestMultiplayerGameStart(final String strOpponentName,
+    public static final void requestMultiplayerGame(final String strOpponentName,
             final String strGID) {
         if ((Multicards.getPreferences().strUserID == null) ||
                 Multicards.getPreferences().strUserID.isEmpty())

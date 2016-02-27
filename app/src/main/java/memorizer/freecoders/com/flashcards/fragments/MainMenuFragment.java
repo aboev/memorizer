@@ -125,7 +125,7 @@ public class MainMenuFragment extends Fragment {
             public void onResponse(Object obj) {
                 String strOpponentName = (obj != null) ? (String) obj : null;
                 GameplayManager.strOpponentName = strOpponentName;
-                GameplayManager.requestMultiplayerGameStart(strOpponentName, strGID);
+                GameplayManager.requestMultiplayerGame(strOpponentName, strGID);
             }
         });
         Multicards.getCardsetPickerActivity().finish();
