@@ -275,7 +275,7 @@ public class GameplayManager {
                                     if (Multicards.getMainActivity().boolIsForeground)
                                         SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
                                 }
-                            });
+                            }, invitation);
 
                 InputDialogInterface.showProgressBar(Multicards.getMainActivity().
                                 getResources().getString(R.string.string_waiting_opponent),
