@@ -126,4 +126,6 @@ public class Constants {
 
     public static Integer FLAG_CARDSET_INVERTED = 0;
 
+    public static Integer DURATION_ANSWER_HIGHLIGHT_ANIM = 1000;
+
 }

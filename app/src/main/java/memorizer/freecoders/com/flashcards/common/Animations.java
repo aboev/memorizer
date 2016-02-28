@@ -25,7 +25,7 @@ public class Animations {
     public final static void highlightColor (View view,
             int colorStart, int colorEnd, final CallbackInterface onAnimationEnd) {
 
-        int duration = 1000;
+        int duration = Constants.DURATION_ANSWER_HIGHLIGHT_ANIM;
         AnimatorSet mAnimationSet = new AnimatorSet();
         ObjectAnimator fadeIn = ObjectAnimator.ofObject(view, "backgroundColor",
                 new ArgbEvaluator(), colorStart, colorEnd);
