@@ -198,6 +198,14 @@ public class GameOverActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onPause()
+    {
+        super.onPause();
+        FragmentManager.returnToMainMenu(false);
+        finish();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
