@@ -10,9 +10,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.QCardset;
@@ -105,6 +107,7 @@ public class InvitationFragment extends DialogFragment {
     public void dismissFragment () {
         Fragment prev = Multicards.getMainActivity().
                 getFragmentManager().findFragmentByTag(Constants.TAG_INVITATION_FRAGMENT);
+        FragmentManager.setUIStates.remove(Constants.UI_DIALOG_INCOMING_INVITATION);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;
             df.dismiss();

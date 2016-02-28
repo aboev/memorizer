@@ -267,6 +267,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.d(LOG_TAG, "onResume");
         boolIsForeground = true;
+        if (FragmentManager.setUIStates.contains(Constants.UI_DIALOG_INCOMING_INVITATION))
+            InputDialogInterface.clearNotification(0, this);
     }
 
     @Override
