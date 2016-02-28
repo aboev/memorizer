@@ -197,6 +197,7 @@ public class InputDialogInterface {
         gameInvitationFragment.setOnClickOKListener(onEnter);
         gameInvitationFragment.setOnClickCancelListener(onCancel);
         gameInvitationFragment.show(fm, Constants.TAG_INVITATION_FRAGMENT);
+        FragmentManager.setUIStates.add(Constants.UI_DIALOG_INCOMING_INVITATION);
     }
 
     public static final void showModalDialog(String strMessage, Activity activity) {
