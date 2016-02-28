@@ -2,6 +2,7 @@ package memorizer.freecoders.com.flashcards;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -71,14 +72,13 @@ public class MultiplayerInterface {
     public void eventAnswerAccepted (int questionID) {
         if ((currentGame.currentQuestion != null) &&
                 (currentGame.currentQuestion.question_id == questionID)) {
-            CallbackInterface onAnimationEnd = new CallbackInterface() {
+            FragmentManager.currentFlashCardFragment.answerHighlight(currentAnswer, false, null);
+            Utils.postDelayed(new CallbackInterface() {
                 @Override
                 public void onResponse(Object obj) {
                     invokeEvent(EVENT_USER_WAIT, "");
                 }
-            };
-            FragmentManager.currentFlashCardFragment.answerHighlight(currentAnswer, false,
-                    onAnimationEnd);
+            }, Constants.DURATION_ANSWER_HIGHLIGHT_ANIM);
             if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                     == currentAnswer) {
                 FragmentManager.playersInfoFragment.highlightAnswer(0, true, null);
@@ -101,26 +101,23 @@ public class MultiplayerInterface {
     public void eventOpponentAnswer(String strAnswerID) {
         Integer intAnswerID = Integer.valueOf(strAnswerID);
 
+        FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true, null);
         if (FragmentManager.currentFlashCardFragment.mFlashCard.answer_id
                 == intAnswerID) {
             CallbackInterface onAnimationEnd = null;
             if (currentGame.boolAnswerConfirmed ||
                     (!currentGame.strUserStatus.equals(Constants.PLAYER_STATUS_ANSWERED))) {
-                onAnimationEnd = new CallbackInterface() {
+                Utils.postDelayed(new CallbackInterface() {
                     @Override
                     public void onResponse(Object obj) {
                         invokeEvent(EVENT_USER_WAIT, "");
                     }
-                };
+                }, Constants.DURATION_ANSWER_HIGHLIGHT_ANIM);
                 FragmentManager.currentFlashCardFragment.setEmptyOnFlashcardItemClickListener();
             }
             FragmentManager.playersInfoFragment.highlightAnswer(1, true, null);
-            FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true,
-                    onAnimationEnd);
-        } else {
+        } else
             FragmentManager.playersInfoFragment.highlightAnswer(1, false, null);
-            FragmentManager.currentFlashCardFragment.answerHighlight(intAnswerID, true, null);
-        }
     }
 
     public void eventNewQuestion (Question question, HashMap<String, Integer> scores) {

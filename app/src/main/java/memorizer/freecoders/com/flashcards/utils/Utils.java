@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -48,6 +49,18 @@ import memorizer.freecoders.com.flashcards.network.StringRequest;
  */
 public class Utils {
     private static String LOG_TAG = "Utils";
+
+    public static final String extractOpponentSocketID(HashMap<String, UserDetails> map) {
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String strSocketID = (String) pair.getKey();
+            if (!strSocketID.equals(Multicards.getPreferences().strSocketID))
+                return strSocketID;
+            it.remove();
+        }
+        return null;
+    }
 
     public static final UserDetails extractOpponentProfile(HashMap<String, UserDetails> map) {
         Iterator it = map.entrySet().iterator();
@@ -260,6 +273,17 @@ public class Utils {
                 }
             }, null);
         } else callbackInterface.onResponse(null);
+    }
+
+
+    public final static void postDelayed (final CallbackInterface callback, Integer intDelay) {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                callback.onResponse(null);
+            }
+        }, intDelay);
     }
 
 }
