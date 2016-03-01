@@ -37,7 +37,6 @@ public class RegistrationIntentService extends IntentService {
 
     private void sendRegistrationToServer(String token) {
         Multicards.getPreferences().strPushID = token;
-        Multicards.getPreferences().boolPushIDsent = false;
         Multicards.getPreferences().savePreferences();
         Utils.refreshPushID();
     }
