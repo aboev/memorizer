@@ -92,18 +92,24 @@ public class FlashCardFragment extends Fragment {
             Visual animation of opponent answer
          */
         Log.d(LOG_TAG, "Highlighting answer " + intAnswerID);
-        if ((intAnswerID >= 0) && (intAnswerID < flashCardsListView.getChildCount())) {
-            View option = flashCardsListView.getChildAt(intAnswerID);
+
+        if (mFlashCard.answer_id == intAnswerID)
+            listViewAdapter.setCorrectAnswer(intAnswerID);
+        else
+            listViewAdapter.setWrongAnswer(intAnswerID);
+
+        int firstListItemPosition = flashCardsListView.getFirstVisiblePosition();
+        int lastListItemPosition = firstListItemPosition + flashCardsListView.getChildCount();
+        if ((intAnswerID >= firstListItemPosition) && (intAnswerID < lastListItemPosition)) {
+            int childIndex = intAnswerID - firstListItemPosition;
+
+            View option = flashCardsListView.getChildAt(childIndex);
+
             TextView textView = (TextView) option.findViewById(R.id.TextView_ButtonName);
             int colorFrom = Color.argb(0, 0, 255, 0);
             int colorTo = Color.argb(255, 0, 255, 0); // Green (correct answer)
-            final Boolean boolCorrect;
-            if (mFlashCard.answer_id == intAnswerID)
-                boolCorrect = true;
-            else {
+            if (mFlashCard.answer_id != intAnswerID)
                 colorTo = Color.argb(255, 255, 0, 0); // Red (wrong answer)
-                boolCorrect = false;
-            }
 
             Animations.highlightColor(textView, colorFrom, colorTo, onComplete);
         }

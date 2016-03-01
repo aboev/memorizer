@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import memorizer.freecoders.com.flashcards.R;
 
@@ -18,7 +20,7 @@ public class ListViewAdapter extends ArrayAdapter<String>{
     private Context context;
     private ArrayList<String> values;
     private int intCorrectAnswer = -1;
-    private int intWrongAnswer = -1;
+    private Set<Integer> setWrongAnswers = new HashSet<Integer>();
 
     public ListViewAdapter(Context context) {
         super(context, -1);
@@ -30,7 +32,10 @@ public class ListViewAdapter extends ArrayAdapter<String>{
     }
 
     public void setWrongAnswer (int intWrongAnswer){
-        this.intWrongAnswer = intWrongAnswer;
+        if (intWrongAnswer == -1)
+            setWrongAnswers.clear();
+        else
+            setWrongAnswers.add(intWrongAnswer);
     }
 
     public void setValues(ArrayList<String> values) {
@@ -54,7 +59,7 @@ public class ListViewAdapter extends ArrayAdapter<String>{
         View rowView;
         if (position == intCorrectAnswer)
             rowView = inflater.inflate(R.layout.button_right, parent, false);
-        else if (position == intWrongAnswer)
+        else if (setWrongAnswers.contains(position))
             rowView = inflater.inflate(R.layout.button_wrong, parent, false);
         else
             rowView = inflater.inflate(R.layout.button, parent, false);
