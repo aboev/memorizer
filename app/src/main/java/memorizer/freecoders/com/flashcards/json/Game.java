@@ -12,4 +12,5 @@ public class Game {
     public Integer status;
     public HashMap<String, UserDetails> profiles;
     public CardSet cardset;
+    public Integer total_questions;
 }
