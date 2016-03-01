@@ -50,6 +50,7 @@ public class Constants {
     public final static String KEY_LATEST_APK_VER = "latest_ver";
     public final static String KEY_LATEST_APK_URL = "latest_apk";
     public final static String KEY_MIN_CLIENT_VERSION = "min_client";
+    public final static String KEY_UPDATE_COMMENT = "update_comment";
 
     public final static String SOCKET_CHANNEL_NAME = "event";
 
