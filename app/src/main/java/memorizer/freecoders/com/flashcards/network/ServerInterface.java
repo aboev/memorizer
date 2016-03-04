@@ -18,6 +18,7 @@ import memorizer.freecoders.com.flashcards.common.ConstantsPrivate;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.QCardset;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
@@ -114,49 +115,6 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
-    public static final void newGameRequest(
-            String strSetID,
-            String strOpponentName,
-            final Response.Listener<ServerResponse<Game>> responseListener,
-            final Response.ErrorListener errorListener) {
-        HashMap<String, String> headers = makeHTTPHeaders();
-        headers.put(Constants.HEADER_OPPONENTNAME, strOpponentName);
-        Log.d(LOG_TAG, "New game request");
-        if (strSetID != null)
-            headers.put(Constants.HEADER_SETID, strSetID);
-        StringRequest request = new StringRequest(Request.Method.POST,
-                Constants.SERVER_URL + Constants.SERVER_PATH_GAME ,
-                "", headers,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(LOG_TAG, "Response: " + response);
-                        Type type = new TypeToken<ServerResponse
-                                <Game>>(){}.getType();
-                        try {
-                            ServerResponse<Game> res =
-                                    gson.fromJson(response, type);
-                            if ( res != null && responseListener != null)
-                                responseListener.onResponse(res);
-                            else if (errorListener != null)
-                                errorListener.onErrorResponse(new VolleyError());
-                        } catch (Exception e) {
-                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
-                            if (errorListener != null) errorListener.onErrorResponse(
-                                    new VolleyError());
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (errorListener != null) errorListener.onErrorResponse(error);
-            }
-        }
-        );
-        VolleySingleton.getInstance(Multicards.getMainActivity()).
-                addToRequestQueue(request);
-    }
-
     public static final void startGameRequest(
             Boolean boolNewGame,
             String strGID,
@@ -217,6 +175,45 @@ public class ServerInterface {
                                 <ArrayList<Game>>>(){}.getType();
                         try {
                             ServerResponse<ArrayList<Game>> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && (responseListener != null) &&
+                                    res.data != null)
+                                responseListener.onResponse(res.data);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void getInvitationsRequest(
+            final Response.Listener<ArrayList<InvitationDescriptor>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        Log.d(LOG_TAG, "Get invitations request");
+        StringRequest request = new StringRequest(Request.Method.GET,
+                Constants.SERVER_URL + Constants.SERVER_PATH_INVITATIONS,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <ArrayList<InvitationDescriptor>>>(){}.getType();
+                        try {
+                            ServerResponse<ArrayList<InvitationDescriptor>> res =
                                     gson.fromJson(response, type);
                             if ( res != null && res.isSuccess() && (responseListener != null) &&
                                     res.data != null)
