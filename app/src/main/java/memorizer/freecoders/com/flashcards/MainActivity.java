@@ -3,6 +3,7 @@ package memorizer.freecoders.com.flashcards;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -164,8 +165,9 @@ public class MainActivity extends AppCompatActivity {
                 Multicards.getPreferences().strUserID.isEmpty()) {
             final UserDetails userDetails = new UserDetails();
             userDetails.locale = Utils.getLocale();
+            userDetails.deviceid = Utils.getDeviceID();
             ServerInterface.registerUserRequest(
-                    new UserDetails(),
+                    userDetails,
                     new Response.Listener<UserDetails>() {
                         @Override
                         public void onResponse(UserDetails response) {
