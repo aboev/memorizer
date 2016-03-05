@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy");
-        if (isFinishing()) {
+        if ((isFinishing()) && (SocketInterface.getSocketIO() != null)) {
             SocketInterface.getSocketIO().disconnect();
             SocketInterface.getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
                     SocketInterface.onNewSocketMessage);

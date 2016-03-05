@@ -776,7 +776,10 @@ public class ServerInterface {
                 cancelAll(new RequestQueue.RequestFilter() {
                     @Override
                     public boolean apply(Request<?> request) {
-                        return request.getTag().toString().equals(strTag);
+                        if (request.getTag() != null)
+                            return request.getTag().toString().equals(strTag);
+                        else
+                            return false;
                     }
                 });
     }
