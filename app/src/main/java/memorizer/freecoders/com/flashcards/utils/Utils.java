@@ -3,6 +3,8 @@ package memorizer.freecoders.com.flashcards.utils;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -16,10 +18,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.google.gson.Gson;
+import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,6 +54,7 @@ import memorizer.freecoders.com.flashcards.network.StringRequest;
  */
 public class Utils {
     private static String LOG_TAG = "Utils";
+    private static PrettyTime pTime = new PrettyTime();
 
     public static final String extractOpponentSocketID(HashMap<String, UserDetails> map) {
         Iterator it = map.entrySet().iterator();
@@ -296,6 +301,56 @@ public class Utils {
     public final static String getDeviceID () {
         return Settings.Secure.getString(Multicards.getMainActivity().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+    }
+
+    public final static String[] parseGID (String strGID) {
+        return strGID.split("_");
+    }
+
+    public final static Long getSetID (String strGID) {
+        Long res = null;
+        if (parseGID(strGID).length > 1)
+            res = Long.valueOf(parseGID(strGID)[1]);
+        return res;
+    }
+
+    public final static String getPrettyDate (Long time) {
+        return pTime.format(new Date(time));
+    }
+
+    public final static Boolean arrayContains (String[] array, String value) {
+        for (int i = 0; i < array.length; i++)
+            if (array[i].equals(value)) {
+                return true;
+            }
+        return false;
+    }
+
+    public final static Boolean arrayContains (Integer[] array, Integer value) {
+        for (int i = 0; i < array.length; i++)
+            if (array[i].equals(value)) {
+                return true;
+            }
+        return false;
+    }
+
+    public final static Drawable getDrawable (String strName) {
+        Resources resources = Multicards.getMainActivity().getResources();
+        final int resourceId = resources.getIdentifier(strName, "drawable",
+                Multicards.getMainActivity().getPackageName());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return resources.getDrawable(resourceId, Multicards.getMainActivity().getTheme());
+        } else {
+            return resources.getDrawable(resourceId);
+        }
+    }
+
+    public final static Drawable getCountryFlagByLang (String strLang) {
+        if (Constants.countryMap.containsKey(strLang)) {
+            String strFilename = Constants.countryMap.get(strLang);
+            return getDrawable(strFilename);
+        } else
+            return  null;
     }
 
 }

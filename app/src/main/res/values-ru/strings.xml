@@ -96,4 +96,6 @@
     <string name="action_settings">Настройки</string>
     <string name="string_winner_you">Вы победили!</string>
 
+    <string name="string_played">Играли </string>
+
 </resources>

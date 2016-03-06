@@ -86,6 +86,8 @@ public class FlashCardsDAO {
                         cardset.terms_count = response.terms.size();
                         cardset.has_images = response.has_images;
                         cardset.inverted = false;
+                        cardset.lang_terms = response.lang_terms;
+                        cardset.lang_definitions = response.lang_definitions;
                         cardset.save();
                         int cnt = 0;
                         for (int i = 0; i < response.terms.size(); i++) {

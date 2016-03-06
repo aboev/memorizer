@@ -7,8 +7,9 @@ public class CardSet {
     public String gid;
     String cardset_id;
     public String title;
-    String lang_terms;
-    String lang_definitions;
+    public String lang_terms;
+    public String lang_definitions;
     String[] likes = new String[]{};
-    Integer like_count;
+    public Integer[] flags = new Integer[]{};
+    public Integer like_count;
 }

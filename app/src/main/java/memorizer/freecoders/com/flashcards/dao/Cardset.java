@@ -26,4 +26,8 @@ public class Cardset extends Model {
     public Boolean inverted;
     @Column(name = "has_images")
     public Boolean has_images;
+    @Column(name = "lang_terms")
+    public String lang_terms;
+    @Column(name = "lang_definitions")
+    public String lang_definitions;
 }

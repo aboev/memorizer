@@ -2,7 +2,6 @@ package memorizer.freecoders.com.flashcards;
 
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
@@ -20,14 +19,12 @@ import memorizer.freecoders.com.flashcards.classes.GameplayData;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
-import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.fragments.FlashCardFragment;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
-import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.SocketInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
@@ -229,6 +226,7 @@ public class GameplayManager {
         FragmentManager.playersInfoFragment.initInfo();
         Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.VISIBLE);
         FragmentManager.initEmoticons();
+        Utils.vibrateSignal();
     }
 
     public static final void quitMultilayerGame(GameOverMessage gameOverMessage) {
@@ -288,7 +286,8 @@ public class GameplayManager {
                             }
                         });
 
-                Multicards.getPreferences().setRecentCardset(invitation);
+                if ((invitation.game != null) && (invitation.game.game_gid != null))
+                    Multicards.getPreferences().setRecentCardset(invitation.game.game_gid);
             }
         }, new CallbackInterface() {
             @Override

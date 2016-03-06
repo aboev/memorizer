@@ -10,4 +10,5 @@
     <color name="colorSelected">#b2fc92</color>
     <color name="colorMain">#fffef7</color>
     <color name="colorButton">#cdfffa</color>
+    <color name="colorBlind">#dcdcdc</color>
 </resources>

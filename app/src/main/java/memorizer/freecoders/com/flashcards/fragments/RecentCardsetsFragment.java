@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.squareup.okhttp.internal.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 26.12.15.
@@ -91,7 +93,10 @@ public class RecentCardsetsFragment extends Fragment{
                 QuizletCardsetDescriptor descriptor = new QuizletCardsetDescriptor();
                 descriptor.title = cardset.title;
                 descriptor.created_by = cardset.created_by;
+                if (Utils.getSetID(cardset.gid) != null) descriptor.id = Utils.getSetID(cardset.gid);
                 descriptor.gid = cardset.gid;
+                descriptor.lang_terms = cardset.lang_terms;
+                descriptor.lang_definitions = cardset.lang_definitions;
                 cardsetDescriptors.add(descriptor);
             } else {
                 if (Multicards.getPreferences().recentSetDescriptors.containsKey(strGID)) {
