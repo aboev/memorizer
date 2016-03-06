@@ -301,7 +301,7 @@ public class InputDialogInterface {
                 R.mipmap.ic_launcher);
         NotificationCompat.Builder mBuilder = new NotificationCompat.
                 Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_logo_tiny5)
                 .setContentTitle(context.getResources().
                         getString(R.string.string_game_invitation))
                 .setSound(soundUri)
