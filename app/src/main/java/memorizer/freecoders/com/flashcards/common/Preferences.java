@@ -176,8 +176,8 @@ public final class Preferences {
                 new Response.Listener<QuizletCardsetDescriptor>() {
                     @Override
                     public void onResponse(QuizletCardsetDescriptor response) {
-                        Log.d(LOG_TAG, "Setting recent quizlet cardset " + strGID +
-                        " value " + gson.toJson(response));
+                        response.terms = null;
+                        response.gid = Constants.Q_PREFIX + response.id;
                         recentSets.put(strGID, System.currentTimeMillis());
                         recentSetDescriptors.put(strGID, response);
                         savePreferences();
