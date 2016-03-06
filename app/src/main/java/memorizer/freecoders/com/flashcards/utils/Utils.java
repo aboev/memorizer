@@ -45,6 +45,7 @@ import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.BonusDescriptor;
 import memorizer.freecoders.com.flashcards.json.GameOverMessage;
+import memorizer.freecoders.com.flashcards.json.ServerInfo;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.network.StringRequest;
@@ -141,10 +142,11 @@ public class Utils {
 
     public final static void checkLatestVersion () {
         ServerInterface.getServerInfoRequest(
-                new Response.Listener<HashMap<String, String>>() {
+                new Response.Listener<ServerInfo>() {
                     @Override
-                    public void onResponse(HashMap<String, String> response) {
+                    public void onResponse(ServerInfo response) {
                         Gson gson = new Gson();
+                        Log.d(LOG_TAG, "Server info " + gson.toJson(response));
                         String strServerInfo = gson.toJson(response);
                         if (Multicards.getPreferences().strServerInfo.equals(strServerInfo)) return;
                         PackageInfo pInfo = null;
@@ -153,19 +155,21 @@ public class Utils {
                                     Multicards.getMainActivity().getPackageName(), 0);
                         } catch (PackageManager.NameNotFoundException e) {
                         }
-                        if (response.containsKey(Constants.KEY_LATEST_APK_VER) &&
-                                response.containsKey(Constants.KEY_LATEST_APK_URL) &&
-                                response.containsKey(Constants.KEY_MIN_CLIENT_VERSION) &&
-                                pInfo != null) {
-                            int intLatestAPKVersion = Integer.
-                                    valueOf(response.get(Constants.KEY_LATEST_APK_VER));
-                            int intMinClientVersion = Integer.
-                                    valueOf(response.get(Constants.KEY_MIN_CLIENT_VERSION));
+                        if ((response.latest_ver != null) && (response.latest_apk != null) &&
+                                (response.min_client != null) && pInfo != null) {
+                            int intLatestAPKVersion = Integer.valueOf(response.latest_ver);
+                            int intMinClientVersion = Integer.valueOf(response.min_client);
+
+
+                            String strMessage = "";
+                            if ((response.update_comment != null) &&
+                                    (Utils.getLocaleString(response.update_comment) != null))
+                                strMessage = Utils.getLocaleString(response.update_comment);
 
                             if (intMinClientVersion > pInfo.versionCode)
-                                InputDialogInterface.showUpdateDialog(true, "", response);
+                                InputDialogInterface.showUpdateDialog(true, strMessage, response);
                             else if (intLatestAPKVersion > pInfo.versionCode)
-                                InputDialogInterface.showUpdateDialog(false, "", response);
+                                InputDialogInterface.showUpdateDialog(false, strMessage, response);
                         }
                     }
                 }, null);

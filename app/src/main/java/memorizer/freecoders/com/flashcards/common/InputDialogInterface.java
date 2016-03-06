@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.squareup.okhttp.internal.Util;
 
 import java.io.File;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import memorizer.freecoders.com.flashcards.fragments.InvitationFragment;
 import memorizer.freecoders.com.flashcards.fragments.PickGameFragment;
 import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
+import memorizer.freecoders.com.flashcards.json.ServerInfo;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -233,16 +236,18 @@ public class InputDialogInterface {
     }
 
     public static final void showUpdateDialog (Boolean boolMandatory, String strMessage,
-                                               final HashMap<String, String> serverInfo) {
+                                               final ServerInfo serverInfo) {
 
-        final String strURL = serverInfo.get(Constants.KEY_LATEST_APK_URL);
+        final String strURL = serverInfo.latest_apk;
 
-        final String strLocalFilename = serverInfo.get(Constants.KEY_LATEST_APK_VER) + ".apk";
+        final String strLocalFilename = serverInfo.latest_ver + ".apk";
         AlertDialog.Builder alert = new AlertDialog.Builder(Multicards.getMainActivity());
         if (boolMandatory)
-            alert.setMessage(R.string.alert_update_required + " \n" + strMessage);
+            alert.setMessage(Multicards.getMainActivity().getResources().
+                    getString(R.string.alert_update_required) + " \n" + strMessage);
         else
-            alert.setMessage(R.string.alert_new_version_available + " \n" + strMessage);
+            alert.setMessage(Multicards.getMainActivity().getResources().
+                    getString(R.string.alert_new_version_available) + " \n" + strMessage);
         alert.setPositiveButton(R.string.string_ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -268,6 +273,15 @@ public class InputDialogInterface {
                         Multicards.getPreferences().savePreferences();
                     }
                 });
+        if (boolMandatory)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        Multicards.getMainActivity().finish();
+                    }
+                });
+            }
         if (!boolMandatory) {
             alert.setNegativeButton(R.string.string_cancel,
                     new DialogInterface.OnClickListener() {
@@ -308,6 +322,38 @@ public class InputDialogInterface {
                 .setLargeIcon(bitmap)
                 .setVibrate(new long[] {0, 1000})
                 .setContentText(strContext);
+
+        mBuilder.setContentIntent(intent);
+        mBuilder.setAutoCancel(true);
+        mBuilder.setOnlyAlertOnce(true);
+
+        NotificationManager notifyMgr = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Integer notificationID = 0;
+        notifyMgr.notify(notificationID, mBuilder.build());
+    }
+
+    public static final void showUpdateNotification(
+            ServerInfo serverInfo,
+            PendingIntent intent, Context context) {
+        String strMessage = "";
+        if ((serverInfo.update_comment != null)
+                && (Utils.getLocaleString(serverInfo.update_comment) != null))
+            strMessage = Utils.getLocaleString(serverInfo.update_comment);
+        Uri soundUri = RingtoneManager
+                .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
+                R.mipmap.ic_launcher);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.
+                Builder(context)
+                .setSmallIcon(R.drawable.ic_logo_tiny5)
+                .setContentTitle(context.getResources().
+                        getString(R.string.alert_new_version_available))
+                .setSound(soundUri)
+                .setLargeIcon(bitmap)
+                .setVibrate(new long[] {0, 1000})
+                .setContentText(strMessage);
 
         mBuilder.setContentIntent(intent);
         mBuilder.setAutoCancel(true);

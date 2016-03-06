@@ -79,6 +79,7 @@ public class Constants {
     public static String SOCK_MSG_TYPE_CONFIRM = "receive_confirm";
     public static String SOCK_MSG_TYPE_CUSTOM = "custom";
     public static String SOCK_MSG_TYPE_SEND_EMOTICON = "send_emoticon";
+    public static String SOCK_MSG_TYPE_NEW_UPDATE = "new_update";
 
     public static Integer GAME_STATUS_SEARCHING_PLAYERS = 0;
     public static Integer GAME_STATUS_WAITING_OPPONENT = 1;
@@ -119,6 +120,7 @@ public class Constants {
     public final static int INTENT_PICK_IMAGE = 111;
     public final static int INTENT_PICK_IMAGE_KITKAT = 112;
     public final static int INTENT_INVITATION = 1;
+    public final static int INTENT_UPDATE = 2;
     public final static String FILENAME_AVATAR = "avatar.jpg";
 
     public final static String DEFAULT_LOCALE = "en";

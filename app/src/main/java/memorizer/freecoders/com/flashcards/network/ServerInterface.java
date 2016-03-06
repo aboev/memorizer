@@ -20,6 +20,7 @@ import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.Game;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.QCardset;
+import memorizer.freecoders.com.flashcards.json.ServerInfo;
 import memorizer.freecoders.com.flashcards.json.ServerResponse;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.json.TagDescriptor;
@@ -732,7 +733,7 @@ public class ServerInterface {
     }
 
     public static final void getServerInfoRequest (
-            final Response.Listener<HashMap<String, String>> responseListener,
+            final Response.Listener<ServerInfo> responseListener,
             final Response.ErrorListener errorListener) {
         HashMap<String, String> headers = makeHTTPHeaders();
         Log.d(LOG_TAG, "Get server info request");
@@ -742,10 +743,9 @@ public class ServerInterface {
                     @Override
                     public void onResponse(String response) {
                         Log.d(LOG_TAG, response);
-                        Type type = new TypeToken<ServerResponse
-                                <HashMap<String, String>>>(){}.getType();
+                        Type type = new TypeToken<ServerResponse<ServerInfo>>(){}.getType();
                         try {
-                            ServerResponse<HashMap<String, String>> res =
+                            ServerResponse<ServerInfo> res =
                                     gson.fromJson(response, type);
                             if ( res != null && res.isSuccess() && res.data != null
                                     && responseListener != null)

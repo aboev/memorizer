@@ -291,6 +291,8 @@ public class MainActivity extends AppCompatActivity {
                     GameplayManager.gameInvitation(invitationDescriptor);
                     InputDialogInterface.clearNotification(0, this);
                 }
+            } else if (intEventType == Constants.INTENT_UPDATE) {
+                Utils.OpenPlayMarketPage();
             }
         }
     }

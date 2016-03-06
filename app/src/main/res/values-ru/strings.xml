@@ -96,6 +96,9 @@
     <string name="action_settings">Настройки</string>
     <string name="string_winner_you">Вы победили!</string>
 
-    <string name="string_played">Играли </string>
+    <string name="string_played">Посл.раз играли </string>
+    <string name="string_author">Автор:</string>
+    <string name="string_total_cards">Карточек в наборе:</string>
+
 
 </resources>

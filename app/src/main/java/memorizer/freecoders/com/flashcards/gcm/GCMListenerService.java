@@ -20,6 +20,7 @@ import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
+import memorizer.freecoders.com.flashcards.json.ServerInfo;
 
 /**
  * Created by alex-mac on 13.02.16.
@@ -35,14 +36,25 @@ public class GCMListenerService extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("msg");
         String event = data.getString("event");
-        if ((event != null) && (event.equals(Constants.SOCK_MSG_TYPE_GAME_INVITE))) {
-            try {
-                InvitationDescriptor invitation =
-                        gson.fromJson(message, InvitationDescriptor.class);
-                sendNotification(invitation);
-            }catch (Exception e) {
-                e.printStackTrace();
-                Log.d(LOG_TAG, "Parsing exception " + e.getLocalizedMessage());
+        if (event != null) {
+            if (event.equals(Constants.SOCK_MSG_TYPE_GAME_INVITE)) {
+                try {
+                    InvitationDescriptor invitation =
+                            gson.fromJson(message, InvitationDescriptor.class);
+                    sendNotification(invitation);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(LOG_TAG, "Parsing exception " + e.getLocalizedMessage());
+                }
+            } else if (event.equals(Constants.SOCK_MSG_TYPE_NEW_UPDATE)) {
+                try {
+                    ServerInfo serverInfo =
+                            gson.fromJson(message, ServerInfo.class);
+                    sendNotification(serverInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(LOG_TAG, "Parsing exception " + e.getLocalizedMessage());
+                }
             }
         }
     }
@@ -53,5 +65,13 @@ public class GCMListenerService extends GcmListenerService {
         intent.putExtra(Constants.INTENT_META_EVENT_BODY, gson.toJson(invitation));
         PendingIntent pi = PendingIntent.getActivity(this, ran.nextInt(1000000), intent, 0);
         InputDialogInterface.showInvitationNotification(invitation, pi, this);
+    }
+
+    private void sendNotification(ServerInfo serverInfo) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.INTENT_META_EVENT_TYPE, Constants.INTENT_INVITATION);
+        intent.putExtra(Constants.INTENT_META_EVENT_BODY, gson.toJson(serverInfo));
+        PendingIntent pi = PendingIntent.getActivity(this, ran.nextInt(1000000), intent, 0);
+        InputDialogInterface.showUpdateNotification(serverInfo, pi, this);
     }
 }

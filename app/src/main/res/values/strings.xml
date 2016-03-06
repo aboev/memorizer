@@ -105,6 +105,8 @@
 
     <string name="string_user_not_found">Player not found, please check username</string>
 
-    <string name="string_played">Played</string>
+    <string name="string_played">Last played</string>
+    <string name="string_author">Author:</string>
+    <string name="string_total_cards">Cards in set:</string>
 
 </resources>
