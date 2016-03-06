@@ -100,8 +100,9 @@ public class FlashCardFragment extends Fragment {
 
         int firstListItemPosition = flashCardsListView.getFirstVisiblePosition();
         int lastListItemPosition = firstListItemPosition + flashCardsListView.getChildCount();
-        if ((intAnswerID >= firstListItemPosition) && (intAnswerID < lastListItemPosition)) {
-            int childIndex = intAnswerID - firstListItemPosition;
+        int childIndex = intAnswerID - firstListItemPosition
+                + flashCardsListView.getHeaderViewsCount();
+        if ((childIndex >= firstListItemPosition) && (childIndex <= lastListItemPosition)) {
 
             View option = flashCardsListView.getChildAt(childIndex);
 
