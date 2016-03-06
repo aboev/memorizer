@@ -161,10 +161,11 @@ public class Utils {
                                     valueOf(response.get(Constants.KEY_LATEST_APK_VER));
                             int intMinClientVersion = Integer.
                                     valueOf(response.get(Constants.KEY_MIN_CLIENT_VERSION));
+
                             if (intMinClientVersion > pInfo.versionCode)
-                                InputDialogInterface.showUpdateDialog(true, response);
+                                InputDialogInterface.showUpdateDialog(true, "", response);
                             else if (intLatestAPKVersion > pInfo.versionCode)
-                                InputDialogInterface.showUpdateDialog(false, response);
+                                InputDialogInterface.showUpdateDialog(false, "", response);
                         }
                     }
                 }, null);
@@ -351,6 +352,16 @@ public class Utils {
             return getDrawable(strFilename);
         } else
             return  null;
+    }
+
+    public final static String getLocaleString (HashMap<String, String> map) {
+        String strRes = "";
+        if (map != null)
+            if (map.containsKey(Utils.getLocale()))
+                strRes = map.get(Utils.getLocale());
+            else if (map.containsKey(Constants.DEFAULT_LOCALE))
+                strRes = map.get(Constants.DEFAULT_LOCALE);
+        return strRes;
     }
 
 }
