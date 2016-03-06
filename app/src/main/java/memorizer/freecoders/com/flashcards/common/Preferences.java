@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.MutableBoolean;
 
+import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,6 +18,8 @@ import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.TagDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
+import memorizer.freecoders.com.flashcards.network.ServerInterface;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 27.11.15.
@@ -133,17 +136,21 @@ public final class Preferences {
     }
 
     public void setRecentCardset(CardSet cardset) {
-        Log.d(LOG_TAG, "Setting recent cardset " + cardset.gid);
+        Log.d(LOG_TAG, "Setting recent cardset " + cardset.gid + " value " +
+            gson.toJson(cardset));
         QuizletCardsetDescriptor qcardset = new QuizletCardsetDescriptor();
         qcardset.title = cardset.title;
         qcardset.gid = cardset.gid;
+        qcardset.lang_terms = cardset.lang_terms;
+        qcardset.lang_definitions = cardset.lang_definitions;
         recentSets.put(qcardset.gid, System.currentTimeMillis());
         recentSetDescriptors.put(qcardset.gid, qcardset);
         savePreferences();
     }
 
     public void setRecentCardset(QuizletCardsetDescriptor cardset, String strGID) {
-        Log.d(LOG_TAG, "Setting recent qcardset " + strGID);
+        Log.d(LOG_TAG, "Setting recent qcardset " + strGID + " value " +
+            gson.toJson(cardset));
         cardset.gid = strGID;
         Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
         Multicards.getPreferences().recentSetDescriptors.put(strGID, cardset);
@@ -160,6 +167,22 @@ public final class Preferences {
         recentSets.put(qcardset.gid, System.currentTimeMillis());
         recentSetDescriptors.put(qcardset.gid, qcardset);
         savePreferences();
+    }
+
+    public void setRecentCardset (final String strGID) {
+        if (Utils.parseGID(strGID).length < 2) return;
+        String strSetID = Utils.parseGID(strGID)[1];
+        ServerInterface.fetchQuizletCardsetRequest(strSetID,
+                new Response.Listener<QuizletCardsetDescriptor>() {
+                    @Override
+                    public void onResponse(QuizletCardsetDescriptor response) {
+                        Log.d(LOG_TAG, "Setting recent quizlet cardset " + strGID +
+                        " value " + gson.toJson(response));
+                        recentSets.put(strGID, System.currentTimeMillis());
+                        recentSetDescriptors.put(strGID, response);
+                        savePreferences();
+                    }
+                }, null);
     }
 
 }
