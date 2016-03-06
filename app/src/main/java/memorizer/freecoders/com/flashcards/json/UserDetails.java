@@ -14,6 +14,7 @@ public class UserDetails {
     public Integer status;
     public String locale = "";
     public String pushid = "";
+    public String deviceid = "";
 
     public void setNullFields(){
         if (name.isEmpty()) name = null;
