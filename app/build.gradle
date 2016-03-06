@@ -30,6 +30,10 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE.txt'
     }
+
+    sourceSets {
+        main.res.srcDirs = ['src/main/res','src/main/res_extra']
+    }
 }
 
 dependencies {
