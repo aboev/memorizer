@@ -8,15 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.okhttp.internal.Util;
-
 import java.util.ArrayList;
 
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
-import memorizer.freecoders.com.flashcards.common.Preferences;
-import memorizer.freecoders.com.flashcards.dao.Cardset;
 import memorizer.freecoders.com.flashcards.json.CardSet;
 import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.utils.Utils;
@@ -60,7 +56,7 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView;
 
-        rowView = inflater.inflate(R.layout.cardsetpicker_item, parent, false);
+        rowView = inflater.inflate(R.layout.item_cardsetpicker, parent, false);
 
         TextView textViewCardsetTitle = (TextView) rowView.findViewById(R.id.textViewCardsetPickerItem);
         TextView textViewLikeCount = (TextView) rowView.findViewById(R.id.textViewCardsetSearchLikes);
