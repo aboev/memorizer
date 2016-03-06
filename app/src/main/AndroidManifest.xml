@@ -35,10 +35,10 @@
 
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="Memorizer.db" />
+            android:value="Memorizer_v2.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="13" />
+            android:value="1" />
 
         <activity
             android:name=".CardsetPickerActivity"
