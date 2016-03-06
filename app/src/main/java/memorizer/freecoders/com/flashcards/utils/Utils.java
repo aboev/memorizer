@@ -192,6 +192,12 @@ public class Utils {
         v.vibrate(50);
     }
 
+    public final static void vibrateSignal() {
+        Vibrator v = (Vibrator) Multicards.getMainActivity().
+                getSystemService(Multicards.getMainActivity().VIBRATOR_SERVICE);
+        v.vibrate(new long[] {0, 300, 300, 300, 300, 300}, -1);
+    }
+
     public final static void refreshPushID(){
         if ((Multicards.getPreferences().strUserID != null) &&
                 !Multicards.getPreferences().strUserID.isEmpty() &&
@@ -212,7 +218,7 @@ public class Utils {
 
     public final static void generateRandomGameplayData(int intGameType){
         String strGID = "quizlet_415";
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, true);
         if (cardset == null) {
             Log.d(LOG_TAG, "Cardset is empty");
             Multicards.getFlashCardsDAO().importFromWeb(strGID, null, null);
@@ -226,7 +232,7 @@ public class Utils {
 
     public final static void showRandomGameoverActivity(final int intGameType){
         final String strGID = "quizlet_415";
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, true);
 
         final CallbackInterface callbackInterface = new CallbackInterface() {
             @Override
