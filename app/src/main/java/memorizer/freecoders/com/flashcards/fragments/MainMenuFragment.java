@@ -159,7 +159,7 @@ public class MainMenuFragment extends Fragment {
     }
 
     private void startSinglePlayer (final String strGID) {
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, true);
         if (cardset == null) {
             Multicards.getFlashCardsDAO().importFromWeb(strGID,
                 new CallbackInterface() {

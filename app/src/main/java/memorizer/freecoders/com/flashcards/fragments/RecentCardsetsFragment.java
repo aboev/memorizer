@@ -86,7 +86,7 @@ public class RecentCardsetsFragment extends Fragment{
         while(iterator.hasNext()) {
             Map.Entry entry = (Map.Entry)iterator.next();
             String strGID = (String) entry.getKey();
-            Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+            Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, false);
             if (cardset != null) {
                 QuizletCardsetDescriptor descriptor = new QuizletCardsetDescriptor();
                 descriptor.title = cardset.title;

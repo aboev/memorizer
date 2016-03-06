@@ -195,17 +195,14 @@ public class FlashCardsDAO {
         return new ArrayList<Card>(cards);
     }
 
-    public Cardset fetchCardset(String strGID){
+    public Cardset fetchCardset(String strGID, Boolean boolSaveRecents){
         List<Cardset> cardsets = new Select()
                 .from(Cardset.class)
                 .where("gid = ?", strGID)
                 .limit(1)
                 .execute();
         if (cardsets.size() > 0) {
-            Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
-            Multicards.getPreferences().savePreferences();
-            Log.d(LOG_TAG, "Saving recent sets " +
-                    new Gson().toJson(Multicards.getPreferences().recentSets) );
+            if (boolSaveRecents) setRecentCardset(strGID);
             return cardsets.get(0);
         } else return null;
     }
@@ -214,5 +211,6 @@ public class FlashCardsDAO {
         Log.d(LOG_TAG, "Setting recent cardset " +  strGID);
         Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());
         Multicards.getPreferences().savePreferences();
+        Log.d(LOG_TAG, "Saving recent sets " + new Gson().toJson(Multicards.getPreferences().recentSets));
     }
 }
