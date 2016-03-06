@@ -232,7 +232,7 @@ public class InputDialogInterface {
             progressDialog.dismiss();
     }
 
-    public static final void showUpdateDialog (Boolean boolMandatory,
+    public static final void showUpdateDialog (Boolean boolMandatory, String strMessage,
                                                final HashMap<String, String> serverInfo) {
 
         final String strURL = serverInfo.get(Constants.KEY_LATEST_APK_URL);
@@ -240,9 +240,9 @@ public class InputDialogInterface {
         final String strLocalFilename = serverInfo.get(Constants.KEY_LATEST_APK_VER) + ".apk";
         AlertDialog.Builder alert = new AlertDialog.Builder(Multicards.getMainActivity());
         if (boolMandatory)
-            alert.setMessage(R.string.alert_update_required);
+            alert.setMessage(R.string.alert_update_required + " \n" + strMessage);
         else
-            alert.setMessage(R.string.alert_new_version_available);
+            alert.setMessage(R.string.alert_new_version_available + " \n" + strMessage);
         alert.setPositiveButton(R.string.string_ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
