@@ -42,7 +42,7 @@ public class GameplayData {
 
         if (strGID == null) return;
 
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID);
+        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, true);
         this.strGID = strGID;
 
         ArrayList<Card> cards = Multicards.getFlashCardsDAO().fetchRandomCards(cardset.getId(),
