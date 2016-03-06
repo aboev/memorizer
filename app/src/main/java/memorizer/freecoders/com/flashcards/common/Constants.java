@@ -133,6 +133,8 @@ public class Constants {
 
     public static Integer DURATION_ANSWER_HIGHLIGHT_ANIM = 1000;
 
+    public final static String Q_PREFIX = "quizlet_";
+
     public final static Map<String, String> countryMap = new HashMap<String, String>();
     static {
         countryMap.put("en", "united_kingdom_flag");
