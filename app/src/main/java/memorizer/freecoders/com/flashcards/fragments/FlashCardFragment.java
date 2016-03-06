@@ -42,7 +42,7 @@ public class FlashCardFragment extends Fragment {
     public CallbackInterface onAnswerPick;
     ListView flashCardsListView;
     public ListViewAdapter listViewAdapter;
-    AutoResizeTextView questionTextView;
+    TextView questionTextView;
     private int intActionType = INT_LOCAL_FLASHCARD;
 
 
@@ -118,8 +118,15 @@ public class FlashCardFragment extends Fragment {
 
     public boolean populateView() {
         flashCardsListView = (ListView) view.findViewById(R.id.ListView_FlashCard);
-        questionTextView = (AutoResizeTextView) view.findViewById(R.id.TextView_Question);
         listViewAdapter = new ListViewAdapter(view.getContext());
+
+        LayoutInflater inflater = Multicards.getMainActivity().getLayoutInflater();
+        ViewGroup header = (ViewGroup)inflater.inflate(R.layout.flashcard_header,
+                flashCardsListView, false);
+        questionTextView = (TextView) header.findViewById(R.id.textViewQuestion);
+
+        flashCardsListView.addHeaderView(header, null, false);
+
 
         questionTextView.setText(mFlashCard.question);
         listViewAdapter.setValues(mFlashCard.options);
@@ -128,6 +135,7 @@ public class FlashCardFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                position -= flashCardsListView.getHeaderViewsCount();
                 onAnswerPick.onResponse(position);
             }
         });
