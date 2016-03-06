@@ -9,4 +9,6 @@ public class QCardset {
     public Integer cardset_id;
     public String title;
     public ArrayList<Integer> flags;
+    public String lang_terms;
+    public String lang_definitions;
 }
