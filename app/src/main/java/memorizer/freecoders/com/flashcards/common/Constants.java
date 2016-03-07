@@ -121,6 +121,7 @@ public class Constants {
     public final static int INTENT_PICK_IMAGE_KITKAT = 112;
     public final static int INTENT_INVITATION = 1;
     public final static int INTENT_UPDATE = 2;
+    public final static int INTENT_INVITATION_ACCEPTED = 3;
     public final static String FILENAME_AVATAR = "avatar.jpg";
 
     public final static String DEFAULT_LOCALE = "en";
