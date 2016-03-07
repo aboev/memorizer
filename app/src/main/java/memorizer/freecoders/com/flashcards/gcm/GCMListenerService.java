@@ -64,7 +64,12 @@ public class GCMListenerService extends GcmListenerService {
         intent.putExtra(Constants.INTENT_META_EVENT_TYPE, Constants.INTENT_INVITATION);
         intent.putExtra(Constants.INTENT_META_EVENT_BODY, gson.toJson(invitation));
         PendingIntent pi = PendingIntent.getActivity(this, ran.nextInt(1000000), intent, 0);
-        InputDialogInterface.showInvitationNotification(invitation, pi, this);
+        if ((Multicards.getMainActivity() == null) ||
+                (!Multicards.getMainActivity().boolIsForeground))
+            InputDialogInterface.showInvitationNotification(invitation, pi, this);
+        else {
+            Multicards.getMainActivity().onNewIntent(intent);
+        }
     }
 
     private void sendNotification(ServerInfo serverInfo) {

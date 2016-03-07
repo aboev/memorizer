@@ -269,22 +269,22 @@ public class GameplayManager {
             public void onResponse(Object obj) {
                 if (game_id != -1)
                     SocketInterface.emitInvitationAccepted(game_id,
-                            new CallbackInterface() {
-                                @Override
-                                public void onResponse(Object obj) {
-                                    if (Multicards.getMainActivity().boolIsForeground)
-                                        SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
-                                }
-                            }, invitation);
-
-                InputDialogInterface.showProgressBar(Multicards.getMainActivity().
-                                getResources().getString(R.string.string_waiting_opponent),
                         new CallbackInterface() {
                             @Override
                             public void onResponse(Object obj) {
-                                Multicards.getMultiplayerInterface().quitGame();
+                                if (Multicards.getMainActivity().boolIsForeground)
+                                    SocketInterface.emitStatusUpdate(Constants.PLAYER_STATUS_WAITING);
+
+                                InputDialogInterface.showProgressBar(Multicards.getMainActivity().
+                                        getResources().getString(R.string.string_waiting_opponent),
+                                    new CallbackInterface() {
+                                        @Override
+                                        public void onResponse(Object obj) {
+                                            Multicards.getMultiplayerInterface().quitGame();
+                                        }
+                                    });
                             }
-                        });
+                        }, invitation);
 
                 if ((invitation.game != null) && (invitation.game.game_gid != null))
                     Multicards.getPreferences().setRecentCardset(invitation.game.game_gid);
