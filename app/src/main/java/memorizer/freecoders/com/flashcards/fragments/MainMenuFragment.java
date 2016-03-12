@@ -2,6 +2,8 @@ package memorizer.freecoders.com.flashcards.fragments;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,9 +105,19 @@ public class MainMenuFragment extends Fragment {
         imageViewInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InputDialogInterface.showModalDialog(Multicards.getMainActivity().
-                        getResources().getString(R.string.aboutText),
-                        Multicards.getMainActivity());
+                String strVersion = "";
+                try {
+                    PackageInfo pInfo = Multicards.getMainActivity().
+                            getPackageManager().getPackageInfo(
+                            Multicards.getMainActivity().getPackageName(), 0);
+                    strVersion = pInfo.versionName;
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                String strMessage = Multicards.getMainActivity().
+                        getResources().getString(R.string.aboutText) + "\n" +
+                        strVersion;
+                InputDialogInterface.showModalDialog(strMessage, Multicards.getMainActivity());
             }
         });
 
