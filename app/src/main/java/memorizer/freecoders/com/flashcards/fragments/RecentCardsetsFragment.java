@@ -74,6 +74,20 @@ public class RecentCardsetsFragment extends Fragment{
             }
         });
 
+        cardSetListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String strGID = "";
+                if (cardSetListAdapter.INT_ITEMS_TYPE == CardsetListAdapter.INT_ITEMS_TYPE_CARDSET)
+                    strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
+                else
+                    strGID = String.valueOf(cardSetListAdapter.qvalues.get(position).gid);
+
+                InputDialogInterface.showCardsetDetailsDialog(strGID);
+                return true;
+            }
+        });
+
         return view;
     }
 

@@ -10,14 +10,34 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/linearLayoutLoading">
+        <TextView
+            android:id="@+id/textViewLoading"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/string_loading"
+            android:gravity="center"/>
+        <ProgressBar
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            style="?android:attr/progressBarStyleLarge"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
         <ImageView
             android:id="@+id/imageViewLangFrom"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/russia_flag"
             android:padding="2dp"
-            android:alpha="0.5"/>
+            android:alpha="0.5" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

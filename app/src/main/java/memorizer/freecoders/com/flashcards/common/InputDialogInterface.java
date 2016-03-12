@@ -32,6 +32,7 @@ import memorizer.freecoders.com.flashcards.FragmentManager;
 import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
+import memorizer.freecoders.com.flashcards.fragments.CardsetDetailsFragment;
 import memorizer.freecoders.com.flashcards.fragments.InvitationFragment;
 import memorizer.freecoders.com.flashcards.fragments.PickGameFragment;
 import memorizer.freecoders.com.flashcards.fragments.PickOpponentFragment;
@@ -229,6 +230,15 @@ public class InputDialogInterface {
         gameInvitationFragment.setOnClickCancelListener(onCancel);
         gameInvitationFragment.show(fm, Constants.TAG_INVITATION_FRAGMENT);
         FragmentManager.setUIStates.add(Constants.UI_DIALOG_INCOMING_INVITATION);
+    }
+
+    public static final void showCardsetDetailsDialog (String strGID) {
+        android.app.FragmentManager fm =
+                Multicards.getCardsetPickerActivity().getFragmentManager();
+        CardsetDetailsFragment cardsetDetailsFragment = new CardsetDetailsFragment();
+        cardsetDetailsFragment.setGID(strGID);
+        cardsetDetailsFragment.show(fm, Constants.TAG_DETAILS_FRAGMENT);
+        FragmentManager.setUIStates.add(Constants.UI_DIALOG_CARDSET_DETAILS);
     }
 
     public static final void showModalDialog(String strMessage, Activity activity) {

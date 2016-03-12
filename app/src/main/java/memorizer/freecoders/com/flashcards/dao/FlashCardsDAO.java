@@ -171,6 +171,14 @@ public class FlashCardsDAO {
         } else return null;
     }
 
+    public List<Card> fetchCards(Long setID){
+        List<Card> cards = new Select()
+                .from(Card.class)
+                .where("SetID = ?", setID)
+                .execute();
+        return cards;
+    }
+
     public void setRecentCardset (String strGID) {
         Log.d(LOG_TAG, "Setting recent cardset " +  strGID);
         Multicards.getPreferences().recentSets.put(strGID, System.currentTimeMillis());

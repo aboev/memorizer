@@ -114,4 +114,6 @@
     <item>Flip flashcards</item>
     </string-array>
 
+    <string name="string_loading">Loading</string>
+
 </resources>

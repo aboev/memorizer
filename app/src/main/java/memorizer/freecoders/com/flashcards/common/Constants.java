@@ -103,6 +103,7 @@ public class Constants {
     public static Integer UI_DIALOG_WAITING_OPPONENT = 60;
     public static Integer UI_DIALOG_PICK_OPPONENT = 70;
     public static Integer UI_DIALOG_INCOMING_INVITATION = 80;
+    public static Integer UI_DIALOG_CARDSET_DETAILS = 90;
 
     public static Integer GAMEPLAY_QUESTIONS_PER_GAME = 20;
     public static Integer GAMEPLAY_OPTIONS_PER_QUESTION = 4;
@@ -132,6 +133,7 @@ public class Constants {
     public final static String TAG_PICK_OPPONENT_FRAGMENT = "pick_opponent_dialog";
     public final static String TAG_PICK_GAME_FRAGMENT = "pick_game_dialog";
     public final static String TAG_INVITATION_FRAGMENT = "invitation_dialog";
+    public final static String TAG_DETAILS_FRAGMENT = "cardset_details_dialog";
 
     public final static String APP_FOLDER = "multicards";
 

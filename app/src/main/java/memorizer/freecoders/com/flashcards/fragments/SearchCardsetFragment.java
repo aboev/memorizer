@@ -139,20 +139,44 @@ public class SearchCardsetFragment extends Fragment {
         cardSetListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String strGID = "";
+                String strGID = "";
 
-            if (cardSetListAdapter.INT_ITEMS_TYPE == CardsetListAdapter.INT_ITEMS_TYPE_CARDSET) {
-                strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
-                Multicards.getPreferences().setRecentCardset
-                        (cardSetListAdapter.values.get(position));
-            } else {
-                strGID = "quizlet_" + String.valueOf(cardSetListAdapter.qvalues.get(position).id);
-                Multicards.getPreferences().setRecentCardset
-                        (cardSetListAdapter.qvalues.get(position), strGID);
+                if (cardSetListAdapter.INT_ITEMS_TYPE == CardsetListAdapter.INT_ITEMS_TYPE_CARDSET) {
+                    strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
+                    Multicards.getPreferences().setRecentCardset
+                            (cardSetListAdapter.values.get(position));
+                } else {
+                    strGID = "quizlet_" + String.valueOf(cardSetListAdapter.qvalues.get(position).id);
+                    Multicards.getPreferences().setRecentCardset
+                            (cardSetListAdapter.qvalues.get(position), strGID);
+                }
+
+                if (Multicards.onPickCardsetCallback != null)
+                    Multicards.onPickCardsetCallback.onResponse(strGID);
             }
+        });
 
-            if (Multicards.onPickCardsetCallback != null)
-                Multicards.onPickCardsetCallback.onResponse(strGID);
+        cardSetListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String strGID = "";
+                if (cardSetListAdapter.INT_ITEMS_TYPE == CardsetListAdapter.INT_ITEMS_TYPE_CARDSET)
+                    strGID = String.valueOf(cardSetListAdapter.values.get(position).gid);
+                else
+                    strGID = "quizlet_" + String.valueOf(cardSetListAdapter.qvalues.get(position).id);
+                InputDialogInterface.showCardsetDetailsDialog(strGID);
+                return true;
+            }
+        });
+
+        popularCardSetListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final String strGID = String.valueOf(
+                        popularCardSetListAdapter.values.get(position).gid);
+                Log.d(LOG_TAG, "Onlongclick " + strGID);
+                InputDialogInterface.showCardsetDetailsDialog(strGID);
+                return true;
             }
         });
 

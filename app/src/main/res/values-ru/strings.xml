@@ -105,4 +105,6 @@
         <item>Перевернуть карточки</item>
     </string-array>
 
+    <string name="string_loading">Загрузка</string>
+
 </resources>
