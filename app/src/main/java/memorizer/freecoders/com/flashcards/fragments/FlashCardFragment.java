@@ -25,12 +25,16 @@ import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.AutoResizeTextView;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
+import memorizer.freecoders.com.flashcards.classes.GameplayData;
 import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
+import memorizer.freecoders.com.flashcards.json.CardSet;
+import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.quizlet.QuizletCardsetDescriptor;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
@@ -186,23 +190,49 @@ public class FlashCardFragment extends Fragment {
                         InputDialogInterface.showFlashcardSettingsDialog(new CallbackInterface() {
                             @Override
                             public void onResponse(Object obj) {
-                                Log.d(LOG_TAG, "Cardset is inverting");
-                                Log.d(LOG_TAG, "Cardset is inverting 1 " + GameplayManager.currentGameplay.strGID);
-                                String strGID = GameplayManager.currentGameplay.strGID;
-                                if ((strGID != null) && (!strGID.isEmpty())) {
-                                    ArrayList<String> flags = new ArrayList<String>();
-                                    flags.add(Constants.FLAG_CARDSET_INVERTED.toString());
-                                    ServerInterface.flagCardsetRequest(strGID, flags, null, null);
-                                    Cardset cardset = Multicards.getFlashCardsDAO().
-                                            fetchCardset(strGID, false);
-                                    Log.d(LOG_TAG, "Cardset is " + (cardset.inverted ? "inverted" : "not inverted"));
-                                    cardset.inverted = !cardset.inverted;
-                                    cardset.save();
+                                int pos = (int) obj;
+                                if (pos == 0) {
+                                    String strGID = GameplayManager.currentGameplay.strGID;
+                                    if ((strGID != null) && (!strGID.isEmpty())) {
+                                        ArrayList<String> flags = new ArrayList<String>();
+                                        flags.add(Constants.FLAG_CARDSET_INVERTED.toString());
+                                        ServerInterface.flagCardsetRequest(strGID, flags, null, null);
+                                        Cardset cardset = Multicards.getFlashCardsDAO().
+                                                fetchCardset(strGID, false);
+                                        cardset.inverted = !cardset.inverted;
+                                        cardset.save();
+                                    }
+                                } else if (pos == 1) {
+                                    Multicards.getPreferences().boolEnableSound =
+                                            !Multicards.getPreferences().boolEnableSound;
+                                    Multicards.getPreferences().savePreferences();
                                 }
                             }
                         });
                     }
                 });
+
+        try {
+            if ((Multicards.getPreferences().boolEnableSound)
+                    && (GameplayManager.currentGameplay != null)) {
+                if (GameplayManager.currentGameplay.intGameType == GameplayData.INT_MULTIPLAYER) {
+                    if ((Multicards.getMultiplayerInterface().currentGame != null) &&
+                            (Multicards.getMultiplayerInterface().currentGame.game != null) &&
+                            (Multicards.getMultiplayerInterface().currentGame.game.cardset != null)) {
+                        CardSet cardset = Multicards.getMultiplayerInterface().currentGame.game.
+                                cardset;
+                        Utils.pronounceText(cardset.lang_terms, mFlashCard.question_img.text);
+                    }
+                } else if (GameplayManager.currentGameplay.cardset != null) {
+                        Cardset cardset = GameplayManager.currentGameplay.cardset;
+                        String strLangFrom = cardset.lang_terms;
+                        if (cardset.inverted) strLangFrom = cardset.lang_definitions;
+                        Utils.pronounceText(strLangFrom, mFlashCard.question_img.text);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Pronounciation failed with error " + e.getLocalizedMessage());
+        }
 
         return true;
     }

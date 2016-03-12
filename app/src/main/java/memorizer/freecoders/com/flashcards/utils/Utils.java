@@ -1,5 +1,6 @@
 package memorizer.freecoders.com.flashcards.utils;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.ImageView;
@@ -57,6 +59,8 @@ public class Utils {
     private static String LOG_TAG = "Utils";
     private static PrettyTime pTime = new PrettyTime();
     public static Gson gson = new Gson();
+    public static TextToSpeech tts;
+    private static Boolean boolTTSLoaded = false;
 
     public static final String extractOpponentSocketID(HashMap<String, UserDetails> map) {
         Iterator it = map.entrySet().iterator();
@@ -385,6 +389,52 @@ public class Utils {
         res.add((int)newWidth);
         res.add((int)newHeight);
         return res;
+    }
+
+    public final static void pronounceText (final String strLangFrom, String strText) {
+        Log.d(LOG_TAG, "Pronouncing in language " + strLangFrom);
+        if (tts == null)
+            tts = new TextToSpeech(Multicards.getMainActivity(),
+                    new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if(status == TextToSpeech.SUCCESS){
+                        int result=tts.setLanguage(getLocaleByLang(strLangFrom));
+                        if(result==TextToSpeech.LANG_MISSING_DATA ||
+                                result==TextToSpeech.LANG_NOT_SUPPORTED){
+                            Log.e(LOG_TAG, "TTS language is not supported for " + strLangFrom);
+                        } else {
+                            boolTTSLoaded = true;
+                        }
+                    }
+                    else
+                        Log.e(LOG_TAG, "TTS initilization failed");
+                }
+            });
+        if (boolTTSLoaded) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ttsGreater21(strText);
+            } else {
+                ttsUnder20(strText);
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void ttsUnder20(String text) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static void ttsGreater21(String text) {
+        String utteranceId=Multicards.getMainActivity().hashCode() + "";
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
+
+    private static Locale getLocaleByLang (String strLangFrom) {
+        return new Locale(strLangFrom);
     }
 
 }

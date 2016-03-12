@@ -49,7 +49,7 @@ public class FragmentManager {
         if (boolConfigurationChange)
             showFragment(FlashCardFragment.cloneFragment(currentFlashCardFragment) , null);
         Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.INVISIBLE);
-        Multicards.getMainActivity().linearLayoutBottomBar.setVisibility(View.VISIBLE);
+        //Multicards.getMainActivity().linearLayoutBottomBar.setVisibility(View.VISIBLE);
     }
 
     public static final void showFragment (Fragment newFragment, Integer intTransitionType) {

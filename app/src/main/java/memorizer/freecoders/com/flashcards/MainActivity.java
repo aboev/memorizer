@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
+import com.squareup.okhttp.internal.Util;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -207,13 +208,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(LOG_TAG, "onDestroy");
         if ((isFinishing()) && (SocketInterface.getSocketIO() != null)) {
             SocketInterface.getSocketIO().disconnect();
             SocketInterface.getSocketIO().off(Constants.SOCKET_CHANNEL_NAME,
                     SocketInterface.onNewSocketMessage);
         }
+        if (Utils.tts != null) {
+            Utils.tts.stop();
+            Utils.tts.shutdown();
+        }
+        super.onDestroy();
     }
 
     @Override

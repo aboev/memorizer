@@ -111,7 +111,8 @@
     <string name="string_total_cards">Cards in set:</string>
 
     <string-array name="dialog_flashcard_settings">
-    <item>Flip flashcards</item>
+        <item>Flip flashcards</item>
+        <item>Pronounciation on/off</item>
     </string-array>
 
     <string name="string_loading">Loading</string>

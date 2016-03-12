@@ -103,6 +103,7 @@
 
     <string-array name="dialog_flashcard_settings">
         <item>Перевернуть карточки</item>
+        <item>Произношение вкл/выкл</item>
     </string-array>
 
     <string name="string_loading">Загрузка</string>

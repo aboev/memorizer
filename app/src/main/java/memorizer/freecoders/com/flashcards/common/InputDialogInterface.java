@@ -180,7 +180,7 @@ public class InputDialogInterface {
         final AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
         String[] mItems = Multicards.getMainActivity().
                 getResources().getStringArray(R.array.dialog_flashcard_settings);
-        CharSequence options[] = new CharSequence[] {mItems[0]};
+        CharSequence options[] = new CharSequence[] {mItems[0], mItems[1]};
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

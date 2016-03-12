@@ -49,6 +49,7 @@ public final class Preferences {
     private String KEY_SERVER_INFO = "server_info";
     private String KEY_PUSHID = "pushid";
     private String KEY_PUSHID_SAVED = "pushid_saved";
+    private String KEY_ENABLE_SOUND = "enable_sound";
 
     public String strUserID = "";
     public String strUserName = "";
@@ -64,6 +65,7 @@ public final class Preferences {
     public Integer intUserScore = 0;
     public Boolean boolFirstStart = true;
     public Boolean boolPushIDsent = false;
+    public Boolean boolEnableSound = false;
     public HashMap<String, Long> recentSets;
     public HashMap<String, QuizletCardsetDescriptor> recentSetDescriptors;
     public HashMap<String, Long> recentOpponents;
@@ -87,6 +89,7 @@ public final class Preferences {
         strServerInfo = settings.getString(KEY_SERVER_INFO, "{}");
         strPushID = settings.getString(KEY_PUSHID, "");
         boolPushIDsent = settings.getBoolean(KEY_PUSHID_SAVED, false);
+        boolEnableSound = settings.getBoolean(KEY_ENABLE_SOUND, false);
 
         Type type = new TypeToken<HashMap<String, Long>>() {}.getType();
         recentSets = gson.fromJson(settings.getString(KEY_RECENT_SETS, "{}"), type);
@@ -124,6 +127,7 @@ public final class Preferences {
         editor.putString(KEY_SERVER_INFO, strServerInfo);
         editor.putString(KEY_PUSHID, strPushID);
         editor.putBoolean(KEY_PUSHID_SAVED, boolPushIDsent);
+        editor.putBoolean(KEY_ENABLE_SOUND, boolEnableSound);
         editor.commit();
     }
 

@@ -26,6 +26,8 @@ public class GameplayData {
     public ArrayList<FlashCard> questions;
     public ArrayList<Integer> answers;
     public ArrayList<Boolean> checks;
+    public String strLangFrom = "";
+    public String strLangTo = "";
     public int intCurrentQuestion = 0;
     public final static int INT_SINGLEPLAYER = 0;
     public final static int INT_MULTIPLAYER = 1;
@@ -42,10 +44,17 @@ public class GameplayData {
         questions = new ArrayList<FlashCard>();
         this.intGameType = intGameType;
 
-        if (strGID == null) return;
+        if ((strGID == null) || (intGameType == GameplayData.INT_MULTIPLAYER)) return;
 
-        Cardset cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, true);
+        cardset = Multicards.getFlashCardsDAO().fetchCardset(strGID, true);
         this.strGID = strGID;
+        if (!cardset.inverted) {
+            this.strLangFrom = cardset.lang_terms;
+            this.strLangTo = cardset.lang_definitions;
+        }else{
+            this.strLangFrom = cardset.lang_definitions;
+            this.strLangTo = cardset.lang_terms;
+        }
 
         ArrayList<Card> cards = Multicards.getFlashCardsDAO().fetchRandomCards(cardset.getId(),
                 Constants.GAMEPLAY_QUESTIONS_PER_GAME);
