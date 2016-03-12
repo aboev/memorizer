@@ -16,6 +16,8 @@ import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.json.Game;
+import memorizer.freecoders.com.flashcards.json.Image;
+import memorizer.freecoders.com.flashcards.json.MetaItem;
 import memorizer.freecoders.com.flashcards.json.Question;
 import memorizer.freecoders.com.flashcards.json.SocketMessage;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -150,9 +152,15 @@ public class MultiplayerInterface {
 
         public void setCurrentQuestion (Question question) {
             Question newQuestion = new Question();
-            newQuestion.question = question.question;
-            newQuestion.options = new ArrayList<String>();
-            newQuestion.options.addAll(question.options);
+            newQuestion.question_img = new MetaItem(question.question_img.text, null);
+            if (question.question_img.image != null) {
+                newQuestion.question_img.image = new Image();
+                newQuestion.question_img.image.url = question.question_img.image.url;
+                newQuestion.question_img.image.width = question.question_img.image.width;
+                newQuestion.question_img.image.height = question.question_img.image.height;
+            }
+            newQuestion.options_img = new ArrayList<MetaItem>();
+            newQuestion.options_img.addAll(question.options_img);
             newQuestion.answer_id = question.answer_id;
             newQuestion.question_id = question.question_id;
             currentQuestion = newQuestion;

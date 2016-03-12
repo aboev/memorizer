@@ -66,6 +66,7 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
         ImageView imageViewLangFrom = (ImageView) rowView.findViewById(R.id.imageViewLangFrom);
         ImageView imageViewLangTo = (ImageView) rowView.findViewById(R.id.imageViewLangTo);
         ImageView imageViewLikes = (ImageView) rowView.findViewById(R.id.imageViewLike);
+        ImageView imageViewHasImages = (ImageView) rowView.findViewById(R.id.imageViewHasImages);
 
         Integer intLikeCount = 0;
         String strLangFrom = "";
@@ -74,6 +75,7 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
         String strCardsetTitle = "";
         String strGID = "";
         String strDate = "";
+        Boolean boolHasImages;
         if (INT_ITEMS_TYPE == INT_ITEMS_TYPE_CARDSET) {
             if (!Utils.arrayContains(values.get(position).flags, Constants.FLAG_CARDSET_INVERTED)) {
                 strLangFrom = values.get(position).lang_terms;
@@ -85,12 +87,14 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
             intLikeCount = values.get(position).like_count;
             strCardsetTitle = values.get(position).title;
             strGID = values.get(position).gid;
+            boolHasImages = values.get(position).has_images;
         } else {
             strLangFrom = qvalues.get(position).lang_terms;
             strLangTo = qvalues.get(position).lang_definitions;
             strAuthor = qvalues.get(position).created_by;
             strCardsetTitle = qvalues.get(position).title;
             strGID = "quizlet_" + qvalues.get(position).id;
+            boolHasImages = qvalues.get(position).has_images;
         }
 
         if ((intLikeCount == null) || (intLikeCount == 0)) {
@@ -118,6 +122,11 @@ public class CardsetListAdapter extends ArrayAdapter<String> {
             imageViewLangFrom.setVisibility(View.VISIBLE);
             imageViewLangTo.setVisibility(View.VISIBLE);
         }
+
+        if ((boolHasImages != null) && boolHasImages)
+            imageViewHasImages.setVisibility(View.VISIBLE);
+        else
+            imageViewHasImages.setVisibility(View.GONE);
 
         textViewCardsetTitle.setText(strCardsetTitle);
         textViewLikeCount.setText(intLikeCount.toString());

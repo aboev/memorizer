@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Question {
     public int question_id;
-    public String question;
-    public ArrayList<String> options;
+    public MetaItem question_img;
+    public ArrayList<MetaItem> options_img;
     public int answer_id;
  }

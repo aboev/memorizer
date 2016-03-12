@@ -43,18 +43,18 @@ public class AnswerLogManager {
             final FlashCard question = gameplayData.questions.get(i);
             String strText = "";
             if (gameplayData.answers.get(i) != -1)
-                strText = question.question + " - " +
-                        question.options.get(gameplayData.answers.get(i));
+                strText = question.question_img.text + " - " +
+                        question.options_img.get(gameplayData.answers.get(i)).text;
             else
-                strText = question.question + " - X";
+                strText = question.question_img.text + " - X";
             answer.setText(strText);
             answer.setCorrect(gameplayData.checks.get(i));
 
             answer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String strText = question.question + ": \n" +
-                            question.options.get(question.answer_id);
+                    String strText = question.question_img.text + ": \n" +
+                            question.options_img.get(question.answer_id).text;
                     InputDialogInterface.showModalDialog(strText, Multicards.getGameOverActivity());
                 }
             });

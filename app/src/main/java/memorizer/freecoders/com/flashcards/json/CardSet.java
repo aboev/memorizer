@@ -12,4 +12,5 @@ public class CardSet {
     String[] likes = new String[]{};
     public Integer[] flags = new Integer[]{};
     public Integer like_count;
+    public Boolean has_images = false;
 }

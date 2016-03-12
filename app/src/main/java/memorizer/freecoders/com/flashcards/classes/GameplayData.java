@@ -1,7 +1,8 @@
 package memorizer.freecoders.com.flashcards.classes;
 
-import android.content.Intent;
 import android.util.Log;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import memorizer.freecoders.com.flashcards.common.Constants;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.Card;
 import memorizer.freecoders.com.flashcards.dao.Cardset;
-import memorizer.freecoders.com.flashcards.json.Question;
+import memorizer.freecoders.com.flashcards.json.MetaItem;
 
 /**
  * Created by alex-mac on 24.01.16.
@@ -29,6 +30,7 @@ public class GameplayData {
     public final static int INT_SINGLEPLAYER = 0;
     public final static int INT_MULTIPLAYER = 1;
     public int intGameType = INT_SINGLEPLAYER;
+    private Gson gson = new Gson();
 
     private Random ran = new Random();
 
@@ -51,16 +53,19 @@ public class GameplayData {
             return;
 
         for (int i = 0; i < cards.size(); i++) {
+            String strTerm = gson.toJson(new MetaItem(cards.get(i).question,null));
+            String strDefinition = gson.toJson(new MetaItem(cards.get(i).answer,
+                    cards.get(i).getImageDescriptor()));
+
             if (!cardset.inverted) {
-                terms.add(cards.get(i).question);
-                definitions.add(cards.get(i).answer);
+                terms.add(strTerm);
+                definitions.add(strDefinition);
             } else {
-                definitions.add(cards.get(i).question);
-                terms.add(cards.get(i).answer);
+                definitions.add(strDefinition);
+                terms.add(strTerm);
             }
         }
-
-        questions = makeQuestions(new QuestionData(terms, definitions));
+        questions = makeQuestions(new QuestionData(terms, definitions), cardset.has_images);
 
         intCurrentQuestion = 0;
     }
@@ -72,7 +77,7 @@ public class GameplayData {
         intCurrentQuestion = questions.size();
     }
 
-    public ArrayList<FlashCard> makeQuestions (QuestionData questionData) {
+    public ArrayList<FlashCard> makeQuestions (QuestionData questionData, Boolean boolHasImages) {
         ArrayList<String> terms = questionData.terms;
         ArrayList<String> definitions = questionData.udefinitions;
         ArrayList<FlashCard> res = new ArrayList<FlashCard>();
@@ -91,14 +96,18 @@ public class GameplayData {
                     optionCount - 1, definitions.size(), except);
 
             for (int j = 0; j < optionIdList.size(); j++) {
-                if (j == answerID) question.options.add(questionData.getDefinition(termID));
-                question.options.add(definitions.get(optionIdList.get(j)));
+                if (j == answerID)
+                    question.options_img.add(MetaItem.fromJsonString(
+                            questionData.getDefinition(termID)));
+                question.options_img.add(MetaItem.fromJsonString(
+                        definitions.get(optionIdList.get(j))));
             }
 
             if (answerID == optionIdList.size())
-                question.options.add(questionData.getDefinition(termID));
+                question.options_img.add(MetaItem.fromJsonString(
+                        questionData.getDefinition(termID)));
 
-            question.question = terms.get(termID);
+            question.question_img = MetaItem.fromJsonString(terms.get(termID));
             question.answer_id = answerID;
             res.add(question);
 

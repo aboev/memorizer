@@ -56,6 +56,7 @@ import memorizer.freecoders.com.flashcards.network.StringRequest;
 public class Utils {
     private static String LOG_TAG = "Utils";
     private static PrettyTime pTime = new PrettyTime();
+    public static Gson gson = new Gson();
 
     public static final String extractOpponentSocketID(HashMap<String, UserDetails> map) {
         Iterator it = map.entrySet().iterator();
@@ -109,8 +110,8 @@ public class Utils {
 
         @Override
         public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-            if (response.getBitmap() != null) {
-                imageView.setImageResource(0);
+            if ((response.getBitmap() != null) && (imageView != null)) {
+                imageView.setImageResource(android.R.color.transparent);
                 imageView.setImageBitmap(response.getBitmap());
             }
         }
@@ -366,6 +367,24 @@ public class Utils {
             else if (map.containsKey(Constants.DEFAULT_LOCALE))
                 strRes = map.get(Constants.DEFAULT_LOCALE);
         return strRes;
+    }
+
+    public final static ArrayList<Integer> scaleToMaxXY(Integer width, Integer height) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        res.add(width);
+        res.add(height);
+        if ((width == 0) || (height == 0)) return res;
+        float ratio = height / width;
+        float newWidth = Constants.IMAGE_MAX_WIDTH;
+        float newHeight = newWidth * ratio;
+        if (newHeight > Constants.IMAGE_MAX_HEIGHT) {
+            newHeight = Constants.IMAGE_MAX_HEIGHT;
+            newWidth = newHeight / ratio;
+        }
+        res.clear();
+        res.add((int)newWidth);
+        res.add((int)newHeight);
+        return res;
     }
 
 }

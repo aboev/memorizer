@@ -138,6 +138,9 @@ public class Constants {
 
     public final static String Q_PREFIX = "quizlet_";
 
+    public final static int IMAGE_MAX_WIDTH = 200;
+    public final static int IMAGE_MAX_HEIGHT = 300;
+
     public final static Map<String, String> countryMap = new HashMap<String, String>();
     static {
         countryMap.put("en", "united_kingdom_flag");

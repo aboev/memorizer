@@ -5,6 +5,18 @@
     android:layout_height="wrap_content"
     android:background="@drawable/button_shape"
     android:layout_margin="0dp">
+
+    <ImageView
+        android:id="@+id/imageViewOption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_image"
+        android:scaleType="fitXY"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_gravity="center"/>
+
     <TextView
         android:id="@+id/TextView_ButtonName"
         android:layout_width="match_parent"

@@ -12,8 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.AutoResizeTextView;
@@ -22,6 +25,7 @@ import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
 import memorizer.freecoders.com.flashcards.common.Animations;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
  * Created by alex-mac on 07.11.15.
@@ -43,6 +47,7 @@ public class FlashCardFragment extends Fragment {
     ListView flashCardsListView;
     public ListViewAdapter listViewAdapter;
     TextView questionTextView;
+    ImageView questionImageView;
     private int intActionType = INT_LOCAL_FLASHCARD;
 
 
@@ -106,6 +111,8 @@ public class FlashCardFragment extends Fragment {
 
             View option = flashCardsListView.getChildAt(childIndex);
 
+            if (option == null) return;
+
             TextView textView = (TextView) option.findViewById(R.id.TextView_ButtonName);
             int colorFrom = Color.argb(0, 0, 255, 0);
             int colorTo = Color.argb(255, 0, 255, 0); // Green (correct answer)
@@ -125,12 +132,31 @@ public class FlashCardFragment extends Fragment {
         ViewGroup header = (ViewGroup)inflater.inflate(R.layout.flashcard_header,
                 flashCardsListView, false);
         questionTextView = (TextView) header.findViewById(R.id.textViewQuestion);
+        questionImageView = (ImageView) header.findViewById(R.id.imageViewQuestion);
 
         flashCardsListView.addHeaderView(header, null, false);
 
+        if (mFlashCard.question_img != null) {
+            if (mFlashCard.question_img.text != null)
+                questionTextView.setText(mFlashCard.question_img.text);
+            if ((mFlashCard.question_img.image != null)
+                    && (mFlashCard.question_img.image.url != null)) {
+                ArrayList<Integer> size = Utils.scaleToMaxXY(mFlashCard.question_img.image.width,
+                        mFlashCard.question_img.image.height);
+                Integer width = size.get(0);
+                Integer height = size.get(1);
+                ViewGroup.LayoutParams params = questionImageView.getLayoutParams();
+                params.width = width;
+                params.height = height;
+                questionImageView.setLayoutParams(params);
+                Multicards.getAvatarLoader().get(mFlashCard.question_img.image.url,
+                        new Utils.AvatarListener(questionImageView));
+                questionImageView.setVisibility(View.VISIBLE);
+            } else
+                questionImageView.setVisibility(View.GONE);
 
-        questionTextView.setText(mFlashCard.question);
-        listViewAdapter.setValues(mFlashCard.options);
+        }
+        listViewAdapter.setValues(mFlashCard.options_img);
         flashCardsListView.setAdapter(listViewAdapter);
         flashCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

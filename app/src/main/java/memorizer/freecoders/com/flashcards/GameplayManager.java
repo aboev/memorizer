@@ -81,8 +81,8 @@ public class GameplayManager {
             InputDialogInterface.progressDialog.dismiss();
 
         FlashCard mFlashcard = new FlashCard();
-        mFlashcard.question = question.question;
-        mFlashcard.options = question.options;
+        mFlashcard.question_img = question.question_img;
+        mFlashcard.options_img = question.options_img;
         mFlashcard.answer_id = question.answer_id;
         currentGameplay.newServerQuestion(mFlashcard);
 

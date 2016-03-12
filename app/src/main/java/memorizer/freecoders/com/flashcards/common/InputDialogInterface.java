@@ -218,6 +218,7 @@ public class InputDialogInterface {
     }
 
     public static final void showProgressBar (String strMessage, final CallbackInterface onCancel) {
+        hideProgressBar();
         progressDialog = ProgressDialog.show(Multicards.getMainActivity(), "", strMessage, true);
         progressDialog.setOnCancelListener(
                 new DialogInterface.OnCancelListener() {

@@ -95,9 +95,14 @@ public class FlashCardsDAO {
                             card.question = response.terms.get(i).term;
                             card.answer = response.terms.get(i).definition;
 
-                            if (response.terms.get(i).image != null)
-                                card.image = gson.toJson(response.terms.get(i).image);
-
+                            if (response.terms.get(i).image != null) {
+                                if (response.terms.get(i).image.url != null)
+                                    card.imageURL = response.terms.get(i).image.url;
+                                if (response.terms.get(i).image.width != null)
+                                    card.imageWidth = response.terms.get(i).image.width;
+                                if (response.terms.get(i).image.height != null)
+                                    card.imageHeight = response.terms.get(i).image.height;
+                            }
                             card.setID = cardset.getId();
                             card.save();
                             cnt++;
@@ -140,49 +145,6 @@ public class FlashCardsDAO {
                     onSuccess.onResponse(cardset.getId());
                 }
             });
-    }
-
-    public FlashCard fetchRandomCard(){
-        List<Card> cards = new Select()
-                .from(Card.class)
-                .orderBy("RANDOM()")
-                .limit(Constants.GAMEPLAY_OPTIONS_PER_QUESTION + 1)
-                .execute();
-        if (cards == null) return null;
-
-        FlashCard flashCard = new FlashCard();
-
-        for (int i=1; i < cards.size(); i++)
-            flashCard.options.add(cards.get(i).answer);
-
-        int intAnswerPos = ran.nextInt(intCardsCount);
-
-        flashCard.question = cards.get(0).question;
-        flashCard.options.set(intAnswerPos, cards.get(0).answer);
-        flashCard.answer_id = intAnswerPos;
-        return flashCard;
-    }
-
-    public FlashCard fetchRandomCard(Long setID){
-        List<Card> cards = new Select()
-                .from(Card.class)
-                .where("SetID = ?", setID)
-                .orderBy("RANDOM()")
-                .limit(Constants.GAMEPLAY_OPTIONS_PER_QUESTION + 1)
-                .execute();
-        if (cards == null) return null;
-
-        FlashCard flashCard = new FlashCard();
-
-        for (int i=1; i < cards.size(); i++)
-            flashCard.options.add(cards.get(i).answer);
-
-        int intAnswerPos = ran.nextInt(intCardsCount);
-
-        flashCard.question = cards.get(0).question;
-        flashCard.options.set(intAnswerPos, cards.get(0).answer);
-        flashCard.answer_id = intAnswerPos;
-        return flashCard;
     }
 
     public ArrayList<Card> fetchRandomCards(Long setID, int count){
