@@ -31,6 +31,8 @@ public class Constants {
     public final static String SERVER_PATH_TAGS = "/tags";
     public final static String SERVER_PATH_TAG = "/tag";
     public final static String SERVER_PATH_UNTAG = "/untag";
+    public final static String SERVER_PATH_FLAG = "/flag";
+    public final static String SERVER_PATH_UNFLAG = "/unflag";
     public final static String SERVER_PATH_INFO = "/info";
 
     public final static String RESPONSE_RESULT = "result";
@@ -46,6 +48,7 @@ public class Constants {
     public final static String HEADER_SETID = "setid";
     public final static String HEADER_OPPONENTNAME = "opponentname";
     public final static String HEADER_TAGID = "tagid";
+    public final static String HEADER_FLAGID = "flagid";
     public final static String HEADER_IDS = "ids";
     public final static String HEADER_MULTIPLAYER_TYPE = "multiplayerType";
     public final static String HEADER_GAMEID = "gameid";

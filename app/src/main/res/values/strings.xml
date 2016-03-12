@@ -110,4 +110,8 @@
     <string name="string_author">Author:</string>
     <string name="string_total_cards">Cards in set:</string>
 
+    <string-array name="dialog_flashcard_settings">
+    <item>Flip flashcards</item>
+    </string-array>
+
 </resources>

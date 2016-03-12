@@ -61,8 +61,8 @@ public class GameplayData {
                 terms.add(strTerm);
                 definitions.add(strDefinition);
             } else {
-                definitions.add(strDefinition);
-                terms.add(strTerm);
+                terms.add(strDefinition);
+                definitions.add(strTerm);
             }
         }
         questions = makeQuestions(new QuestionData(terms, definitions), cardset.has_images);

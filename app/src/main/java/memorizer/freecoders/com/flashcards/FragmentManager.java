@@ -48,7 +48,8 @@ public class FragmentManager {
         showPlayersInfo(boolConfigurationChange);
         if (boolConfigurationChange)
             showFragment(FlashCardFragment.cloneFragment(currentFlashCardFragment) , null);
-        Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.GONE);
+        Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.INVISIBLE);
+        Multicards.getMainActivity().linearLayoutBottomBar.setVisibility(View.VISIBLE);
     }
 
     public static final void showFragment (Fragment newFragment, Integer intTransitionType) {
@@ -147,6 +148,7 @@ public class FragmentManager {
         hideUserProfileFragment();
         hideGameOverFragment();
         Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.GONE);
+        Multicards.getMainActivity().linearLayoutBottomBar.setVisibility(View.INVISIBLE);
         intUIState = Constants.UI_STATE_MAIN_MENU;
         setUIStates.remove(Constants.UI_STATE_MULTIPLAYER_MODE);
         setUIStates.remove(Constants.UI_STATE_TRAIN_MODE);

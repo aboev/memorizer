@@ -101,5 +101,8 @@
     <string name="string_author">Автор:</string>
     <string name="string_total_cards">Карточек в наборе:</string>
 
+    <string-array name="dialog_flashcard_settings">
+        <item>Перевернуть карточки</item>
+    </string-array>
 
 </resources>

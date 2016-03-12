@@ -127,24 +127,24 @@ public class FlashCardsDAO {
     private void fetchCardsetData (final String gid, final Cardset cardset,
             final CallbackInterface onSuccess, final CallbackInterface onFail) {
         ServerInterface.getCardsetDataRequest(gid,
-            new Response.Listener<ArrayList<QCardset>>() {
-                @Override
-                public void onResponse(ArrayList<QCardset> response) {
-                    if  ((response.size() > 0) && response.get(0).flags != null
-                            && response.get(0).flags.
-                            contains(Constants.FLAG_CARDSET_INVERTED)) {
-                        cardset.inverted = true;
-                        cardset.save();
-                        Log.d(LOG_TAG, "Cardset " + gid + " is inverted");
+                new Response.Listener<ArrayList<QCardset>>() {
+                    @Override
+                    public void onResponse(ArrayList<QCardset> response) {
+                        if ((response.size() > 0) && response.get(0).flags != null
+                                && response.get(0).flags.
+                                contains(Constants.FLAG_CARDSET_INVERTED)) {
+                            cardset.inverted = true;
+                            cardset.save();
+                            Log.d(LOG_TAG, "Cardset " + gid + " is inverted");
+                        }
+                        onSuccess.onResponse(cardset.getId());
                     }
-                    onSuccess.onResponse(cardset.getId());
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    onSuccess.onResponse(cardset.getId());
-                }
-            });
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        onSuccess.onResponse(cardset.getId());
+                    }
+                });
     }
 
     public ArrayList<Card> fetchRandomCards(Long setID, int count){

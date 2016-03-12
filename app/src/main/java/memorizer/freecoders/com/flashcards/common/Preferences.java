@@ -143,6 +143,7 @@ public final class Preferences {
         qcardset.gid = cardset.gid;
         qcardset.lang_terms = cardset.lang_terms;
         qcardset.lang_definitions = cardset.lang_definitions;
+        qcardset.has_images = cardset.has_images;
         recentSets.put(qcardset.gid, System.currentTimeMillis());
         recentSetDescriptors.put(qcardset.gid, qcardset);
         savePreferences();

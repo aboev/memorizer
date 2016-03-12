@@ -603,6 +603,96 @@ public class ServerInterface {
                 addToRequestQueue(request);
     }
 
+    public static final void flagCardsetRequest(
+            String strGID,
+            ArrayList<String> flagIDS,
+            final Response.Listener<ArrayList<TagDescriptor>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        String strFlags = flagIDS.get(0);
+        for (int i = 1; i < flagIDS.size(); i++) strFlags = strFlags + "," + flagIDS.get(i);
+        headers.put(Constants.HEADER_SETID, strGID);
+        headers.put(Constants.HEADER_FLAGID, strFlags);
+
+        Log.d(LOG_TAG, "Post flag request");
+        StringRequest request = new StringRequest(Request.Method.POST,
+                Constants.SERVER_URL + Constants.SERVER_PATH_FLAG ,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <String>>(){}.getType();
+                        try {
+                            ServerResponse<String> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && (responseListener != null))
+                                responseListener.onResponse(null);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
+    public static final void unflagCardsetRequest(
+            String strGID,
+            ArrayList<String> flagIDS,
+            final Response.Listener<ArrayList<TagDescriptor>> responseListener,
+            final Response.ErrorListener errorListener) {
+        HashMap<String, String> headers = makeHTTPHeaders();
+        String strFlags = flagIDS.get(0);
+        for (int i = 1; i < flagIDS.size(); i++) strFlags = strFlags + "," + flagIDS.get(i);
+        headers.put(Constants.HEADER_SETID, strGID);
+        headers.put(Constants.HEADER_FLAGID, strFlags);
+
+        Log.d(LOG_TAG, "Drop flag request");
+        StringRequest request = new StringRequest(Request.Method.POST,
+                Constants.SERVER_URL + Constants.SERVER_PATH_UNFLAG ,
+                "", headers,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(LOG_TAG, "Response: " + response);
+                        Type type = new TypeToken<ServerResponse
+                                <String>>(){}.getType();
+                        try {
+                            ServerResponse<String> res =
+                                    gson.fromJson(response, type);
+                            if ( res != null && res.isSuccess() && (responseListener != null))
+                                responseListener.onResponse(null);
+                            else if (errorListener != null)
+                                errorListener.onErrorResponse(new VolleyError());
+                        } catch (Exception e) {
+                            Log.d(LOG_TAG, "Exception: " + e.getLocalizedMessage());
+                            if (errorListener != null) errorListener.onErrorResponse(
+                                    new VolleyError());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorListener != null) errorListener.onErrorResponse(error);
+            }
+        }
+        );
+        VolleySingleton.getInstance(Multicards.getMainActivity()).
+                addToRequestQueue(request);
+    }
+
     public static final void searchCardsetsRequest(
             ArrayList<String> tagIDS,
             final Response.Listener<ArrayList<CardSet>> responseListener,

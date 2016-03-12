@@ -33,6 +33,7 @@ import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
 import memorizer.freecoders.com.flashcards.dao.FlashCardsDAO;
 import memorizer.freecoders.com.flashcards.gcm.RegistrationIntentService;
+import memorizer.freecoders.com.flashcards.json.Image;
 import memorizer.freecoders.com.flashcards.json.InvitationDescriptor;
 import memorizer.freecoders.com.flashcards.json.UserDetails;
 import memorizer.freecoders.com.flashcards.network.ServerInterface;
@@ -47,12 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
     public TextView textViewNetworkState;
     public LinearLayout linearLayoutEmoticons;
+    public LinearLayout linearLayoutBottomBar;
     public ImageView imageViewEmoticon1;
     public ImageView imageViewEmoticon2;
     public ImageView imageViewEmoticon3;
     public ImageView imageViewEmoticon4;
     public ImageView imageViewEmoticon5;
     public ImageView imageViewEmoticon6;
+    public ImageView settingsImageView;
 
     private static String LOG_TAG = "MainActivity";
 
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         textViewNetworkState = (TextView) findViewById(R.id.textViewNetworkState);
 
         linearLayoutEmoticons = (LinearLayout) findViewById(R.id.linearLayoutEmoticons);
+        linearLayoutBottomBar = (LinearLayout) findViewById(R.id.linearLayoutBottomBar);
 
         imageViewEmoticon1 = (ImageView) findViewById(R.id.imageViewEmoticon1);
         imageViewEmoticon2 = (ImageView) findViewById(R.id.imageViewEmoticon2);
@@ -84,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         imageViewEmoticon4 = (ImageView) findViewById(R.id.imageViewEmoticon4);
         imageViewEmoticon5 = (ImageView) findViewById(R.id.imageViewEmoticon5);
         imageViewEmoticon6 = (ImageView) findViewById(R.id.imageViewEmoticon6);
+
+        settingsImageView = (ImageView) findViewById(R.id.imageViewSettings);
 
         Log.d(LOG_TAG, "OnCreate " + (savedInstanceState == null ? "savedInstanceState == null" :
                 "savedInstanceState != null"));

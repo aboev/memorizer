@@ -219,12 +219,13 @@ public class GameplayManager {
     public static final void startMultiplayerGame(Game game) {
         FragmentManager.setUIStates.add(Constants.UI_STATE_MULTIPLAYER_MODE);
         FragmentManager.intUIState = Constants.UI_STATE_MULTIPLAYER_MODE;
-        currentGameplay = new GameplayData(null, GameplayData.INT_MULTIPLAYER);
+        currentGameplay = new GameplayData(game.game_gid, GameplayData.INT_MULTIPLAYER);
         Multicards.getMultiplayerInterface().setGameData(game, null);
         Multicards.getPreferences().saveRecentOpponent(Utils.extractOpponentProfile(game.profiles));
         FragmentManager.showPlayersInfo(false);
         FragmentManager.playersInfoFragment.initInfo();
         Multicards.getMainActivity().linearLayoutEmoticons.setVisibility(View.VISIBLE);
+        Multicards.getMainActivity().linearLayoutBottomBar.setVisibility(View.GONE);
         FragmentManager.initEmoticons();
         Utils.vibrateSignal();
         if (FragmentManager.setUIStates.contains(Constants.UI_DIALOG_WAITING_OPPONENT))

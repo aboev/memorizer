@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -18,13 +19,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import memorizer.freecoders.com.flashcards.CardsetPickerActivity;
+import memorizer.freecoders.com.flashcards.GameplayManager;
 import memorizer.freecoders.com.flashcards.R;
 import memorizer.freecoders.com.flashcards.classes.AutoResizeTextView;
 import memorizer.freecoders.com.flashcards.classes.CallbackInterface;
 import memorizer.freecoders.com.flashcards.classes.FlashCard;
 import memorizer.freecoders.com.flashcards.classes.ListViewAdapter;
 import memorizer.freecoders.com.flashcards.common.Animations;
+import memorizer.freecoders.com.flashcards.common.Constants;
+import memorizer.freecoders.com.flashcards.common.InputDialogInterface;
 import memorizer.freecoders.com.flashcards.common.Multicards;
+import memorizer.freecoders.com.flashcards.dao.Cardset;
+import memorizer.freecoders.com.flashcards.network.ServerInterface;
 import memorizer.freecoders.com.flashcards.utils.Utils;
 
 /**
@@ -171,6 +178,31 @@ public class FlashCardFragment extends Fragment {
             listViewAdapter.setCorrectAnswer(mFlashCard.answer_id);
             listViewAdapter.setWrongAnswer(mFlashCard.wrong_answer_id);
         }
+
+        Multicards.getMainActivity().settingsImageView.
+                setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InputDialogInterface.showFlashcardSettingsDialog(new CallbackInterface() {
+                            @Override
+                            public void onResponse(Object obj) {
+                                Log.d(LOG_TAG, "Cardset is inverting");
+                                Log.d(LOG_TAG, "Cardset is inverting 1 " + GameplayManager.currentGameplay.strGID);
+                                String strGID = GameplayManager.currentGameplay.strGID;
+                                if ((strGID != null) && (!strGID.isEmpty())) {
+                                    ArrayList<String> flags = new ArrayList<String>();
+                                    flags.add(Constants.FLAG_CARDSET_INVERTED.toString());
+                                    ServerInterface.flagCardsetRequest(strGID, flags, null, null);
+                                    Cardset cardset = Multicards.getFlashCardsDAO().
+                                            fetchCardset(strGID, false);
+                                    Log.d(LOG_TAG, "Cardset is " + (cardset.inverted ? "inverted" : "not inverted"));
+                                    cardset.inverted = !cardset.inverted;
+                                    cardset.save();
+                                }
+                            }
+                        });
+                    }
+                });
 
         return true;
     }

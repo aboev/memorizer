@@ -11,4 +11,5 @@
     <color name="colorMain">#fffef7</color>
     <color name="colorButton">#cdfffa</color>
     <color name="colorBlind">#dcdcdc</color>
+    <color name="colorFlashcard">#ffd918</color>
 </resources>

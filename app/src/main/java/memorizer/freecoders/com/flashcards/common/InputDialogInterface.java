@@ -175,6 +175,34 @@ public class InputDialogInterface {
         builder.show();
     }
 
+    public static final void showFlashcardSettingsDialog (final CallbackInterface onClick) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+        String[] mItems = Multicards.getMainActivity().
+                getResources().getStringArray(R.array.dialog_flashcard_settings);
+        CharSequence options[] = new CharSequence[] {mItems[0]};
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                if (onClick != null) onClick.onResponse(which);
+            }
+        });
+        builder.show();
+    }
+
+    public static final void showOptionsDialog (CharSequence[] options,
+            final CallbackInterface onClick) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Multicards.getMainActivity());
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                if (onClick != null) onClick.onResponse(which);
+            }
+        });
+        builder.show();
+    }
+
     public static final void showEnterOpponentNameDialog (final CallbackInterface onEnter) {
         android.app.FragmentManager fm =
                 Multicards.getMainActivity().getFragmentManager();
